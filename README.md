@@ -1,12 +1,12 @@
-#### MANIFEST PRODUCER
+# MANIFEST PRODUCER
 
 This project is a tool for analyzing ELF files to produce manifests that describe information extracted from ELF libraries and binaries.
 
-### Project Structure
+## Project Structure
 
 The project is divided into two main parts: a Rust library containing modules and functionalities for analyzing ELF files, and a binary for direct usage of the tool.
 
-## Library Structure
+### Library Structure
 
 The library is organized into the following modules:
 
@@ -19,7 +19,7 @@ The library is organized into the following modules:
 * `manifest_creation`: Module for creating manifests.
 * `error`: Definition of custom errors and result types.
 
-## Binary Structure
+### Binary Structure
 
 The manifest-producer binary uses the library to perform analysis of ELF files. It is divided into three main parts:
 
@@ -27,7 +27,7 @@ The manifest-producer binary uses the library to perform analysis of ELF files. 
 2. Utilization of library functionalities for ELF file analysis.
 3. Utilization of library functionalities for the Manifest creation.
 
-### Usage
+## Usage
 
 To use the manifest-producer tool, you can run the following command from the command line:
 
@@ -37,12 +37,17 @@ cargo run manifest-producer <elf_file_path>
 
 Where `<elf_file_path>` is the path to the ELF file to be analyzed.
 
-### Dependencies
+## Dependencies
 
 The project uses the following main dependencies:
 
-* [goblin](https://docs.rs/goblin/latest/goblin/) and [gimli](https://docs.rs/gimli/latest/gimli/): Rust libraries for analyzing ELF files.
-* [capstone](https://docs.rs/capstone/latest/capstone/): Rust library for analyzing machine code.
-* [cpp_demangle](https://docs.rs/cpp_demangle/latest/cpp_demangle/) and [rustc_demangle](https://docs.rs/rustc-demangle/latest/rustc_demangle/): Rust libraries for demangling C++ and Rust function names.
-* [memmap2](https://docs.rs/memmap2/latest/memmap2/): Rust library for memory-mapping files.
+- [capstone](https://crates.io/crates/capstone) - A disassembly framework with multiple architectures support.
+- [goblin](https://crates.io/crates/goblin) - A crate for handling PE, ELF, and Mach-O binaries.
+- [serde_json](https://crates.io/crates/serde_json) - A JSON serialization and deserialization library for Rust.
+- [thiserror](https://crates.io/crates/thiserror) - A library for defining custom error types in Rust.
+- [object](https://crates.io/crates/object) - A crate for working with object file formats.
+- [cpp_demangle](https://crates.io/crates/cpp_demangle) - A demangler for C++ symbols.
+- [gimli](https://crates.io/crates/gimli) - A library for working with the DWARF debugging format.
+- [memmap2](https://crates.io/crates/memmap2) - A safe and easy-to-use wrapper around platform memory-mapped I/O APIs.
+- [rustc-demangle](https://crates.io/crates/rustc-demangle) - A demangler for Rust symbols.
 
