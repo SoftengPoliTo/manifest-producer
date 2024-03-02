@@ -31,10 +31,12 @@ pub fn code_section(elf: &Elf, api: &API, buffer: &[u8], link: bool, rust: bool)
         // Dynamic linking
         code_slice = &buffer[(api.start_addr) as usize
             ..(api.end_addr) as usize];
-        let plt_section = find_plt_section(elf).ok_or(Error::PLTSectionNotFound)?;
-        let plt_entry_size = plt_section.sh_entsize as usize;
-        let tbl = load_rela_plt_relocations(elf, plt_section, plt_entry_size);
 
+        let mut found_plt_sec = false;
+        let plt_section = find_plt_section(elf, &mut found_plt_sec).ok_or(Error::PLTSectionNotFound)?;
+        let plt_entry_size = plt_section.sh_entsize as usize;
+        let tbl = load_rela_plt_relocations(elf, plt_section, plt_entry_size, found_plt_sec);
+        
         println!("\n{:#x}\t<{}>", &api.start_addr, &api.name);
         sys_call = disassemble(&elf,code_slice, api.start_addr, link, tbl, rust)?;
     }
@@ -131,9 +133,6 @@ fn call_instruction<'a>(elf: &'a Elf<'a>, op_str: &'a str, address: u64, name_fu
                         println!("0x{:x}:\t{}\t<{}>", address, name_func, name);
                         return Some(name.to_string());
                     }
-                    let name = format!("CALL_to_<{}>", op_str);
-                    println!("0x{:x}:\t{}\t<{}>", address, name_func, name);
-                    return Some(name.to_string());
                 }
                 None => {
                     println!("PLT map is not available");
