@@ -61,6 +61,7 @@ pub fn is_stripped(elf: &Elf) -> bool {
         _ => true,
     }
 }
+
 // Get the architecture type of the ELF file.
 fn has_sections(elf: &Elf, section_type: u32) -> bool {
     elf.section_headers.iter().any(|section| section.sh_type == section_type)
@@ -167,5 +168,34 @@ mod tests {
         let result = cs_init();
         assert!(result.is_ok(), "Failed to initialize Capstone: {:?}", result.err());
     }
+
+    #[test]
+    fn test_is_stripped() {
+        let elf_data = read_elf_file("./elf_file/fake-firmware-rust-dynamic-stripped").unwrap();
+        let elf = goblin::elf::Elf::parse(&elf_data).unwrap();
+        assert_eq!(true, is_stripped(&elf))
+    }
+
+    #[test]
+    fn test_is_static() {
+        let elf_data = read_elf_file("./elf_file/fake-firmware-rust-dynamic").unwrap();
+        let elf = goblin::elf::Elf::parse(&elf_data).unwrap();
+        assert_eq!(false, is_static(&elf))
+    }
+
+    #[test]
+    fn test_has_sections() {
+        let elf_data = read_elf_file("./elf_file/fake-firmware-rust-dynamic").unwrap();
+        let elf = goblin::elf::Elf::parse(&elf_data).unwrap();
+        assert_eq!(true, has_sections(&elf, goblin::elf::section_header::SHT_DYNSYM))
+    }
+
+    #[test]
+    fn test_get_file_type() {
+        let elf_data = read_elf_file("./elf_file/fake-firmware-rust-dynamic").unwrap();
+        let elf = goblin::elf::Elf::parse(&elf_data).unwrap();
+        assert_eq!("Dynamic Library", get_file_type(&elf).unwrap())
+    }
+
 }
 
