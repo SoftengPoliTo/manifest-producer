@@ -7,7 +7,18 @@ use manifest_producer::api_detection::api_search;
 use manifest_producer::dwarf_analysis::dwarf_analysis;
 use manifest_producer::elf_utils::{is_static, is_stripped, read_elf_file};
 
-
+/// Perform ELF analysis including API detection, system call flow encapsulation, and manifest generation.
+///
+/// This function performs analysis on an ELF file, including API detection, system call flow encapsulation, and manifest generation.
+///
+/// # Arguments
+///
+/// * `file_path` - The path to the ELF file to be analyzed.
+/// * `api_list` - A vector containing the names of the APIs to search for.
+///
+/// # Returns
+///
+/// Returns a `Result` indicating success or failure of the ELF analysis.
 pub fn elf_analysis(file_path: &str, api_list: Vec<&str>) -> Result<()> {
     let elf_data = read_elf_file(file_path)?;
     let elf = goblin::elf::Elf::parse(&elf_data)?;

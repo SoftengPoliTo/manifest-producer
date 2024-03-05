@@ -6,22 +6,20 @@ use error::{Error, Result};
 use goblin::elf::{Elf, SectionHeader};
 use object::elf::SHT_PROGBITS;
 
-
-/* 
-*
-*   ELF Utilities: Functions for retrieving basic information from ELF files.
-*
-*/
-
-// Structure used to collect API data identified in the code.
+/// Structure used to collect API data identified in the code.
 pub struct API {
+    /// The name of the API.
     pub name: String,
+    /// The starting address of the API.
     pub start_addr: u64,
+    /// The ending address of the API.
     pub end_addr: u64,
+    /// The list of system calls associated with the API.
     pub syscalls: Vec<String>,
 }
 
 impl API {
+    /// Creates a new API instance with the specified name, start address, and end address.
     pub fn new(name: String, start_addr: u64, end_addr: u64) -> Self {
         Self {
             name,
@@ -30,13 +28,21 @@ impl API {
             syscalls: Vec::new(),
         }
     }
-
+    /// Adds a system call to the list of system calls associated with the API.
     pub fn add_syscall(&mut self, syscall: String) {
         self.syscalls.push(syscall);
     }
 }
 
-// Read the contents of an ELF file.
+/// Read the contents of an ELF file.
+///
+/// # Arguments
+///
+/// * `file_path` - The path to the ELF file.
+///
+/// # Returns
+///
+/// Returns a `Result` containing the vector of bytes read from the ELF file.
 pub fn read_elf_file(file_path: &str) -> Result<Vec<u8>> {
     let mut file = File::open(&file_path)?;
     let mut buffer = Vec::new();
@@ -44,7 +50,7 @@ pub fn read_elf_file(file_path: &str) -> Result<Vec<u8>> {
     Ok(buffer)
 }
 
-// Check whether the specified ELF has been stripped of debug symbols.
+/// Check whether the specified ELF file has been stripped of debug symbols.
 pub fn is_stripped(elf: &Elf) -> bool {
     match elf.header.e_ident[goblin::elf::header::EI_CLASS] {
         goblin::elf::header::ELFCLASS64
@@ -55,7 +61,7 @@ pub fn is_stripped(elf: &Elf) -> bool {
         _ => true,
     }
 }
-
+// Get the architecture type of the ELF file.
 fn has_sections(elf: &Elf, section_type: u32) -> bool {
     elf.section_headers.iter().any(|section| section.sh_type == section_type)
 }
@@ -69,7 +75,7 @@ pub fn get_arch<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-// Return the file type.
+/// Return the type of the ELF file.
 pub fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_type {
         goblin::elf::header::ET_EXEC => Ok("Executable"),
@@ -79,7 +85,7 @@ pub fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-// Check if the file is statically linked.
+/// Check if the ELF file is statically linked.
 pub fn is_static(elf: &Elf) -> bool {
     if elf.dynamic.is_some() {
         false
@@ -88,7 +94,7 @@ pub fn is_static(elf: &Elf) -> bool {
     }
 }
 
-// Locate the .text section.
+/// Locate the `.text` section in the ELF file.
 pub fn find_text_section<'a>(elf: &'a Elf<'a>) -> Option<&'a SectionHeader>{
     elf
         .section_headers
@@ -99,7 +105,7 @@ pub fn find_text_section<'a>(elf: &'a Elf<'a>) -> Option<&'a SectionHeader>{
         })
 }
 
-// Initialize Capstone.
+/// Initialize Capstone disassembly engine.
 pub fn cs_init() -> Result<Capstone> {
     let cs = Capstone::new()
         .x86()
@@ -112,7 +118,16 @@ pub fn cs_init() -> Result<Capstone> {
     })
 }
 
-// Retrieve the name given the address.
+/// Retrieve the name associated with the given address in the ELF file.
+///
+/// # Arguments
+///
+/// * `elf` - A reference to the ELF structure representing the binary file.
+/// * `address` - The address for which to retrieve the name.
+///
+/// # Returns
+///
+/// Returns an optional reference to the name associated with the given address.
 pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
     let symtab = &elf.syms;
     let dyntab = &elf.dynsyms;

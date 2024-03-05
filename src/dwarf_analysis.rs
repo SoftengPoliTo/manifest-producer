@@ -3,14 +3,18 @@ use error::Result;
 use std::{fs, borrow};
 use object::{Object, ObjectSection};
 
-/* 
-*
-*   Dwarf Analysis: Analyzes the ELF file to determine the programming language used.
-*
-*/
-
-// Parse an ELF file to determine the programming language used. 
-// Analysis example from: https://github.com/gimli-rs/gimli/blob/master/crates/examples/src/bin/simple.rs
+/// Parse an ELF file to determine the programming language used.
+///
+/// This function analyzes the Dwarf information in the ELF file to determine the programming language used.
+///
+/// # Arguments
+///
+/// * `file_path` - The path to the ELF file.
+///
+/// # Returns
+///
+/// Returns a `Result` containing the programming language used, if successfully determined.
+/// Analysis example from: https://github.com/gimli-rs/gimli/blob/master/crates/examples/src/bin/simple.rs
 pub fn dwarf_analysis(file_path: &str) -> Result<String>{
     let file = fs::File::open(&file_path)?;
     let mmap = unsafe { memmap2::Mmap::map(&file)? };

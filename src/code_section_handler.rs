@@ -4,13 +4,22 @@ use error::{Error, Result};
 
 use goblin::elf::Elf;
 
-/* 
-*
-*   Section Handler: Extracts and disassembles code sections of APIs.
-*
-*/
-
-// Extracts the code of the specified section, managing static or dynamic linking.
+/// Extracts and disassembles code sections of APIs, handling static or dynamic linking.
+///
+/// This function extracts and disassembles the code of the specified API section, managing static or dynamic linking.
+/// It returns the disassembled code and any system calls made by the API.
+///
+/// # Arguments
+///
+/// * `elf` - The ELF object representing the binary.
+/// * `api` - The API structure containing information about the API section.
+/// * `buffer` - The buffer containing the binary data of the ELF file.
+/// * `link` - A boolean indicating whether static linking is used (`true`) or dynamic linking (`false`).
+/// * `rust` - A boolean indicating whether the API section is written in Rust (`true`) or not (`false`).
+///
+/// # Returns
+///
+/// Returns a `Result` containing a vector of disassembled code strings and any system calls made by the API.
 pub fn code_section(elf: &Elf, api: &API, buffer: &[u8], link: bool, rust: bool) -> Result<Vec<String>> {
     let text_section = find_text_section(elf).ok_or(Error::TextSectionNotFound)?;
     let code_slice:&[u8];
@@ -44,13 +53,11 @@ pub fn code_section(elf: &Elf, api: &API, buffer: &[u8], link: bool, rust: bool)
     Ok(sys_call)
 }
 
-/* 
-*
-*   Disassembler: Disassembles code sections handling static or dynamic function calls.
-*
-*/
 
-// Disassemble the code in the specified section, handling static or dynamic function calls.
+// Disassembles the code in the specified section, handling static or dynamic function calls.
+//
+// This function disassembles the code in the specified section, handling static or dynamic function calls based on the given parameters.
+// It returns the disassembled code and any system calls made by the API.
 fn disassemble(elf: &Elf, code_slice: &[u8], addr: u64, link: bool, plt_map: Option<HashMap<u64, &str>>, rust: bool) -> Result<Vec<String>> {
     let cs = cs_init()?;
     let mut sys_call: Vec<String> = vec![];

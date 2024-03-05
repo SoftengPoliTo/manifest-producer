@@ -5,13 +5,19 @@ use elf_utils::API;
 use cpp_demangle::{DemangleOptions, Symbol};
 use rustc_demangle::demangle;
 
-/* 
-*
-*   Cleanup: Functions for cleaning up and encapsulating system call flows.
-*
-*/
-
-// Encapsulate the call flow within the appropriate structure.
+/// Encapsulate the call flow within the appropriate structure.
+///
+/// This function encapsulates the call flow within the API structure, cleaning up and adding the system calls.
+///
+/// # Arguments
+///
+/// * `api` - A mutable reference to the API structure.
+/// * `sys` - A vector containing the system call names.
+/// * `lang` - A string indicating the programming language used (e.g., "Rust", "C++").
+///
+/// # Returns
+///
+/// Returns a `Result` indicating success or failure.
 pub fn syscall_flow(api: &mut API, sys: Vec<String>, lang: &str) -> Result<()>{
     for s in sys {
         if lang.contains("Rust") {
@@ -28,7 +34,7 @@ pub fn syscall_flow(api: &mut API, sys: Vec<String>, lang: &str) -> Result<()>{
     Ok(())
 }
 
-// Attempt to clean up the mangled names
+// This function attempts to demangle the mangled function names.
 fn demangle_function_name(mangled_name: &str, rust: bool) -> Result<String> {
     if mangled_name.starts_with("_Z") {
         if rust {
@@ -43,7 +49,7 @@ fn demangle_function_name(mangled_name: &str, rust: bool) -> Result<String> {
     }
 }
 
-// Clean Rust call name
+// This function cleans up the demangled Rust function names.
 fn clean_rust(demangled_name: &str) -> Option<String> {
     let excluded_keywords = vec!["core::result", "shake_intern", "core::iter"];
     let contains_excluded = excluded_keywords.iter().any(|&keyword| demangled_name.contains(keyword));
@@ -54,7 +60,7 @@ fn clean_rust(demangled_name: &str) -> Option<String> {
     }
 }
 
-// Clean C/C++ call name
+// This function cleans up the demangled C/C++ function names.
 fn clean_cpp(demangled_name: &str) -> Option<String> {
     let excluded_keywords = vec!["_Unwind_Resume", "shake_intern", "value_", "__cxa"];
     let contains_excluded = excluded_keywords.iter().any(|&keyword| demangled_name.contains(keyword));
