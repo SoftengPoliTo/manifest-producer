@@ -1,13 +1,18 @@
 use std::collections::HashMap;
 use goblin::elf::{Elf, SectionHeader};
 
-/* 
-*
-*   PLT Mapping: Functions for mapping the .plt and .rela.plt sections in dynamically linked ELF binaries.
-*
-*/
-
-// Load the .rela.plt relocations and return a map of the PLT entry addresses and their symbol names.
+/// Load the `.rela.plt` relocations and return a map of the PLT entry addresses and their symbol names.
+///
+/// # Arguments
+///
+/// * `elf` - A reference to the ELF structure representing the binary file.
+/// * `plt_section` - A reference to the section header representing the `.plt` section.
+/// * `plt_entry_size` - The size of each PLT entry.
+/// * `start_from` - A boolean indicating whether to start from the first PLT entry or not cause we are in .plt.sec .
+///
+/// # Returns
+///
+/// Returns an optional `HashMap` containing the PLT entry addresses and their associated symbol names.
 pub fn load_rela_plt_relocations<'a>(elf: &'a Elf<'a>, plt_section: &'a SectionHeader, plt_entry_size: usize, start_from: bool) -> Option<HashMap<u64, &'a str>> {
     let mut tbl = HashMap::new();
     let mut i = if start_from {0} else {1};
@@ -38,7 +43,16 @@ fn plt_entry_address(plt_section: &SectionHeader, index: usize, plt_entry_size: 
     plt_section.sh_addr + offset as u64
 }
 
-// Find the .plt.sec section or .plt section.
+/// Find the `.plt.sec` section or `.plt` section.
+///
+/// # Arguments
+///
+/// * `elf` - A reference to the ELF structure representing the binary file.
+/// * `found_plt_sec` - A mutable reference to a boolean indicating whether the `.plt.sec` section was found.
+///
+/// # Returns
+///
+/// Returns an optional reference to the section header of the `.plt.sec` section or `.plt` section.
 pub fn find_plt_section<'a>(elf: &'a Elf<'a>, found_plt_sec: &mut bool) -> Option<&'a SectionHeader> {
     if let Some(plt_sec) = elf.section_headers.iter().find(|sec| {
         let name = elf.shdr_strtab.get_at(sec.sh_name);

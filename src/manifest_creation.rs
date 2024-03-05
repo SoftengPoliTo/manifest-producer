@@ -6,13 +6,6 @@ use goblin::elf::Elf;
 
 use elf_utils::{get_arch, get_file_type, is_static, API};
 
-
-/* 
-*
-*   Creation of JSON manifests.
-*
-*/
-
 const CATEGORIES: [(&str, &[&str]); 9] = [
     ("File Manipulation", &["fwrite", "fopen", "fclose", "File", "write"]),
     ("Network Access", &["curl", "sendto", "recvfrom", "cpr"]),
@@ -25,7 +18,19 @@ const CATEGORIES: [(&str, &[&str]); 9] = [
     ("Process Management", &["fork", "exec", "wait", "exit"]),
 ];
 
-// Category JSON manifest: Categorizes APIs based on their functionality features.
+/// Creates a JSON manifest that categorizes APIs based on their functionality features.
+///
+/// # Arguments
+///
+/// * `api_list` - A reference to a vector containing the list of APIs to be categorized.
+///
+/// # Returns
+///
+/// Returns a `Result` indicating success or failure.
+///
+/// # Errors
+///
+/// Returns an error if there is an issue creating or writing to the output file.
 pub fn feature_manifest(api_list: &Vec<API>) -> Result<()> {
     let mut categorized_features: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -68,7 +73,20 @@ fn categorize_api(categorized_features: &mut HashMap<String, Vec<String>>, api_n
     }
 }
 
-// Function call JSON manifest: Creates a JSON manifest that presents for each identified API, the list of function calls (system calls or subfunctions).
+/// Creates a JSON manifest that presents, for each identified API, the list of function calls (system calls or subfunctions).
+///
+/// # Arguments
+///
+/// * `api_list` - A reference to a vector containing the list of APIs with their associated function calls.
+///
+/// # Returns
+///
+/// Returns a `Result` indicating success or failure.
+///
+/// # Errors
+///
+/// Returns an error if there is an issue creating or writing to the output file.
+
 pub fn flow_call_manifest(api_list: &Vec<API>) -> Result<()> {
     let mut api_flow = Vec::new();
 
@@ -98,7 +116,22 @@ pub fn flow_call_manifest(api_list: &Vec<API>) -> Result<()> {
 
 }
 
-// Basic JSON manifest: Prints general information about the ELF binary and the identified public APIs.
+/// Prints general information about the ELF binary and the identified public APIs in a JSON manifest.
+///
+/// # Arguments
+///
+/// * `elf` - A reference to the ELF structure representing the binary file.
+/// * `file_path` - The path to the ELF binary file.
+/// * `api_list` - A reference to a vector containing the list of identified public APIs.
+/// * `language` - The programming language used to build the ELF binary.
+///
+/// # Returns
+///
+/// Returns a `Result` indicating success or failure.
+///
+/// # Errors
+///
+/// Returns an error if there is an issue creating or writing to the output file.
 pub fn basic_info_manifest(elf: &Elf, file_path: &str, api_list: &Vec<API>, language: String) -> Result<()>{
     let mut info = serde_json::Map::new();
     let file_name = Path::new(file_path).file_name().map_or(file_path, |f| f.to_str().unwrap());
