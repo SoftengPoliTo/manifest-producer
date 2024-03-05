@@ -66,11 +66,12 @@ fn has_sections(elf: &Elf, section_type: u32) -> bool {
     elf.section_headers.iter().any(|section| section.sh_type == section_type)
 }
 
-// Get the architecture type.
+/// Get the architecture type.
 pub fn get_arch<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_machine {
         goblin::elf::header::EM_X86_64 =>  Ok("x86-64"),
         goblin::elf::header::EM_386 =>  Ok("x86"),
+        goblin::elf::header::EM_XTENSA => Ok("Xtensa"),
         _ =>  Err(Error::InvalidElf { source: goblin::error::Error::Malformed("Unknown Architecture".to_string())}),
     }
 }
@@ -148,3 +149,23 @@ pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_read_elf_file() {
+        // Assicurati di avere un percorso valido a un file ELF per eseguire il test
+        let file_path = "./elf_file/fake-firmware-rust-dynamic";
+        let result = read_elf_file(file_path);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_cs_init() {
+        let result = cs_init();
+        assert!(result.is_ok(), "Failed to initialize Capstone: {:?}", result.err());
+    }
+}
+

@@ -70,3 +70,51 @@ fn clean_cpp(demangled_name: &str) -> Option<String> {
         Some(demangled_name.to_string())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_demangle_function_name_rust() {
+        let mangled_name = "_ZN4core9panicking16panic_in_cleanup17h55eb1d85cadde1a1E";
+        let demangled_name = demangle_function_name(mangled_name, true).unwrap();
+        assert_eq!(demangled_name, "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1");
+    }
+
+    #[test]
+    fn test_demangle_function_name_cpp() {
+        let mangled_name = "_ZN12example_name3fooE";
+        let demangled_name = demangle_function_name(mangled_name, false).unwrap();
+        assert_eq!(demangled_name, "example_name::foo");
+    }
+
+    #[test]
+    fn test_clean_rust_excluded_keyword() {
+        let demangled_name = "core::result::Result";
+        let result = clean_rust(demangled_name);
+        assert_eq!(result, None);
+    }
+
+    #[test]
+    fn test_clean_rust_no_excluded_keyword() {
+        let demangled_name = "my_function";
+        let result = clean_rust(demangled_name).unwrap();
+        assert_eq!(result, "my_function");
+    }
+
+    #[test]
+    fn test_clean_cpp_excluded_keyword() {
+        let demangled_name = "__cxa_throw";
+        let result = clean_cpp(demangled_name);
+        assert_eq!(result, None);
+    }
+
+    #[test]
+    fn test_clean_cpp_no_excluded_keyword() {
+        let demangled_name = "my_function";
+        let result = clean_cpp(demangled_name).unwrap();
+        assert_eq!(result, "my_function");
+    }
+}
+

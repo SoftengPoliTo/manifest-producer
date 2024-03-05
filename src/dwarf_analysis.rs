@@ -73,3 +73,26 @@ fn analyze_elf_file<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndi
     }
     Ok(lang)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_dwarf_analysis() {
+        let file_path = "./elf_file/fake-firmware-rust-dynamic";
+        let result = dwarf_analysis(file_path).unwrap();
+        assert_eq!(result, "DW_LANG_Rust".to_string());
+    }
+
+    #[test]
+    fn test_analyze_elf_file() {
+        let file = fs::File::open("./elf_file/fake-firmware-rust-dynamic").unwrap();
+        let mmap = unsafe { memmap2::Mmap::map(&file).unwrap() };
+        let object = object::File::parse(&*mmap).unwrap();
+        let endian = gimli::RunTimeEndian::Little; 
+        let result = analyze_elf_file(&object, endian).unwrap();
+        assert_eq!(result, "DW_LANG_Rust");
+    }
+}
+
