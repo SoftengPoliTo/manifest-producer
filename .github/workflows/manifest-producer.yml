@@ -16,6 +16,8 @@ env:
   UDEPS_VERSION: "0.1.35"
 
   CAREFUL_VERSION: "0.3.4"
+
+  DENY_VERSION: "0.13.7"
             
 jobs:
 
@@ -109,8 +111,8 @@ jobs:
         - name: Get coverage data for codecov
           run: |
             grcov . --binary-path ./target/debug/ -s . -t lcov --branch \
-            --ignore-not-existing --ignore "src/bin/manifest-producer.rs" --ignore "src/error.rs" \
-            --ignore "src/lib.rs" -o lcov.info
+                  --ignore-not-existing --ignore "/*" --ignore "../*" \
+                  --ignore "src/bin/*" -o lcov.info
 
         - name: Codecov upload
           uses: codecov/codecov-action@v4
@@ -213,11 +215,25 @@ jobs:
               - 'Cargo.toml'
               - 'Cargo.lock'
 
-      - name: Detect multiple versions of the same crate
+      - name: Install Rust stable
         if: steps.changes.outputs.cargo == 'true'
-        uses: EmbarkStudios/cargo-deny-action@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          command: check bans
+          toolchain: stable
+
+      - name: Install cargo-deny
+        if: steps.changes.outputs.cargo == 'true'
+        env:
+          DENY_LINK: https://github.com/EmbarkStudios/cargo-deny/releases/download
+        run: |
+          curl -L "$DENY_LINK/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz" |
+          tar xz -C $HOME/.cargo/bin --strip-components 1
+
+      - name: Run cargo-deny
+        if: steps.changes.outputs.cargo == 'true'
+        run: |
+          cargo deny init
+          cargo deny check bans
 
     udeps:
 
@@ -240,7 +256,9 @@ jobs:
       - name: Install Rust nightly
         if: steps.changes.outputs.cargo == 'true'
         uses: dtolnay/rust-toolchain@nightly
-        
+        with:
+          toolchain: nightly
+
       - name: Install cargo-udeps
         if: steps.changes.outputs.cargo == 'true'
         env:
@@ -267,6 +285,7 @@ jobs:
 
       - name: Install valgrind
         run: |
+          sudo apt-get update
           sudo apt-get install valgrind
 
       - name: Run cargo-valgrind
@@ -287,6 +306,7 @@ jobs:
       - name: Install Rust nightly
         uses: dtolnay/rust-toolchain@nightly
         with:
+          toolchain: nightly
           components: rust-src
 
       - name: Install cargo-careful
@@ -313,6 +333,7 @@ jobs:
         - name: Install Rust nightly
           uses: dtolnay/rust-toolchain@nightly
           with:
+            toolchain: nightly
             components: rust-src
 
         - name: Run AddressSanitizer
