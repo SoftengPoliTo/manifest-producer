@@ -1,0 +1,10 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "writeOnDrive": [
+    "File Manipulation",
+    "Device Access"
+  ]
+}

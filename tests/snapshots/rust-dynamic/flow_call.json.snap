@@ -1,0 +1,32 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "Public APIs flow": [
+    {
+      "name": "write_on_drive",
+      "syscalls": [
+        "std::io::Write::write_all::h54836e3ac9c95be0",
+        "core::ptr::drop_in_place<std::fs::File>::h03f8da3e70008748",
+        "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1"
+      ]
+    },
+    {
+      "name": "access_network",
+      "syscalls": []
+    },
+    {
+      "name": "access_webcam",
+      "syscalls": [
+        "<rscam::Config as core::default::Default>::default::hdd622f4c190b10f1",
+        "core::ptr::drop_in_place<rscam::Camera>::h5175a7f12a07adfa",
+        "convert..From$LT$alloc..string..String$GT$$GT$..from..StringError$u20$as$u20$core..error..Error$GT$11description17h7ce3f5f0356f8a1aE",
+        "rscam::Camera::start::h0523aad2eb42dc05",
+        "rscam::Camera::capture::h9dc84f44d13abe10",
+        "core::ptr::drop_in_place<rscam::Frame>::hcde38e6c66fe1fcb",
+        "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1"
+      ]
+    }
+  ]
+}

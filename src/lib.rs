@@ -5,9 +5,9 @@
 //! - C
 //! - C++
 //! - Rust
-//! 
+//!
 //! ## Manifest Produced
-//! 
+//!
 //! - Basic informations:
 //!   - file_name: The name of the ELF file.
 //!   - programming language: The programming language used to build the ELF file.
@@ -18,19 +18,19 @@
 //!   - header_size: The size of the ELF header.
 //!   - entry_point: The entry point of the ELF file.
 //!   - APIs found: The list of identified public APIs.
-//! 
+//!
 //! - Flow called functions:
 //!   - For each identified API, lists the function calls (system calls or subfunctions).
-//! 
+//!
 //! - Features associated to each APIs:
 //!   - Categorizes APIs based on their functionality features.
-//! 
+//!
 
-pub mod manifest_creation;
-pub mod code_section_handler;
-pub mod plt_mapping;
-pub mod dwarf_analysis;
 pub mod api_detection;
-pub mod elf_utils;
 pub mod cleanup;
+pub mod code_section_handler;
+pub mod dwarf_analysis;
+pub mod elf_utils;
 pub mod error;
+pub mod manifest_creation;
+pub mod plt_mapping;

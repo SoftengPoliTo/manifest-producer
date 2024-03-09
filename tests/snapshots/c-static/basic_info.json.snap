@@ -1,0 +1,17 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "APIs found": [
+    "writeOnDrive"
+  ],
+  "architecture": "x86-64",
+  "endianness": "Little",
+  "entry_point": "0x401600",
+  "file_name": "minimal-fake-firmware-c-static",
+  "file_type": "Executable",
+  "header_size": 64,
+  "link": "statically linked",
+  "programming language": "C99"
+}

@@ -1,0 +1,12 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "access_webcam": [
+    "Video Access"
+  ],
+  "write_on_drive": [
+    "File Manipulation"
+  ]
+}

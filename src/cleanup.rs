@@ -1,9 +1,9 @@
-use crate::{error, elf_utils};
-use error::Result;
-
-use elf_utils::API;
 use cpp_demangle::{DemangleOptions, Symbol};
 use rustc_demangle::demangle;
+
+use crate::{elf_utils, error};
+use elf_utils::API;
+use error::Result;
 
 /// Encapsulate the call flow within the appropriate structure.
 ///
@@ -18,17 +18,14 @@ use rustc_demangle::demangle;
 /// # Returns
 ///
 /// Returns a `Result` indicating success or failure.
-pub fn syscall_flow(api: &mut API, sys: Vec<String>, lang: &str) -> Result<()>{
+pub fn syscall_flow(api: &mut API, sys: Vec<String>, lang: &str) -> Result<()> {
     for s in sys {
         if lang.contains("Rust") {
             if let Some(name) = clean_rust(&demangle_function_name(&s, true)?) {
                 api.add_syscall(name);
             }
-        }
-        else {
-            if let Some(name) = clean_cpp(&demangle_function_name(&s, false)?) {
-                api.add_syscall(name);
-            }
+        } else if let Some(name) = clean_cpp(&demangle_function_name(&s, false)?) {
+            api.add_syscall(name);
         }
     }
     Ok(())
@@ -40,9 +37,9 @@ fn demangle_function_name(mangled_name: &str, rust: bool) -> Result<String> {
         if rust {
             let demangled_name = demangle(mangled_name).to_string();
             return Ok(demangled_name);
-        } 
-        let options = DemangleOptions::default(); 
-        let demangled_name = Symbol::new(mangled_name)?.demangle(&options)?; 
+        }
+        let options = DemangleOptions::default();
+        let demangled_name = Symbol::new(mangled_name)?.demangle(&options)?;
         Ok(demangled_name)
     } else {
         Ok(mangled_name.to_string())
@@ -51,8 +48,10 @@ fn demangle_function_name(mangled_name: &str, rust: bool) -> Result<String> {
 
 // This function cleans up the demangled Rust function names.
 fn clean_rust(demangled_name: &str) -> Option<String> {
-    let excluded_keywords = vec!["core::result", "shake_intern", "core::iter"];
-    let contains_excluded = excluded_keywords.iter().any(|&keyword| demangled_name.contains(keyword));
+    let excluded_keywords = ["core::result", "shake_intern", "core::iter"];
+    let contains_excluded = excluded_keywords
+        .iter()
+        .any(|&keyword| demangled_name.contains(keyword));
     if contains_excluded {
         None
     } else {
@@ -62,8 +61,10 @@ fn clean_rust(demangled_name: &str) -> Option<String> {
 
 // This function cleans up the demangled C/C++ function names.
 fn clean_cpp(demangled_name: &str) -> Option<String> {
-    let excluded_keywords = vec!["_Unwind_Resume", "shake_intern", "value_", "__cxa"];
-    let contains_excluded = excluded_keywords.iter().any(|&keyword| demangled_name.contains(keyword));
+    let excluded_keywords = ["_Unwind_Resume", "shake_intern", "value_", "__cxa"];
+    let contains_excluded = excluded_keywords
+        .iter()
+        .any(|&keyword| demangled_name.contains(keyword));
     if contains_excluded {
         None
     } else {
@@ -79,7 +80,10 @@ mod tests {
     fn test_demangle_function_name_rust() {
         let mangled_name = "_ZN4core9panicking16panic_in_cleanup17h55eb1d85cadde1a1E";
         let demangled_name = demangle_function_name(mangled_name, true).unwrap();
-        assert_eq!(demangled_name, "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1");
+        assert_eq!(
+            demangled_name,
+            "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1"
+        );
     }
 
     #[test]
@@ -117,4 +121,3 @@ mod tests {
         assert_eq!(result, "my_function");
     }
 }
-
