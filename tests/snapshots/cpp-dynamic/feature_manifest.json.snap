@@ -1,0 +1,16 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "accessNetwork": [
+    "Network Access"
+  ],
+  "accessWebcam": [
+    "Device Access"
+  ],
+  "writeOnDrive": [
+    "File Manipulation",
+    "Device Access"
+  ]
+}

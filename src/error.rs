@@ -11,7 +11,10 @@ pub enum Error {
 
     /// The file has an invalid format.
     #[error("Invalid format file")]
-    InvalidElf { #[from] source: goblin::error::Error },
+    InvalidElf {
+        #[from]
+        source: goblin::error::Error,
+    },
 
     /// An error occurred in the Capstone disassembly library.
     #[error("Capstone error: {0}")]
@@ -24,7 +27,7 @@ pub enum Error {
     /// No API was found.
     #[error("No API found")]
     APIListEmpty,
-    
+
     /// The `.text` section was not found.
     #[error(".text section not found")]
     TextSectionNotFound,
@@ -56,7 +59,6 @@ pub enum Error {
     /// The prefix was not found.
     #[error("Prefix not found")]
     PrefixNotFound,
-
 }
 
 /// A specialized `Result` type for manifest-producer.

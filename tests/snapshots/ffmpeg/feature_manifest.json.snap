@@ -1,0 +1,16 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "enc_open": [
+    "Memory Management"
+  ],
+  "fg_send_command": [
+    "Memory Management"
+  ],
+  "of_write_trailer": [
+    "File Manipulation",
+    "Device Access"
+  ]
+}

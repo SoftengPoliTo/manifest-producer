@@ -1,0 +1,19 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "APIs found": [
+    "write_on_drive",
+    "access_webcam",
+    "access_network"
+  ],
+  "architecture": "x86-64",
+  "endianness": "Little",
+  "entry_point": "0xf25a9",
+  "file_name": "fake-firmware-rust-static",
+  "file_type": "Dynamic Library",
+  "header_size": 64,
+  "link": "dynamically linked",
+  "programming language": "Rust"
+}
