@@ -1,4 +1,4 @@
-# MANIFEST PRODUCER
+# manifest-producer
 
 This project is a tool for analyzing ELF files to produce manifests that describe information extracted from ELF libraries and binaries.
 
@@ -51,3 +51,6 @@ The project uses the following main dependencies:
 - [memmap2](https://crates.io/crates/memmap2) - A safe and easy-to-use wrapper around platform memory-mapped I/O APIs.
 - [rustc-demangle](https://crates.io/crates/rustc-demangle) - A demangler for Rust symbols.
 
+## License
+
+Released under the [MIT License](LICENSES/MIT.txt)
