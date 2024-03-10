@@ -62,10 +62,7 @@ fn main() {
     }
     let elf_file_path = &args[1];
 
-    let api_list = vec![
-        "get_flags",
-        
-    ];
+    let api_list = vec!["get_flags"];
     let manifest_path = "./manifest-produced";
 
     match elf_analysis(elf_file_path, api_list, manifest_path) {

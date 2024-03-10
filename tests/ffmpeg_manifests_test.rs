@@ -33,4 +33,3 @@ fn test_ffmpeg() {
     let feature_path = format!("{}/feature_manifest.json", path);
     compare_manifest(Path::new(SNAPSHOT_PATH_DYN), Path::new(&feature_path));
 }
-

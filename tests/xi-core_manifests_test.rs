@@ -8,9 +8,7 @@ const SNAPSHOT_PATH_DYN: &str = "../snapshots/xi-core/";
 
 #[test]
 fn test_xi_core() {
-    let api_list = vec![
-        "get_flags",
-    ];
+    let api_list = vec!["get_flags"];
 
     let tmp_dir = temp_dir();
     let folder = tmp_dir.join("xi-core");
