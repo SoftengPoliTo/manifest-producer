@@ -73,8 +73,6 @@ fn has_sections(elf: &Elf, section_type: u32) -> bool {
 pub fn get_arch<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_machine {
         goblin::elf::header::EM_X86_64 => Ok("x86-64"),
-        goblin::elf::header::EM_386 => Ok("x86"),
-        goblin::elf::header::EM_XTENSA => Ok("Xtensa"),
         _ => Err(Error::InvalidElf {
             source: goblin::error::Error::Malformed("Unknown Architecture".to_string()),
         }),
@@ -86,7 +84,6 @@ pub fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_type {
         goblin::elf::header::ET_EXEC => Ok("Executable"),
         goblin::elf::header::ET_DYN => Ok("Dynamic Library"),
-        goblin::elf::header::ET_CORE => Ok("File core"),
         _ => Err(Error::InvalidElf {
             source: goblin::error::Error::Malformed("Unknown File Type".to_string()),
         }),
@@ -163,11 +160,7 @@ mod tests {
     #[test]
     fn test_cs_init() {
         let result = cs_init();
-        assert!(
-            result.is_ok(),
-            "Failed to initialize Capstone: {:?}",
-            result.err()
-        );
+        assert!(result.is_ok());
     }
 
     #[test]
