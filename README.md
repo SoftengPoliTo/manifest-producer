@@ -1,5 +1,10 @@
 # manifest-producer
 
+[![Actions Status][actions badge]][actions]
+[![CodeCov][codecov badge]][codecov]
+[![LICENSE][license badge]][license]
+[![dependency status][status badge]][status]
+
 This project is a tool for analyzing ELF files to produce manifests that describe information extracted from ELF libraries and binaries.
 
 ## Project Structure
@@ -54,3 +59,15 @@ The project uses the following main dependencies:
 ## License
 
 Released under the [MIT License](LICENSES/MIT.txt)
+
+<!-- Links -->
+[actions]: https://github.com/SoftengPoliTo/prin-task-2.2/actions
+[codecov]: https://app.codecov.io/gh/SoftengPoliTo/prin-task-2.2
+[license]: LICENSES/MIT.txt
+[status]: https://deps.rs/repo/github/SoftengPoliTo/prin-task-2.2
+
+<!-- Badges -->
+[actions badge]: https://github.com/SoftengPoliTo/prin-task-2.2/workflows/manifest-producer/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/prin-task-2.2/branch/main/graph/badge.svg
+[license badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[status badge]: https://deps.rs/repo/github/SoftengPoliTo/prin-task-2.2/status.svg
