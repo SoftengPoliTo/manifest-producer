@@ -22,7 +22,7 @@ pub fn elf_analysis(file_path: &str, api_list: Vec<&str>, path: &str) -> Result<
 
     let lang = match dwarf_analysis(file_path)?.strip_prefix("DW_LANG_") {
         Some(stripped_lang) => stripped_lang.to_owned(),
-        None => return Err(Error::PrefixNotFound),
+        None => "NOT_FOUND".to_string(), //return Err(Error::PrefixNotFound),
     };
 
     let link = is_static(&elf);

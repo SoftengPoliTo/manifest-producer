@@ -1,0 +1,25 @@
+---
+source: tests/common/mod.rs
+expression: content
+---
+{
+  "Public APIs flow": [
+    {
+      "name": "get_flags",
+      "syscalls": [
+        "dc23db87E",
+        "std::env::args::ha772ead650dc3be5",
+        "core::ptr::drop_in_place<core::option::Option<alloc::string::String>>::h0766d7bc2d6b481d",
+        "core::ptr::drop_in_place<alloc::string::String>::h41146e42d1c697b9",
+        "core::str::<impl str>::starts_with::h80144efc35a316b7",
+        "core::ptr::drop_in_place<alloc::string::String>::h41146e42d1c697b9",
+        "core::str::<impl str>::trim_start_matches::h67b14fb3ecd3f255",
+        "core::ptr::drop_in_place<core::option::Option<core::option::Option<alloc::string::String>>>::h57e41d1039c2226c",
+        "core::ptr::drop_in_place<alloc::string::String>::h41146e42d1c697b9",
+        "core::ptr::drop_in_place<alloc::string::String>::h41146e42d1c697b9",
+        "core::panicking::panic_in_cleanup::h55eb1d85cadde1a1",
+        "core::ptr::drop_in_place<alloc::string::String>::h41146e42d1c697b9"
+      ]
+    }
+  ]
+}

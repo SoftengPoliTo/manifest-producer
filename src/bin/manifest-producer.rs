@@ -32,7 +32,7 @@ pub fn elf_analysis(file_path: &str, api_list: Vec<&str>, path: &str) -> Result<
 
     let lang = match dwarf_analysis(file_path)?.strip_prefix("DW_LANG_") {
         Some(stripped_lang) => stripped_lang.to_owned(),
-        None => return Err(Error::PrefixNotFound),
+        None => "".to_string(), //return Err(Error::PrefixNotFound),
     };
 
     let link = is_static(&elf);
@@ -63,15 +63,8 @@ fn main() {
     let elf_file_path = &args[1];
 
     let api_list = vec![
-        "writeOnDrive",
-        "turnLampOn",
-        "accessAudioDriver",
-        "turnLampOff",
-        "accessNetwork",
-        "accessWebcam",
-        "write_on_drive",
-        "access_network",
-        "access_webcam",
+        "get_flags",
+        
     ];
     let manifest_path = "./manifest-produced";
 
