@@ -37,10 +37,10 @@ The manifest-producer binary uses the library to perform analysis of ELF files. 
 To use the manifest-producer tool, you can run the following command from the command line:
 
 ```bash
-cargo run manifest-producer <elf_file_path>
+cargo run <ELF_file_path> <JSON_file_path>
 ```
 
-Where `<elf_file_path>` is the path to the ELF file to be analyzed.
+`<ELF_file_path>` represents the path to the ELF file intended for analysis, while `<JSON_file_path>` denotes the path to the JSON file containing the list of APIs.
 
 ## Dependencies
 

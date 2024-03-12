@@ -119,63 +119,12 @@ jobs:
           with:
             files: lcov.info
             token: ${{ secrets.CODECOV_TOKEN }}
-
-    weighted-code-coverage:
-
-      needs: [build, docs]
-          
-      runs-on: ubuntu-latest
-          
-      steps:
-        - uses: actions/checkout@v4
-          
-        - name: Install Rust stable
-          uses: dtolnay/rust-toolchain@stable
-          with:
-            components: llvm-tools-preview
-          
-        - name: Install grcov
-          env:
-            GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
-            GRCOV_BINARY: grcov-x86_64-unknown-linux-musl.tar.bz2
-          run: |
-            curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
-            tar xj -C $HOME/.cargo/bin
-          
-        - name: Install weighted-code-coverage
-          env:
-            WCC_LINK: https://github.com/SoftengPoliTo/weighted-code-coverage/releases/download
-          run: |
-            curl -L "$WCC_LINK/v$WCC_VERSION/weighted-code-coverage-$WCC_VERSION-x86_64-unknown-linux-gnu.tar.gz" |
-            tar xz -C $HOME/.cargo/bin
-          
-        - name: Run tests
-          env:
-            RUSTFLAGS: "-Cinstrument-coverage"
-            LLVM_PROFILE_FILE: "manifest-producer-%p-%m.profraw"
-          run: |
-            cargo test --verbose
-          
-        - name: Run grcov
-          run: |
-            grcov . --binary-path ./target/debug/ -t coveralls -s . --token YOUR_COVERALLS_TOKEN -o coveralls.json
-          
-        - name: Run weighted-code-coverage
-          run: |
-            mkdir $HOME/wcc-output
-            weighted-code-coverage -p src/ -j coveralls.json -c cyclomatic --json $HOME/wcc-output/out.json
-          
-        - name: Upload weighted-code-coverage data
-          uses: actions/upload-artifact@v3
-          with:
-            name: weighted-code-coverage-ubuntu
-            path: ~/wcc-output/out.json
     
 ############################### DEPENDENCY LAYER ###############################
 
     audit:
 
-      needs: [code-coverage, weighted-code-coverage]
+      needs: code-coverage
 
       runs-on: ubuntu-latest
 
@@ -183,7 +132,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check dependencies changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -199,7 +148,7 @@ jobs:
 
     deny:
 
-      needs: [code-coverage, weighted-code-coverage]
+      needs: code-coverage
 
       runs-on: ubuntu-latest
 
@@ -207,7 +156,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check dependencies changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -237,7 +186,7 @@ jobs:
 
     udeps:
 
-      needs: [code-coverage, weighted-code-coverage]
+      needs: code-coverage
         
       runs-on: ubuntu-latest
         
@@ -245,7 +194,7 @@ jobs:
       - uses: actions/checkout@v4
         
       - name: Check dependencies changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
