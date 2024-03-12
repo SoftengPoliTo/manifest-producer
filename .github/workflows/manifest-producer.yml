@@ -166,7 +166,7 @@ jobs:
             weighted-code-coverage -p src/ -j coveralls.json -c cyclomatic --json $HOME/wcc-output/out.json
           
         - name: Upload weighted-code-coverage data
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: weighted-code-coverage-ubuntu
             path: ~/wcc-output/out.json
