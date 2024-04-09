@@ -7,7 +7,8 @@ use manifest_producer::error::{Error, Result};
 use manifest_producer::manifest_creation::{
     basic_info_manifest, feature_manifest, flow_call_manifest,
 };
-use std::env;
+use serde_json::Value;
+use std::{env, fs};
 
 /// Perform ELF analysis including API detection, system call flow encapsulation, and manifest generation.
 ///
@@ -54,18 +55,34 @@ pub fn elf_analysis(file_path: &str, api_list: Vec<&str>, path: &str) -> Result<
     Ok(())
 }
 
+fn read_api_list(json_file_path: &str) -> Result<Vec<String>> {
+    let contents = fs::read_to_string(json_file_path)?;
+    let json: Value = serde_json::from_str(&contents)?;
+    let api_list: Vec<String> = serde_json::from_value(json)?;
+    Ok(api_list)
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        println!("Usage: {} <elf_file_path>", args[0]);
+    if args.len() < 3 {
+        println!("Usage: {} <ELF_file_path> <JSON_file_path>", args[0]);
         return;
     }
     let elf_file_path = &args[1];
+    let json_file_path = &args[2];
 
-    let api_list = vec!["get_flags"];
+    let api_list = match read_api_list(json_file_path) {
+        Ok(list) => list,
+        Err(error) => {
+            eprintln!("Error reading API list from JSON file: {}", error);
+            return;
+        }
+    };
+    let api_list_refs: Vec<&str> = api_list.iter().map(|s| s.as_str()).collect();
+
     let manifest_path = "./manifest-produced";
 
-    match elf_analysis(elf_file_path, api_list, manifest_path) {
+    match elf_analysis(elf_file_path, api_list_refs, manifest_path) {
         Ok(_) => println!("Analysis performed successfully!"),
         Err(error) => eprintln!("Elf analysis failed: {}", error),
     };
