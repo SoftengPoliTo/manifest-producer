@@ -1,4 +1,5 @@
-//! manifest-producer is a tool for analyzing ELF files to produce manifests that describe information extracted from ELF libraries and binaries.
+//! manifest-producer is a tool for analyzing ELF files to produce 
+//! manifests that describe information extracted from ELF libraries and binaries.
 //!
 //! //! ## Supported Languages
 //!
@@ -6,31 +7,21 @@
 //! - C++
 //! - Rust
 //!
-//! ## Manifest Produced
+//! ## Results Produced
 //!
 //! - Basic informations:
 //!   - file_name: The name of the ELF file.
 //!   - programming language: The programming language used to build the ELF file.
-//!   - architecture: The architecture of the ELF file.
+//!   - target architecture: The architecture of the ELF file.
 //!   - link: Whether the ELF file is statically or dynamically linked.
 //!   - file_type: The type of the ELF file.
-//!   - endianness: The endianness of the ELF file.
-//!   - header_size: The size of the ELF header.
+//!   - file size: The size of the ELF binary.
 //!   - entry_point: The entry point of the ELF file.
-//!   - APIs found: The list of identified public APIs.
-//!
-//! - Flow called functions:
-//!   - For each identified API, lists the function calls (system calls or subfunctions).
-//!
-//! - Features associated to each APIs:
-//!   - Categorizes APIs based on their functionality features.
-//!
 
-pub mod api_detection;
-pub mod cleanup;
-pub mod code_section_handler;
-pub mod dwarf_analysis;
-pub mod elf_utils;
-pub mod error;
-pub mod manifest_creation;
-pub mod plt_mapping;
+
+pub mod back_end {
+    pub mod api_analyzer;
+    pub mod elf_analyzer;
+    pub mod error;
+    pub mod func_analyzer;
+}

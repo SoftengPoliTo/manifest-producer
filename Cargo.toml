@@ -1,24 +1,29 @@
 [package]
 name = "manifest-producer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
+description = "The purpose of the software is to analyze an ELF binary—typically a firmware for an IoT device—by disassembling it and reconstructing a call tree. This call tree is instrumental in understanding the device's behavior, which is crucial for certification purposes. The analysis helps verify whether the device aligns with the functionalities declared by the developer."
 license = "MIT"
-description = """
-    Perform ELF analysis including API detection, system call flow encapsulation, and manifest generation.
-    """
+readme = "README.md"
+keywords = ["Behavioural analyzer", "IoT Firmware", "ELF binaries"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-capstone = "0.12.0"
-goblin = "0.8.0"
-thiserror = "1.0.50"
-cpp_demangle = "0.4.3"
+thiserror = "1.0.64"
 serde_json = "1.0"
-object = "0.35.0"
-gimli = "0.29.0"
-memmap2 = "0.9.4"
+goblin = "0.8.0"
+object = "0.36.4"
+memmap2 = "0.9.5"
+gimli = "0.31.0"
+rayon = "1.10.0"
 rustc-demangle = "0.1.23"
+cpp_demangle = "0.4.3"
+capstone = "0.12.0"
+serde = { version = "1.0.203", features = ["derive"] }
+indicatif = "0.17.8"
+petgraph = "0.6.5"
 
 [dev-dependencies]
 insta = "1.34.0"
