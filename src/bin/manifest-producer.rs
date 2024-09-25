@@ -78,11 +78,6 @@ fn main() {
         return;
     }
 
-    // if args.len() < 2 {
-    //     println!("Usage: {} <ELF_file_path>", args[0]);
-    //     return;
-    // }
-
     let elf_file_path = &args[1];
     let json_file_path = &args[2];
 
