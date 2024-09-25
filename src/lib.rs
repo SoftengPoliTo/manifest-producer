@@ -26,6 +26,7 @@
 //!   - Categorizes APIs based on their functionality features.
 //!
 
+//OLD
 pub mod api_detection;
 pub mod cleanup;
 pub mod code_section_handler;
@@ -34,3 +35,6 @@ pub mod elf_utils;
 pub mod error;
 pub mod manifest_creation;
 pub mod plt_mapping;
+
+// NEW
+pub mod elf_analyzer;

@@ -16,6 +16,10 @@ pub enum Error {
         source: goblin::error::Error,
     },
 
+    /// Invalid file name.
+    #[error("No file name")]
+    InvalidFileName,
+
     /// An error occurred in the Capstone disassembly library.
     #[error("Capstone error: {0}")]
     Capstone(String),
@@ -23,6 +27,10 @@ pub enum Error {
     /// No debug information was found.
     #[error("No Debug-info")]
     DebugInfo,
+
+    /// The language was not found.
+    #[error("Language not found")]
+    LangNotFound,
 
     /// No API was found.
     #[error("No API found")]
