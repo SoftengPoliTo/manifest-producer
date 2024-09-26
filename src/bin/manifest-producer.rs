@@ -1,6 +1,7 @@
 use manifest_producer::{
-    elf_analyzer::{parse_elf, pre_analysis, read_elf},
+    elf_analyzer::{filter_source_file, parse_elf, pre_analysis, read_elf},
     error::Result,
+    func_analyzer::functions_detection,
 };
 
 use std::{env, process::exit};
@@ -10,7 +11,10 @@ fn main() -> Result<()> {
     let elf_data = read_elf(&elf_path)?;
     let elf = parse_elf(&elf_data)?;
 
-    let _info = pre_analysis(&elf, &elf_path)?;
+    let info = pre_analysis(&elf, &elf_path)?;
+
+    let _functions = functions_detection(&elf, &info.language)?;
+    let _filtered_function = filter_source_file(&elf_path, &info.language)?;
 
     Ok(())
 }

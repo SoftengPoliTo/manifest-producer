@@ -38,3 +38,4 @@ pub mod plt_mapping;
 
 // NEW
 pub mod elf_analyzer;
+pub mod func_analyzer;
