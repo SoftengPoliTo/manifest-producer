@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::elf_analyzer::{find_text_section, get_name_addr};
 use crate::error;
@@ -9,14 +9,72 @@ use error::{Error, Result};
 use goblin::elf::Elf;
 use indicatif::{ProgressBar, ProgressStyle};
 
+/// Finds the root nodes in a given forest of call trees.
+///
+/// # Arguments
+///
+/// * `forest` - A mutable reference to a `HashMap` where the key is the name of the function (as a `String`)
+///   and the value is a `CallTree` structure.
+/// * `filter` - A `HashSet<String>` containing the names of functions to be considered as potential root nodes.
+///
+/// # Returns
+///
+/// A `Result` containing a vector of root node names (`Vec<String>`) if successful, or an error.
+///
+/// # Errors
+///
+/// This function may return an error if the invocation counting process fails.
+pub fn find_root_nodes(
+    forest: &mut HashMap<String, CallTree>,
+    filter: &HashSet<String>,
+) -> Result<Vec<String>> {
+    invocation_number(forest)?;
+    let mut roots = Vec::new();
+
+    for (name, func) in forest.iter() {
+        if func.invocation_count == 0 && filter.contains(name) {
+            roots.push(name.clone())
+        }
+    }
+    Ok(roots)
+}
+
+/// Updates the invocation counts for each node in the forest.
+fn invocation_number(forest: &mut HashMap<String, CallTree>) -> Result<()> {
+    let progress_bar = ProgressBar::new(forest.len() as u64);
+    progress_bar.set_style(
+        ProgressStyle::default_bar()
+            .template("[{elapsed_precise}] [{wide_bar:.green}] {percent}\n{msg}")?
+            .progress_chars("#>-"),
+    );
+
+    let mut updated_nodes = Vec::new();
+    for (name, node) in forest.iter() {
+        let nodes = node.nodes.clone();
+        updated_nodes.push((name.clone(), nodes));
+    }
+
+    for (name, nodes) in updated_nodes {
+        progress_bar.set_message(format!("Processing node: {}", name));
+        for n in nodes {
+            if let Some(tree) = forest.get_mut(&n) {
+                tree.invocation_count += 1;
+            }
+        }
+        progress_bar.inc(1);
+    }
+    progress_bar.finish_with_message("Invocation counts updated.");
+    Ok(())
+}
+
 /// Analyzes the functions in the given ELF file and disassembles them.
-/// 
+///
 /// # Arguments
 /// * `elf` - A reference to the ELF file to analyze.
 /// * `buffer` - A byte slice of the ELF file's content.
 /// * `functions` - A list of functions (`FUNC`) to disassemble.
 /// * `language` - The programming language to assist with symbol demangling.
-/// 
+///
 /// # Returns
 /// A tuple containing:
 /// * `HashMap<String, CallTree>` - A map of function names to their call trees.
