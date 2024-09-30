@@ -5,11 +5,11 @@ use memmap2::Mmap;
 use object::{Object, ObjectSection};
 
 use std::{
-    borrow::{self}, 
+    borrow::{self},
     collections::{HashMap, HashSet},
-    fs::{self, File}, 
-    io::Read, 
-    path::Path
+    fs::{self, File},
+    io::Read,
+    path::Path,
 };
 
 use goblin::elf::{section_header::SHT_PROGBITS, Elf, SectionHeader};
@@ -225,7 +225,7 @@ pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
 
 /// This function parses the ELF file by returning a set of function names
 /// that belong to the valid source files, according to the specified programming language.
-/// 
+///
 /// # Parameters
 /// * `binary_path` - The path to the binary file to parse.
 /// * `language` - The programming language to consider (e.g. ‘Rust’, ‘C99’, ‘C++’).

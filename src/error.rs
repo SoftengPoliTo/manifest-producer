@@ -67,6 +67,10 @@ pub enum Error {
     /// The prefix was not found.
     #[error("Prefix not found")]
     PrefixNotFound,
+
+    /// An error occurred while creating a ProgressStyle.
+    #[error("Progress style error: {0}")]
+    ProgressStyleError(#[from] indicatif::style::TemplateError),
 }
 
 /// A specialized `Result` type for manifest-producer.

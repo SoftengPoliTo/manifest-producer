@@ -1,4 +1,5 @@
 use manifest_producer::{
+    api_analyzer::analyze_functions,
     elf_analyzer::{filter_source_file, parse_elf, pre_analysis, read_elf},
     error::Result,
     func_analyzer::functions_detection,
@@ -13,8 +14,10 @@ fn main() -> Result<()> {
 
     let info = pre_analysis(&elf, &elf_path)?;
 
-    let _functions = functions_detection(&elf, &info.language)?;
+    let functions = functions_detection(&elf, &info.language)?;
     let _filtered_function = filter_source_file(&elf_path, &info.language)?;
+
+    let (_forest, _disassembly) = analyze_functions(&elf, &elf_data, &functions, &info.language)?;
 
     Ok(())
 }
