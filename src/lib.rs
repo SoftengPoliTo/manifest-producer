@@ -1,4 +1,4 @@
-//! manifest-producer is a tool for analyzing ELF files to produce 
+//! manifest-producer is a tool for analyzing ELF files to produce
 //! manifests that describe information extracted from ELF libraries and binaries.
 //!
 //! //! ## Supported Languages
@@ -17,7 +17,6 @@
 //!   - file_type: The type of the ELF file.
 //!   - file size: The size of the ELF binary.
 //!   - entry_point: The entry point of the ELF file.
-
 
 pub mod back_end {
     pub mod api_analyzer;

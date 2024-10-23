@@ -22,7 +22,7 @@ pub enum Error {
 
     /// An error occurred in the Capstone disassembly library.
     #[error("Capstone error: {0}")]
-    Capstone(String),
+    Capstone(#[from] capstone::Error),
 
     /// No debug information was found.
     #[error("No Debug-info")]

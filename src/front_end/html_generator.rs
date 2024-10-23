@@ -7,12 +7,7 @@ use crate::front_end::tree_generator::TreeNode;
 
 use minijinja::{context, Environment};
 
-use std::{
-    collections::HashMap,
-    fs::File,
-    io::Write
-
-};
+use std::{collections::HashMap, fs::File, io::Write};
 
 pub fn html_generator(
     basic_info: BasicInfo,

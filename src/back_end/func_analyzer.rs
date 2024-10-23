@@ -81,13 +81,13 @@ pub fn functions_detection<'a>(elf: &'a Elf<'a>, language: &str) -> Result<Vec<F
     let mut func_found = Vec::new();
     for symbol in &elf.syms {
         if symbol.st_type() == goblin::elf::sym::STT_FUNC && symbol.st_shndx != 0 {
-            if let Some(func_name) = get_name_symbol(elf, &symbol.to_owned()) {
+            if let Some(func_name) = get_name_symbol(elf, &symbol) {
                 let demangled_name = demangle_function_name(func_name, language)?;
                 func_found.push(FUNC::new(
-                    demangled_name.clone(),
+                    demangled_name,
                     symbol.st_value,
                     symbol.st_value + symbol.st_size,
-                ))
+                ));
             }
         }
     }
@@ -107,10 +107,7 @@ pub fn functions_detection<'a>(elf: &'a Elf<'a>, language: &str) -> Result<Vec<F
 /// Returns an error if the demangling fails.
 pub fn demangle_function_name(mangled_name: &str, language: &str) -> Result<String> {
     match language {
-        "Rust" | "rust" => {
-            let demangled_name = demangle(mangled_name).to_string();
-            Ok(demangled_name)
-        }
+        "Rust" | "rust" => Ok(demangle(mangled_name).to_string()),
         "C_plus_plus_14" | "C++" => {
             if mangled_name.starts_with("_Z") {
                 let options = DemangleOptions::default();
@@ -124,12 +121,12 @@ pub fn demangle_function_name(mangled_name: &str, language: &str) -> Result<Stri
     }
 }
 
+
 /// Retrieves the symbol name from the ELF binary.
 fn get_name_symbol<'a>(elf: &'a Elf<'a>, symbol: &'a goblin::elf::Sym) -> Option<&'a str> {
-    let name_offset = symbol.st_name;
-    let name_str: &str = elf.strtab.get_at(name_offset)?;
-    Some(name_str)
+    elf.strtab.get_at(symbol.st_name)
 }
+
 
 /// Searches for a specific function by name from a list of functions.
 pub fn get_function(functions: &[FUNC], name: &str) -> Option<FUNC> {

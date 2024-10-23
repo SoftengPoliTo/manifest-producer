@@ -69,44 +69,34 @@ impl<'a> BasicInfo<'a> {
         }
     }
 
-    pub fn file_size(mut self, file_size: u64) -> Self {
-        self.file_size = file_size;
-        self
+    pub fn file_size(self, file_size: u64) -> Self {
+        Self{ file_size, ..self}
     }
 
-    pub fn arch(mut self, arch: &'a str) -> Self {
-        self.arch = arch;
-        self
+    pub fn arch(self, arch: &'a str) -> Self {
+        Self{ arch, ..self}
     }
 
-    pub fn pie(mut self, pie: bool) -> Self {
-        self.pie = pie;
-        self
+    pub fn pie(self, pie: bool) -> Self {
+        Self{ pie, ..self}
     }
 
-    pub fn static_linking(mut self, static_linking: &'a str) -> Self {
-        self.static_linking = static_linking;
-        self
+    pub fn static_linking(self, static_linking: &'a str) -> Self {
+        Self{ static_linking, ..self}
     }
 
-    pub fn language(mut self, language: String) -> Self {
-        self.language = language;
-        self
+    pub fn language(self, language: String) -> Self {
+        Self{ language, ..self}
     }
 
-    pub fn entry_point(mut self, entry_point: u64) -> Self {
-        self.entry_point = entry_point;
-        self
+    pub fn entry_point(self, entry_point: u64) -> Self {
+        Self{ entry_point, ..self}
     }
 
-    pub fn stripped(mut self, stripped: bool) -> Self {
-        self.stripped = stripped;
-        self
+    pub fn stripped(self, stripped: bool) -> Self {
+        Self{ stripped, ..self}
     }
 
-    pub fn build(self) -> Self {
-        self
-    }
 }
 
 /// Performs pre-analysis on an ELF file and extracts basic information about it.
@@ -143,8 +133,7 @@ pub fn pre_analysis<'a>(elf: &'a Elf<'a>, elf_path: &'a str) -> Result<BasicInfo
         .pie(pie)
         .static_linking(link_type)
         .language(language)
-        .entry_point(entry_point)
-        .build();
+        .entry_point(entry_point);
 
     Ok(info)
 }
