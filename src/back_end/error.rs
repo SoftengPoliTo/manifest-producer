@@ -40,10 +40,6 @@ pub enum Error {
     #[error(".text section not found")]
     TextSectionNotFound,
 
-    /// The `.plt` section was not found.
-    #[error(".plt section not found")]
-    PLTSectionNotFound,
-
     /// An error occurred while demangling symbols.
     #[error("Demangling error")]
     DemanglingError(#[from] cpp_demangle::error::Error),
@@ -64,13 +60,17 @@ pub enum Error {
     #[error("Object error")]
     ObjectError(#[from] object::Error),
 
-    /// The prefix was not found.
-    #[error("Prefix not found")]
-    PrefixNotFound,
+    /// The function was not found.
+    #[error("Function not found")]
+    FunctionNotFound(String),
 
     /// An error occurred while creating a ProgressStyle.
     #[error("Progress style error: {0}")]
     ProgressStyleError(#[from] indicatif::style::TemplateError),
+
+    /// An error occurred in the MiniJinja template engine.
+    #[error("MiniJinja error: {0}")]
+    MiniJinjaError(#[from] minijinja::Error),
 }
 
 /// A specialized `Result` type for manifest-producer.

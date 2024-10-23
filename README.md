@@ -1,4 +1,4 @@
-# manifest-producer
+# manifest-producer (To be RESTORED)
 
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]

@@ -25,3 +25,8 @@ pub mod back_end {
     pub mod error;
     pub mod func_analyzer;
 }
+
+pub mod front_end {
+    pub mod html_generator;
+    pub mod tree_generator;
+}
