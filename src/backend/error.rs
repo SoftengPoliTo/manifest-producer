@@ -22,7 +22,7 @@ pub enum Error {
 
     /// An error occurred in the Capstone disassembly library.
     #[error("Capstone error: {0}")]
-    Capstone(String),
+    Capstone(#[from] capstone::Error),
 
     /// No debug information was found.
     #[error("No Debug-info")]
@@ -39,10 +39,6 @@ pub enum Error {
     /// The `.text` section was not found.
     #[error(".text section not found")]
     TextSectionNotFound,
-
-    /// The `.plt` section was not found.
-    #[error(".plt section not found")]
-    PLTSectionNotFound,
 
     /// An error occurred while demangling symbols.
     #[error("Demangling error")]
@@ -64,13 +60,17 @@ pub enum Error {
     #[error("Object error")]
     ObjectError(#[from] object::Error),
 
-    /// The prefix was not found.
-    #[error("Prefix not found")]
-    PrefixNotFound,
+    /// The function was not found.
+    #[error("Function not found")]
+    FunctionNotFound(String),
 
     /// An error occurred while creating a ProgressStyle.
     #[error("Progress style error: {0}")]
     ProgressStyleError(#[from] indicatif::style::TemplateError),
+
+    /// An error occurred in the MiniJinja template engine.
+    #[error("MiniJinja error: {0}")]
+    MiniJinjaError(#[from] minijinja::Error),
 }
 
 /// A specialized `Result` type for manifest-producer.

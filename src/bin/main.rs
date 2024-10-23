@@ -1,8 +1,14 @@
-use manifest_producer::back_end::{
-    api_analyzer::{analyze_functions, find_root_nodes},
-    elf_analyzer::{filter_source_file, parse_elf, pre_analysis, read_elf},
-    error::Result,
-    func_analyzer::functions_detection,
+use manifest_producer::{
+    backend::{
+        api_analyzer::{analyze_functions, find_root_nodes},
+        elf_analyzer::{filter_source_file, parse_elf, pre_analysis, read_elf},
+        error::Result,
+        func_analyzer::functions_detection,
+    },
+    frontend::{
+        html_generator::{html_generator, open_index_page},
+        tree_generator::build_tree,
+    },
 };
 
 use std::{env, process};
@@ -20,9 +26,28 @@ fn main() -> Result<()> {
     let filtered_functions = filter_source_file(&elf_path, &analysis_info.language)?;
 
     // Function analysis
-    let (mut call_forest, _disassembly) = analyze_functions(&elf, &elf_data, &detected_functions, &analysis_info.language)?;
-    let _root_nodes = find_root_nodes(&mut call_forest, &filtered_functions)?;
+    let (mut call_forest, disassembly) = analyze_functions(
+        &elf,
+        &elf_data,
+        &detected_functions,
+        &analysis_info.language,
+    )?;
+    let root_nodes = find_root_nodes(&mut call_forest, &filtered_functions)?;
 
+    // Tree construction and HTML generation
+    build_tree(&root_nodes, &call_forest)?;
+
+    html_generator(
+        analysis_info,
+        detected_functions.len(),
+        root_nodes.len(),
+        detected_functions,
+        call_forest,
+        &disassembly,
+        &root_nodes,
+    )?;
+
+    open_index_page()?; // Opens the browser with the generated output
     Ok(())
 }
 
