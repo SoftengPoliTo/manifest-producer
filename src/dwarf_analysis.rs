@@ -2,7 +2,7 @@ use std::{borrow, fs};
 
 use object::{Object, ObjectSection};
 
-use crate::error;
+use crate::back_end::error;
 use error::Result;
 
 /// Parse an ELF file to determine the programming language used.

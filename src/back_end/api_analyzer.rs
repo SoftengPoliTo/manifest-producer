@@ -1,8 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::elf_analyzer::{find_text_section, get_name_addr};
-use crate::error;
-use crate::func_analyzer::{demangle_function_name, get_function, CallTree, FUNC};
+use crate::back_end::{
+    elf_analyzer::{find_text_section, get_name_addr},
+    error,
+    func_analyzer::{demangle_function_name, get_function, CallTree, FUNC},
+};
 
 use capstone::prelude::*;
 use error::{Error, Result};

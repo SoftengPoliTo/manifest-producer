@@ -1,5 +1,5 @@
-use crate::error;
-use error::{Error, Result};
+use crate::back_end::error::{Error, Result};
+
 use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
 use memmap2::Mmap;
 use object::{Object, ObjectSection};

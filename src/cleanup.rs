@@ -1,7 +1,8 @@
 use cpp_demangle::{DemangleOptions, Symbol};
 use rustc_demangle::demangle;
 
-use crate::{elf_utils, error};
+use crate::back_end::error;
+use crate::elf_utils;
 use elf_utils::API;
 use error::Result;
 

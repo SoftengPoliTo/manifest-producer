@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use goblin::elf::Elf;
 
+use crate::back_end::error;
 use crate::{
     elf_utils::{cs_init, find_text_section, get_name_addr, API},
-    error,
     plt_mapping::{find_plt_section, load_rela_plt_relocations},
 };
 use error::{Error, Result};

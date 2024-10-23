@@ -2,9 +2,8 @@ use std::{collections::HashMap, fs::File, io::Write, path::Path};
 
 use goblin::elf::Elf;
 
-use crate::{elf_utils, error};
-use elf_utils::{get_arch, get_file_type, is_static, API};
-use error::Result;
+use crate::back_end::error::Result;
+use crate::elf_utils::{get_arch, get_file_type, is_static, API};
 
 const CATEGORIES: [(&str, &[&str]); 9] = [
     (

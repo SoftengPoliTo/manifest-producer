@@ -1,10 +1,8 @@
-use crate::error;
+use crate::back_end::error::Result;
 use cpp_demangle::{DemangleOptions, Symbol};
 use rustc_demangle::demangle;
 
 use goblin::elf::Elf;
-
-use error::Result;
 
 /// Represents a function within an ELF binary.
 ///

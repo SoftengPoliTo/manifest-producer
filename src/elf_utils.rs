@@ -4,8 +4,7 @@ use capstone::prelude::*;
 use goblin::elf::{Elf, SectionHeader};
 use object::elf::SHT_PROGBITS;
 
-use crate::error;
-use error::{Error, Result};
+use crate::back_end::error::{Error, Result};
 
 /// Structure used to collect API data identified in the code.
 pub struct API {

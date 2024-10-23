@@ -32,11 +32,13 @@ pub mod cleanup;
 pub mod code_section_handler;
 pub mod dwarf_analysis;
 pub mod elf_utils;
-pub mod error;
 pub mod manifest_creation;
 pub mod plt_mapping;
 
 // NEW
-pub mod api_analyzer;
-pub mod elf_analyzer;
-pub mod func_analyzer;
+pub mod back_end {
+    pub mod api_analyzer;
+    pub mod elf_analyzer;
+    pub mod error;
+    pub mod func_analyzer;
+}

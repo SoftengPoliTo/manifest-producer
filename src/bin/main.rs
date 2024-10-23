@@ -1,8 +1,8 @@
-use manifest_producer::{
+use manifest_producer::back_end::{
     api_analyzer::{analyze_functions, find_root_nodes},
     elf_analyzer::{filter_source_file, parse_elf, pre_analysis, read_elf},
-    error::Result,
     func_analyzer::functions_detection,
+    error::Result,
 };
 
 use std::{env, process::exit};
