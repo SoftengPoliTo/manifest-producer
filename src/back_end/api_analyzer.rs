@@ -11,6 +11,9 @@ use error::{Error, Result};
 use goblin::elf::Elf;
 use indicatif::{ProgressBar, ProgressStyle};
 
+type FunctionCallTrees = HashMap<String, CallTree>;
+type FunctionDisassemblies = Vec<(String, String)>;
+
 /// Finds the root nodes in a given forest of call trees.
 ///
 /// # Arguments
@@ -86,7 +89,7 @@ pub fn analyze_functions(
     buffer: &[u8],
     functions: &[FUNC],
     language: &str,
-) -> Result<(HashMap<String, CallTree>, HashMap<String, String>)> {
+) -> Result<(FunctionCallTrees, FunctionDisassemblies)> {
     let progress_bar = ProgressBar::new(functions.len() as u64);
     progress_bar.set_style(
         ProgressStyle::default_bar()
@@ -95,7 +98,7 @@ pub fn analyze_functions(
     );
 
     let mut visited = HashMap::new();
-    let mut disassembly_map = HashMap::new();
+    let mut disassembly_vec = vec![];
 
     for func in functions.iter() {
         progress_bar.set_message(format!(
@@ -108,13 +111,21 @@ pub fn analyze_functions(
             continue;
         } else {
             visited.insert(tree.name.clone(), tree);
-            disassembly_map.insert(func.name.clone(), disassembly);
+            let function_name = normalize_function_name(&func.name);
+            disassembly_vec.push((function_name, disassembly));
         }
         progress_bar.inc(1);
     }
     progress_bar.finish_with_message("Disassembling phase completed.");
 
-    Ok((visited, disassembly_map))
+    Ok((visited, disassembly_vec))
+}
+
+fn normalize_function_name(function_name: &str) -> String {
+    function_name
+        .replace("::", "_")
+        .replace(":", "_")
+        .replace(" ", "_")
 }
 
 /// Disassembles a single function from the ELF file.
@@ -180,11 +191,13 @@ fn analyze_code_slice(
                         op_str,
                         func_name
                     ));
-                    nodes.add_node(func_name);
+                    if !nodes.nodes.contains(&func_name) {
+                        nodes.add_node(func_name);
+                    }
                 }
             } else {
                 disassembly_output.push_str(&format!(
-                    "0x{:x}:\t{}\t{}\t\t(REGISTRO O GOT)\n",
+                    "0x{:x}:\t{}\t{}\t\t(Register Offset-GOT)\n",
                     insn.address(),
                     insn_name,
                     op_str

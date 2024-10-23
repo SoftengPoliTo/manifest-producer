@@ -1,6 +1,7 @@
 use crate::back_end::error::{Error, Result};
 
 use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
+use goblin::elf::{section_header::SHT_PROGBITS, Elf, SectionHeader};
 use memmap2::Mmap;
 use object::{Object, ObjectSection};
 
@@ -11,8 +12,6 @@ use std::{
     io::Read,
     path::Path,
 };
-
-use goblin::elf::{section_header::SHT_PROGBITS, Elf, SectionHeader};
 
 /// Basic information about an ELF binary.
 ///
