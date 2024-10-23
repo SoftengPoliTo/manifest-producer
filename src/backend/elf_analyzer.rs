@@ -1,4 +1,4 @@
-use crate::back_end::error::{Error, Result};
+use crate::backend::error::{Error, Result};
 
 use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
 use goblin::elf::{section_header::SHT_PROGBITS, Elf, SectionHeader};
@@ -13,18 +13,6 @@ use std::{
     path::Path,
 };
 
-/// Basic information about an ELF binary.
-///
-/// # Fields
-/// * `file_name` - The name of the ELF file.
-/// * `file_type` - The type of the ELF file (e.g., executable, dynamic library).
-/// * `file_size` - The size of the ELF file in bytes.
-/// * `arch` - The architecture of the ELF file (e.g., x86_64).
-/// * `pie` - Whether the file is position-independent executable (PIE).
-/// * `stripped` - Whether debug symbols have been stripped from the ELF file.
-/// * `static_linking` - Whether the file is statically linked.
-/// * `language` - The programming language used in the file.
-/// * `entry_point` - The entry point address of the ELF file.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BasicInfo<'a> {
     pub file_name: &'a str,
@@ -39,22 +27,6 @@ pub struct BasicInfo<'a> {
 }
 
 impl<'a> BasicInfo<'a> {
-    /// Creates a new `BasicInfo` instance with the given parameters.
-    ///
-    /// # Arguments
-    ///
-    /// * `file_name` - The name of the ELF file.
-    /// * `file_type` - The type of the ELF file.
-    /// * `file_size` - The size of the ELF file in bytes.
-    /// * `arch` - The architecture of the ELF file.
-    /// * `pie` - Whether the ELF file is position-independent executable (PIE).
-    /// * `static_linking` - The type of linking used (e.g., static or dynamic).
-    /// * `language` - The programming language used in the ELF file.
-    /// * `entry_point` - The entry point address of the ELF file.
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BasicInfo` object with the provided information.
     pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
         Self {
             file_name,
@@ -69,57 +41,41 @@ impl<'a> BasicInfo<'a> {
         }
     }
 
-    pub fn file_size(mut self, file_size: u64) -> Self {
-        self.file_size = file_size;
-        self
+    pub fn file_size(self, file_size: u64) -> Self {
+        Self { file_size, ..self }
     }
 
-    pub fn arch(mut self, arch: &'a str) -> Self {
-        self.arch = arch;
-        self
+    pub fn arch(self, arch: &'a str) -> Self {
+        Self { arch, ..self }
     }
 
-    pub fn pie(mut self, pie: bool) -> Self {
-        self.pie = pie;
-        self
+    pub fn pie(self, pie: bool) -> Self {
+        Self { pie, ..self }
     }
 
-    pub fn static_linking(mut self, static_linking: &'a str) -> Self {
-        self.static_linking = static_linking;
-        self
+    pub fn static_linking(self, static_linking: &'a str) -> Self {
+        Self {
+            static_linking,
+            ..self
+        }
     }
 
-    pub fn language(mut self, language: String) -> Self {
-        self.language = language;
-        self
+    pub fn language(self, language: String) -> Self {
+        Self { language, ..self }
     }
 
-    pub fn entry_point(mut self, entry_point: u64) -> Self {
-        self.entry_point = entry_point;
-        self
+    pub fn entry_point(self, entry_point: u64) -> Self {
+        Self {
+            entry_point,
+            ..self
+        }
     }
 
-    pub fn stripped(mut self, stripped: bool) -> Self {
-        self.stripped = stripped;
-        self
-    }
-
-    pub fn build(self) -> Self {
-        self
+    pub fn stripped(self, stripped: bool) -> Self {
+        Self { stripped, ..self }
     }
 }
 
-/// Performs pre-analysis on an ELF file and extracts basic information about it.
-///
-/// # Arguments
-///
-/// * `elf` - A reference to an ELF object representing the parsed ELF file.
-/// * `elf_path` - The path to the ELF file.
-///
-/// # Returns
-///
-/// Returns a `Result` containing the `BasicInfo` struct with the extracted information,
-/// or an error if the file is stripped of debug symbols.
 pub fn pre_analysis<'a>(elf: &'a Elf<'a>, elf_path: &'a str) -> Result<BasicInfo<'a>> {
     if is_stripped(elf) {
         return Err(Error::DebugInfo);
@@ -143,21 +99,11 @@ pub fn pre_analysis<'a>(elf: &'a Elf<'a>, elf_path: &'a str) -> Result<BasicInfo
         .pie(pie)
         .static_linking(link_type)
         .language(language)
-        .entry_point(entry_point)
-        .build();
+        .entry_point(entry_point);
 
     Ok(info)
 }
 
-/// Reads the contents of an ELF file.
-///
-/// # Arguments
-///
-/// * `file_path` - The path to the ELF file.
-///
-/// # Returns
-///
-/// Returns a `Result` containing the vector of bytes read from the ELF file.
 pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
     let mut file = File::open(file_path)?;
     let mut buffer = Vec::new();
@@ -165,29 +111,10 @@ pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
     Ok(buffer)
 }
 
-/// Parses the given ELF data and returns a parsed `Elf` structure.
-///
-/// # Arguments
-///
-/// * `elf_data` - A slice of bytes representing the ELF file contents.
-///
-/// # Returns
-///
-/// Returns a `Result` containing the parsed `Elf` object, or an error if parsing fails.
 pub fn parse_elf(elf_data: &[u8]) -> Result<Elf> {
     Ok(Elf::parse(elf_data)?)
 }
 
-/// Finds and returns the `.text` section header of the ELF file, if it exists.
-///
-/// # Arguments
-///
-/// * `elf` - A reference to the parsed ELF object.
-///
-/// # Returns
-///
-/// Returns an `Option` containing a reference to the `.text` section header,
-/// or `None` if the section is not found.
 pub fn find_text_section<'a>(elf: &'a Elf<'a>) -> Option<&'a SectionHeader> {
     elf.section_headers.iter().find(|sec| {
         sec.sh_type == SHT_PROGBITS && {
@@ -197,16 +124,6 @@ pub fn find_text_section<'a>(elf: &'a Elf<'a>) -> Option<&'a SectionHeader> {
     })
 }
 
-/// Retrieves the function name associated with a given address in the ELF file.
-///
-/// # Arguments
-///
-/// * `elf` - A reference to the parsed ELF object.
-/// * `address` - The address to search for in the ELF symbol table.
-///
-/// # Returns
-///
-/// Returns an `Option` containing the function name as a string slice, or `None` if not found.
 pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
     let symtab = &elf.syms;
 
@@ -222,18 +139,6 @@ pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
     None
 }
 
-/// This function parses the ELF file by returning a set of function names
-/// that belong to the valid source files, according to the specified programming language.
-///
-/// # Parameters
-/// * `binary_path` - The path to the binary file to parse.
-/// * `language` - The programming language to consider (e.g. ‘Rust’, ‘C99’, ‘C++’).
-///
-/// # Returns
-/// A `HashSet` containing the names of functions filtered from the valid source files.
-///
-/// # Errors
-/// Returns an error if the file cannot be opened or mapped, or if problems occur when analysing DWARF sections.
 pub fn filter_source_file(binary_path: &str, language: &str) -> Result<HashSet<String>> {
     let file = fs::File::open(binary_path)?;
     let mmap = unsafe { Mmap::map(&file)? };
@@ -332,19 +237,16 @@ pub fn filter_source_file(binary_path: &str, language: &str) -> Result<HashSet<S
     Ok(functions)
 }
 
-/// Gets the size of the ELF file in bytes.
 fn get_file_size(elf_path: &str) -> Result<u64> {
     let path = Path::new(elf_path);
     let metadata = std::fs::metadata(path)?;
     Ok(metadata.len())
 }
 
-/// Retrieves the entry point address from the ELF file.
 fn get_entry_point(elf: &Elf) -> Result<u64> {
     Ok(elf.header.e_entry)
 }
 
-/// Extracts the file name from a given ELF path.
 fn get_name(elf_path: &str) -> Result<&str> {
     let path = Path::new(elf_path);
     if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
@@ -354,7 +256,6 @@ fn get_name(elf_path: &str) -> Result<&str> {
     }
 }
 
-/// Checks if the ELF file has been stripped of debug symbols.
 fn is_stripped(elf: &Elf) -> bool {
     match elf.header.e_ident[goblin::elf::header::EI_CLASS] {
         goblin::elf::header::ELFCLASS64 | goblin::elf::header::ELFCLASS32 => {
@@ -365,14 +266,12 @@ fn is_stripped(elf: &Elf) -> bool {
     }
 }
 
-/// Checks if the ELF file contains a specific section based on the section type.
 fn has_sections(elf: &Elf, section_type: u32) -> bool {
     elf.section_headers
         .iter()
         .any(|section| section.sh_type == section_type)
 }
 
-/// Retrieves the architecture of the ELF file.
 fn get_architecture<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_machine {
         goblin::elf::header::EM_X86_64 => Ok("x86_64"),
@@ -389,7 +288,6 @@ fn get_architecture<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-/// Retrieves the file type of the ELF file.
 fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_type {
         goblin::elf::header::ET_EXEC => Ok("Executable"),
@@ -400,7 +298,6 @@ fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-/// Determines if the ELF file is statically linked.
 fn is_static(elf: &Elf) -> bool {
     for ph in &elf.program_headers {
         if ph.p_type == goblin::elf::program_header::PT_DYNAMIC {
@@ -410,7 +307,6 @@ fn is_static(elf: &Elf) -> bool {
     true
 }
 
-/// Determines if the ELF file is a position-independent executable (PIE).
 fn is_pie(elf: &Elf) -> bool {
     if let Some(dynamic) = &elf.dynamic {
         dynamic.dyns.iter().any(|d| {
@@ -422,7 +318,6 @@ fn is_pie(elf: &Elf) -> bool {
     }
 }
 
-/// Retrieves the primary programming language used in the ELF file based on DWARF data.
 fn get_language(elf_path: &str) -> Result<String> {
     let file = fs::File::open(elf_path)?;
     let mmap = unsafe { memmap2::Mmap::map(&file)? };
@@ -437,7 +332,6 @@ fn get_language(elf_path: &str) -> Result<String> {
     Ok(language)
 }
 
-/// Extracts and counts the programming languages used in the ELF file based on DWARF data.
 fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian) -> Result<String> {
     let load_section = |id: gimli::SectionId| -> Result<borrow::Cow<[u8]>> {
         match object.section_by_name(id.name()) {
@@ -488,7 +382,6 @@ fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian)
     Ok(lang)
 }
 
-/// Increments the count of occurrences of a specific language in a map.
 fn increment_language_count(map: &mut HashMap<String, u32>, language: &str) {
     let count = map.entry(language.to_string()).or_insert(0);
     *count += 1;
