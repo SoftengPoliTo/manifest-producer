@@ -70,33 +70,38 @@ impl<'a> BasicInfo<'a> {
     }
 
     pub fn file_size(self, file_size: u64) -> Self {
-        Self{ file_size, ..self}
+        Self { file_size, ..self }
     }
 
     pub fn arch(self, arch: &'a str) -> Self {
-        Self{ arch, ..self}
+        Self { arch, ..self }
     }
 
     pub fn pie(self, pie: bool) -> Self {
-        Self{ pie, ..self}
+        Self { pie, ..self }
     }
 
     pub fn static_linking(self, static_linking: &'a str) -> Self {
-        Self{ static_linking, ..self}
+        Self {
+            static_linking,
+            ..self
+        }
     }
 
     pub fn language(self, language: String) -> Self {
-        Self{ language, ..self}
+        Self { language, ..self }
     }
 
     pub fn entry_point(self, entry_point: u64) -> Self {
-        Self{ entry_point, ..self}
+        Self {
+            entry_point,
+            ..self
+        }
     }
 
     pub fn stripped(self, stripped: bool) -> Self {
-        Self{ stripped, ..self}
+        Self { stripped, ..self }
     }
-
 }
 
 /// Performs pre-analysis on an ELF file and extracts basic information about it.

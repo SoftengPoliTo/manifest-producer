@@ -32,8 +32,10 @@ pub fn find_root_nodes(
     forest: &mut HashMap<String, CallTree>,
     filter: &HashSet<String>,
 ) -> Result<Vec<String>> {
-    invocation_number(forest)?;
-    Ok(forest.iter()
+    invocation_number(forest);
+
+    let root_nodes = forest
+        .iter()
         .filter_map(|(name, func)| {
             if func.invocation_count == 0 && filter.contains(name) {
                 Some(name.clone())
@@ -41,28 +43,24 @@ pub fn find_root_nodes(
                 None
             }
         })
-        .collect())
+        .collect();
+
+    Ok(root_nodes)
 }
 
 /// Updates the invocation counts for each node in the forest.
-fn invocation_number(forest: &mut HashMap<String, CallTree>) -> Result<()> {
-    let mut nodes_to_update = Vec::new();
-
-    for (_, node) in forest.iter() {
-        for n in &node.nodes {
-            nodes_to_update.push(n.clone());
-        }
-    }
+fn invocation_number(forest: &mut HashMap<String, CallTree>) {
+    let nodes_to_update: Vec<String> = forest
+        .values()
+        .flat_map(|node| node.nodes.clone())
+        .collect();
 
     for n in nodes_to_update {
         if let Some(tree) = forest.get_mut(&n) {
             tree.invocation_count += 1;
         }
     }
-
-    Ok(())
 }
-
 
 /// Analyzes the functions in the given ELF file and disassembles them.
 ///
@@ -111,7 +109,7 @@ pub fn analyze_functions(
 }
 
 fn normalize_function_name(function_name: &str) -> String {
-    function_name.replace(&[':', ' ', ':'], "_")
+    function_name.replace(&[':', ' '], "_")
 }
 
 /// Disassembles a single function from the ELF file.
@@ -140,7 +138,7 @@ fn analyze_code_slice(
     let code_slice = init_disassembly(elf, function, buffer)?;
 
     if code_slice.is_empty() {
-        return Ok((nodes, String::new()));  // Skip se non c'è codice da disassemblare
+        return Ok((nodes, String::new())); // Skip if there is no code to disassemble
     }
 
     let instruction = cs.disasm_all(code_slice, start_address)?;
@@ -187,7 +185,8 @@ fn analyze_code_slice(
 
 /// Extracts the name of the function called in a call instruction.
 fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
-    op_str.strip_prefix("0x")
+    op_str
+        .strip_prefix("0x")
         .and_then(|addr_str| u64::from_str_radix(addr_str, 16).ok())
         .and_then(|addr| get_name_addr(elf, addr))
         .and_then(|name| demangle_function_name(name, language).ok())
@@ -202,7 +201,8 @@ fn init_disassembly<'a>(elf: &'a Elf, api: &'a FUNC, buffer: &'a [u8]) -> Result
     if api.start_address > text_section.sh_addr {
         let func_start_offset = (api.start_address - text_section.sh_addr) as usize;
         let func_end_offset = (api.end_address - text_section.sh_addr) as usize;
-        let code_slice = &buffer[text_start_index + func_start_offset..text_start_index + func_end_offset];
+        let code_slice =
+            &buffer[text_start_index + func_start_offset..text_start_index + func_end_offset];
         Ok(code_slice)
     } else {
         Ok(&[])
@@ -216,6 +216,5 @@ fn cs_init() -> Result<Capstone> {
         .mode(arch::x86::ArchMode::Mode64)
         .syntax(arch::x86::ArchSyntax::Att)
         .detail(true)
-        .build()
-        ?)
+        .build()?)
 }

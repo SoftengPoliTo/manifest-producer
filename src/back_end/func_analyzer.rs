@@ -121,12 +121,10 @@ pub fn demangle_function_name(mangled_name: &str, language: &str) -> Result<Stri
     }
 }
 
-
 /// Retrieves the symbol name from the ELF binary.
 fn get_name_symbol<'a>(elf: &'a Elf<'a>, symbol: &'a goblin::elf::Sym) -> Option<&'a str> {
     elf.strtab.get_at(symbol.st_name)
 }
-
 
 /// Searches for a specific function by name from a list of functions.
 pub fn get_function(functions: &[FUNC], name: &str) -> Option<FUNC> {

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::to_string_pretty;
 
 use std::{
-    collections::{HashMap, VecDeque},
+    collections::HashMap,
     fs::File,
     io::Write,
 };
@@ -41,44 +41,45 @@ fn tree_generator(
     function_name: &str,
     forest: &HashMap<String, CallTree>,
     id_counter: &mut usize,
-    active_stack: &mut VecDeque<String>, // Stack to detect cycles
-) -> Option<TreeNode> {
-    // If the function is already on the stack, it means that there is a loop (function is called indirectly)
+    active_stack: &mut Vec<String>, // Stack to detect cycles
+) -> TreeNode {
     if active_stack.contains(&function_name.to_string()) {
-        return None;
+        let node = TreeNode::new(*id_counter, function_name); 
+        *id_counter += 1;  
+        return node;  
     }
 
-    // Adding the function to the stack to keep track of the fact that it is being processed
-    active_stack.push_back(function_name.to_string());
+    active_stack.push(function_name.to_string());
 
     if let Some(call_tree) = forest.get(function_name) {
         let mut node = TreeNode::new(*id_counter, &call_tree.name);
-        *id_counter += 1;
+        *id_counter += 1; 
 
         for child_name in &call_tree.nodes {
-            if let Some(child_node) = tree_generator(child_name, forest, id_counter, active_stack) {
-                node.add_child(child_node);
-            }
+            let child_node = tree_generator(child_name, forest, id_counter, active_stack);
+            node.add_child(child_node); 
         }
 
-        // Remove the function from the stack after it has been fully processed
-        active_stack.pop_back();
+        active_stack.pop();
 
-        Some(node)
+        node
     } else {
-        None
+        let node = TreeNode::new(*id_counter, function_name); 
+        *id_counter += 1;
+
+        node
     }
 }
 
+
 pub fn build_tree(roots: &Vec<String>, forest: &HashMap<String, CallTree>) -> Result<()> {
     let mut id_counter = 0;
-    let mut active_stack = VecDeque::new();
+    let mut active_stack = Vec::new();
 
     for root in roots {
-        if let Some(js_tree) = tree_generator(root, forest, &mut id_counter, &mut active_stack) {
+        let js_tree = tree_generator(root, forest, &mut id_counter, &mut active_stack);
             json_generator(&js_tree, root)?;
             render_tree_page(root, &js_tree)?;
-        }
     }
 
     Ok(())

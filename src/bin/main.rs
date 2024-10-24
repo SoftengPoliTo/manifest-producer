@@ -34,7 +34,7 @@ fn main() -> Result<()> {
     )?;
     let root_nodes = find_root_nodes(&mut call_forest, &filtered_functions)?;
 
-    // JS tree construction and HTML generation
+    // Tree construction and HTML generation
     build_tree(&root_nodes, &call_forest)?;
     html_generator(
         analysis_info,
