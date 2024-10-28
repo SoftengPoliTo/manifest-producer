@@ -1,26 +1,8 @@
-[package]
-name = "manifest-producer"
-version = "0.2.0"
-edition = "2021"
-authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
-description = "The purpose of the software is to analyze an ELF binary—typically a firmware for an IoT device—by disassembling it and reconstructing a call tree. This call tree is instrumental in understanding the device's behavior, which is crucial for certification purposes. The analysis helps verify whether the device aligns with the functionalities declared by the developer."
-license = "MIT"
-readme = "README.md"
-keywords = ["Behavioural analyzer", "IoT Firmware", "ELF binaries"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-thiserror = "1.0.65"
-serde_json = "1.0.132"
-goblin = "0.9.1"
-object = "0.36.5"
-memmap2 = "0.9.5"
-gimli = "0.31.1"
-rustc-demangle = "0.1.23"
-cpp_demangle = "0.4.3"
-capstone = "0.12.0"
-serde = { version = "1.0.213", features = ["derive"] }
-indicatif = "0.17.8"
-open = "5.3.0"
-minijinja = "2.4.0"
+[workspace]
+members = [
+    "common",
+    "backend",
+    "frontend",
+    "example",
+]
+resolver = "2"

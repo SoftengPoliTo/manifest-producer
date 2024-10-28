@@ -1,25 +1,29 @@
-use crate::backend::{
-    elf_analyzer::{find_text_section, get_name_addr},
+use common::{
+    capstone::{
+        arch::{self, BuildsCapstone, BuildsCapstoneSyntax},
+        Capstone,
+    },
     error::{Error, Result},
-    func_analyzer::{demangle_function_name, get_function, CallTree, FUNC},
+    goblin::elf::Elf,
+    indicatif::{ProgressBar, ProgressStyle},
+    CallTree, FUNC,
 };
 
-use capstone::prelude::*;
-use goblin::elf::Elf;
-use indicatif::{ProgressBar, ProgressStyle};
-
 use std::collections::{HashMap, HashSet};
+
+use crate::{
+    elf_analyzer::{find_text_section, get_name_addr},
+    func_analyzer::{demangle_function_name, get_function},
+};
 
 type FunctionCallTrees = HashMap<String, CallTree>;
 type FunctionDisassemblies = Vec<(String, String)>;
 
 pub fn find_root_nodes(
-    forest: &mut HashMap<String, CallTree>,
+    forest: &FunctionCallTrees,
     filter: &HashSet<String>,
 ) -> Result<Vec<String>> {
-    invocation_number(forest);
-
-    let root_nodes = forest
+    let root_nodes: Vec<_> = forest
         .iter()
         .filter_map(|(name, func)| {
             if func.invocation_count == 0 && filter.contains(name) {
@@ -30,17 +34,21 @@ pub fn find_root_nodes(
         })
         .collect();
 
-    Ok(root_nodes)
+    if root_nodes.is_empty() {
+        Ok(vec!["main".to_string()])
+    } else {
+        Ok(root_nodes)
+    }
 }
 
-fn invocation_number(forest: &mut HashMap<String, CallTree>) {
-    let nodes_to_update: Vec<String> = forest
+pub fn calculate_invocation_count(forest: &mut FunctionCallTrees) {
+    let nodes_to_update: Vec<_> = forest
         .values()
         .flat_map(|node| node.nodes.clone())
         .collect();
 
-    for n in nodes_to_update {
-        if let Some(tree) = forest.get_mut(&n) {
+    for node_name in nodes_to_update {
+        if let Some(tree) = forest.get_mut(&node_name) {
             tree.invocation_count += 1;
         }
     }
@@ -53,26 +61,25 @@ pub fn analyze_functions(
     language: &str,
 ) -> Result<(FunctionCallTrees, FunctionDisassemblies)> {
     if functions.is_empty() {
-        return Ok((HashMap::new(), Vec::new()));
+        return Ok((FunctionCallTrees::new(), FunctionDisassemblies::new()));
     }
 
     let progress_bar = ProgressBar::new(functions.len() as u64);
     progress_bar.set_style(
         ProgressStyle::default_bar()
-            .template("[{elapsed_precise}] [{wide_bar:.green}] {percent}\n{msg}")?
+            .template("[{elapsed_precise}] [{wide_bar:.green}] {percent}%\n{msg}")?
             .progress_chars("#>-"),
     );
 
-    let mut visited = HashMap::new();
-    let mut disassembly_vec = Vec::with_capacity(functions.len());
+    let mut visited = FunctionCallTrees::new();
+    let mut disassembly_vec = FunctionDisassemblies::with_capacity(functions.len());
 
     for func in functions.iter() {
         progress_bar.set_message(format!("Disassembling function: {}", func.name));
         let (tree, disassembly) = disassemble_function(elf, func, buffer, functions, language)?;
         if !tree.nodes.is_empty() {
             visited.insert(tree.name.clone(), tree);
-            let function_name = normalize_function_name(&func.name);
-            disassembly_vec.push((function_name, disassembly));
+            disassembly_vec.push((normalize_function_name(&func.name), disassembly));
         }
         progress_bar.inc(1);
     }

@@ -1,20 +1,17 @@
-use crate::backend::{
-    elf_analyzer::BasicInfo,
-    error::Result,
-    func_analyzer::{CallTree, FUNC},
-};
-use crate::frontend::tree_generator::TreeNode;
-
-use minijinja::{context, Environment};
-
 use std::{collections::HashMap, fs::File, io::Write};
+
+use common::{
+    error::Result,
+    minijinja::{context, Environment},
+    open, serde_json, BasicInfo, CallTree, TreeNode, FUNC,
+};
 
 pub fn html_generator(
     basic_info: BasicInfo,
     num_func: usize,
     num_root: usize,
-    functions: Vec<FUNC>,
-    forest: HashMap<String, CallTree>,
+    functions: &Vec<FUNC>,
+    forest: &HashMap<String, CallTree>,
     disassembly: &Vec<(String, String)>,
     roots: &Vec<String>,
 ) -> Result<()> {
@@ -49,15 +46,15 @@ pub fn render_index_page(basic_info: BasicInfo, num_func: usize, num_root: usize
 }
 
 pub fn render_functions_page(
-    functions: Vec<FUNC>,
-    forest: HashMap<String, CallTree>,
+    functions: &Vec<FUNC>,
+    forest: &HashMap<String, CallTree>,
 ) -> Result<()> {
     let mut combined: Vec<(FUNC, CallTree)> = Vec::new();
 
     for func in functions {
         let call_tree = forest.get(&func.name).cloned();
         if let Some(call_tree) = call_tree {
-            combined.push((func, call_tree));
+            combined.push((func.clone(), call_tree));
         }
     }
 

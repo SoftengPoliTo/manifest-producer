@@ -1,46 +1,12 @@
-use crate::backend::error::Result;
+use common::{
+    cpp_demangle::{DemangleOptions, Symbol},
+    error::Result,
+    goblin::{self, elf::Elf},
+    rustc_demangle::demangle,
+    FUNC,
+};
 
-use cpp_demangle::{DemangleOptions, Symbol};
-use rustc_demangle::demangle;
-
-use goblin::elf::Elf;
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct FUNC {
-    pub name: String,
-    pub start_address: u64,
-    pub end_address: u64,
-}
-impl FUNC {
-    pub fn new(name: String, start_address: u64, end_address: u64) -> Self {
-        Self {
-            name,
-            start_address,
-            end_address,
-        }
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct CallTree {
-    pub name: String,
-    pub invocation_count: usize,
-    pub nodes: Vec<String>,
-}
-impl CallTree {
-    pub fn new(name: String) -> Self {
-        Self {
-            name,
-            invocation_count: 0,
-            nodes: vec![],
-        }
-    }
-    pub fn add_node(&mut self, node: String) {
-        self.nodes.push(node);
-    }
-}
-
-pub fn functions_detection<'a>(elf: &'a Elf<'a>, language: &str) -> Result<Vec<FUNC>> {
+pub fn extract_functions<'a>(elf: &'a Elf<'a>, language: &str) -> Result<Vec<FUNC>> {
     let mut func_found = Vec::new();
     for symbol in &elf.syms {
         if symbol.st_type() == goblin::elf::sym::STT_FUNC && symbol.st_shndx != 0 {
@@ -73,10 +39,10 @@ pub fn demangle_function_name(mangled_name: &str, language: &str) -> Result<Stri
     }
 }
 
-fn get_name_symbol<'a>(elf: &'a Elf<'a>, symbol: &'a goblin::elf::Sym) -> Option<&'a str> {
-    elf.strtab.get_at(symbol.st_name)
-}
-
 pub fn get_function(functions: &[FUNC], name: &str) -> Option<FUNC> {
     functions.iter().find(|func| func.name == name).cloned()
+}
+
+fn get_name_symbol<'a>(elf: &'a Elf<'a>, symbol: &'a goblin::elf::Sym) -> Option<&'a str> {
+    elf.strtab.get_at(symbol.st_name)
 }
