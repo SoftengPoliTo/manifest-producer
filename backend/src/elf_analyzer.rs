@@ -1,10 +1,3 @@
-use crate::backend::error::{Error, Result};
-
-use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
-use goblin::elf::{section_header::SHT_PROGBITS, Elf, SectionHeader};
-use memmap2::Mmap;
-use object::{Object, ObjectSection};
-
 use std::{
     borrow::{self},
     collections::{HashMap, HashSet},
@@ -13,68 +6,17 @@ use std::{
     path::Path,
 };
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct BasicInfo<'a> {
-    pub file_name: &'a str,
-    pub file_type: &'a str,
-    pub file_size: u64,
-    pub arch: &'a str,
-    pub pie: bool,
-    pub stripped: bool,
-    pub static_linking: &'a str,
-    pub language: String,
-    pub entry_point: u64,
-}
-
-impl<'a> BasicInfo<'a> {
-    pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
-        Self {
-            file_name,
-            file_type,
-            file_size: 0,
-            arch: "",
-            pie: false,
-            stripped: false,
-            static_linking: "",
-            language: String::new(),
-            entry_point: 0,
-        }
-    }
-
-    pub fn file_size(self, file_size: u64) -> Self {
-        Self { file_size, ..self }
-    }
-
-    pub fn arch(self, arch: &'a str) -> Self {
-        Self { arch, ..self }
-    }
-
-    pub fn pie(self, pie: bool) -> Self {
-        Self { pie, ..self }
-    }
-
-    pub fn static_linking(self, static_linking: &'a str) -> Self {
-        Self {
-            static_linking,
-            ..self
-        }
-    }
-
-    pub fn language(self, language: String) -> Self {
-        Self { language, ..self }
-    }
-
-    pub fn entry_point(self, entry_point: u64) -> Self {
-        Self {
-            entry_point,
-            ..self
-        }
-    }
-
-    pub fn stripped(self, stripped: bool) -> Self {
-        Self { stripped, ..self }
-    }
-}
+use common::{
+    error::{Error, Result},
+    gimli::{self, AttributeValue, DwarfSections, EndianSlice, RunTimeEndian},
+    goblin::{
+        self,
+        elf::{Elf, SectionHeader},
+    },
+    memmap2::{self, Mmap},
+    object::{self, elf::SHT_PROGBITS, Object, ObjectSection},
+    BasicInfo,
+};
 
 pub fn pre_analysis<'a>(elf: &'a Elf<'a>, elf_path: &'a str) -> Result<BasicInfo<'a>> {
     if is_stripped(elf) {
@@ -139,7 +81,7 @@ pub fn get_name_addr<'a>(elf: &'a Elf<'a>, address: u64) -> Option<&'a str> {
     None
 }
 
-pub fn filter_source_file(binary_path: &str, language: &str) -> Result<HashSet<String>> {
+pub fn extract_functions_lang(binary_path: &str, language: &str) -> Result<HashSet<String>> {
     let file = fs::File::open(binary_path)?;
     let mmap = unsafe { Mmap::map(&file)? };
     let object = object::File::parse(&*mmap)?;
@@ -237,17 +179,17 @@ pub fn filter_source_file(binary_path: &str, language: &str) -> Result<HashSet<S
     Ok(functions)
 }
 
-fn get_file_size(elf_path: &str) -> Result<u64> {
+pub fn get_file_size(elf_path: &str) -> Result<u64> {
     let path = Path::new(elf_path);
     let metadata = std::fs::metadata(path)?;
     Ok(metadata.len())
 }
 
-fn get_entry_point(elf: &Elf) -> Result<u64> {
+pub fn get_entry_point(elf: &Elf) -> Result<u64> {
     Ok(elf.header.e_entry)
 }
 
-fn get_name(elf_path: &str) -> Result<&str> {
+pub fn get_name(elf_path: &str) -> Result<&str> {
     let path = Path::new(elf_path);
     if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
         Ok(file_name)
@@ -256,7 +198,7 @@ fn get_name(elf_path: &str) -> Result<&str> {
     }
 }
 
-fn is_stripped(elf: &Elf) -> bool {
+pub fn is_stripped(elf: &Elf) -> bool {
     match elf.header.e_ident[goblin::elf::header::EI_CLASS] {
         goblin::elf::header::ELFCLASS64 | goblin::elf::header::ELFCLASS32 => {
             !has_sections(elf, goblin::elf::section_header::SHT_SYMTAB)
@@ -266,13 +208,7 @@ fn is_stripped(elf: &Elf) -> bool {
     }
 }
 
-fn has_sections(elf: &Elf, section_type: u32) -> bool {
-    elf.section_headers
-        .iter()
-        .any(|section| section.sh_type == section_type)
-}
-
-fn get_architecture<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
+pub fn get_architecture<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_machine {
         goblin::elf::header::EM_X86_64 => Ok("x86_64"),
         goblin::elf::header::EM_ARM => Err(Error::InvalidElf {
@@ -288,7 +224,7 @@ fn get_architecture<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
+pub fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     match elf.header.e_type {
         goblin::elf::header::ET_EXEC => Ok("Executable"),
         goblin::elf::header::ET_DYN => Ok("Dynamic Library"),
@@ -298,7 +234,7 @@ fn get_file_type<'a>(elf: &'a Elf<'a>) -> Result<&'a str> {
     }
 }
 
-fn is_static(elf: &Elf) -> bool {
+pub fn is_static(elf: &Elf) -> bool {
     for ph in &elf.program_headers {
         if ph.p_type == goblin::elf::program_header::PT_DYNAMIC {
             return false;
@@ -307,7 +243,7 @@ fn is_static(elf: &Elf) -> bool {
     true
 }
 
-fn is_pie(elf: &Elf) -> bool {
+pub fn is_pie(elf: &Elf) -> bool {
     if let Some(dynamic) = &elf.dynamic {
         dynamic.dyns.iter().any(|d| {
             d.d_tag == goblin::elf::dynamic::DT_FLAGS_1
@@ -318,7 +254,7 @@ fn is_pie(elf: &Elf) -> bool {
     }
 }
 
-fn get_language(elf_path: &str) -> Result<String> {
+pub fn get_language(elf_path: &str) -> Result<String> {
     let file = fs::File::open(elf_path)?;
     let mmap = unsafe { memmap2::Mmap::map(&file)? };
     let object = object::File::parse(&*mmap)?;
@@ -385,4 +321,10 @@ fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian)
 fn increment_language_count(map: &mut HashMap<String, u32>, language: &str) {
     let count = map.entry(language.to_string()).or_insert(0);
     *count += 1;
+}
+
+fn has_sections(elf: &Elf, section_type: u32) -> bool {
+    elf.section_headers
+        .iter()
+        .any(|section| section.sh_type == section_type)
 }

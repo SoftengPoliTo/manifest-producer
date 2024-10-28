@@ -1,7 +1,6 @@
 /target
 Cargo.lock
-/elf_file
 *.json
-/public/call_graphs/*
-/public/json/*
-/public/*.html
+public/*.html
+public/call_graphs/*.html
+public/json/*.json

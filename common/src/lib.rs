@@ -1,0 +1,142 @@
+pub mod error;
+
+pub use capstone;
+pub use cpp_demangle;
+pub use gimli;
+pub use goblin;
+pub use indicatif;
+pub use memmap2;
+pub use minijinja;
+pub use object;
+pub use open;
+pub use rustc_demangle;
+pub use serde;
+pub use serde_json;
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BasicInfo<'a> {
+    pub file_name: &'a str,
+    pub file_type: &'a str,
+    pub file_size: u64,
+    pub arch: &'a str,
+    pub pie: bool,
+    pub stripped: bool,
+    pub static_linking: &'a str,
+    pub language: String,
+    pub entry_point: u64,
+}
+
+impl<'a> BasicInfo<'a> {
+    pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
+        Self {
+            file_name,
+            file_type,
+            file_size: 0,
+            arch: "",
+            pie: false,
+            stripped: false,
+            static_linking: "",
+            language: String::new(),
+            entry_point: 0,
+        }
+    }
+
+    pub fn file_size(self, file_size: u64) -> Self {
+        Self { file_size, ..self }
+    }
+
+    pub fn arch(self, arch: &'a str) -> Self {
+        Self { arch, ..self }
+    }
+
+    pub fn pie(self, pie: bool) -> Self {
+        Self { pie, ..self }
+    }
+
+    pub fn static_linking(self, static_linking: &'a str) -> Self {
+        Self {
+            static_linking,
+            ..self
+        }
+    }
+
+    pub fn language(self, language: String) -> Self {
+        Self { language, ..self }
+    }
+
+    pub fn entry_point(self, entry_point: u64) -> Self {
+        Self {
+            entry_point,
+            ..self
+        }
+    }
+
+    pub fn stripped(self, stripped: bool) -> Self {
+        Self { stripped, ..self }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct FUNC {
+    pub name: String,
+    pub start_address: u64,
+    pub end_address: u64,
+}
+impl FUNC {
+    pub fn new(name: String, start_address: u64, end_address: u64) -> Self {
+        Self {
+            name,
+            start_address,
+            end_address,
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CallTree {
+    pub name: String,
+    pub invocation_count: usize,
+    pub nodes: Vec<String>,
+}
+impl CallTree {
+    pub fn new(name: String) -> Self {
+        Self {
+            name,
+            invocation_count: 0,
+            nodes: vec![],
+        }
+    }
+    pub fn add_node(&mut self, node: String) {
+        self.nodes.push(node);
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TreeNode {
+    pub id: usize,
+    pub text: String,
+    #[serde(rename = "children")]
+    pub children: Option<Box<Vec<TreeNode>>>,
+}
+impl TreeNode {
+    pub fn new(id: usize, text: &str) -> Self {
+        TreeNode {
+            id,
+            text: text.to_string(),
+            children: None,
+        }
+    }
+    pub fn add_child(&mut self, child: TreeNode) {
+        if let Some(ref mut children) = self.children {
+            children.push(child);
+        } else {
+            self.children = Some(Box::new(vec![child]));
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct FunctionNode {
+    pub name: String,
+    pub jmp: usize,
+}
