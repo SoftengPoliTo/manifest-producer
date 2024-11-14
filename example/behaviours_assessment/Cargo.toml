@@ -2,13 +2,13 @@
 name = "manifest-producer"
 version = "0.2.0"
 edition = "2021"
-authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
+authors = ["Giuseppe Marco Bianco <giuseppemarco.bianco@libero.it>"]
 description = "The purpose of the software is to analyze an ELF binary—typically a firmware for an IoT device—by disassembling it and reconstructing a call tree. This call tree is instrumental in understanding the device's behavior, which is crucial for certification purposes. The analysis helps verify whether the device aligns with the functionalities declared by the developer."
 license = "MIT"
 readme = "README.md"
-keywords = ["Behavioural analyzer", "IoT Firmware", "ELF binaries"]
+keywords = ["Behaviour assessment", "IoT Firmware", "ELF binaries", "Rust"]
 
 [dependencies]
-backend = { path = "../backend" }
-frontend = { path = "../frontend" }
-common = { path = "../common" }
+manifest_producer-backend = { path = "../../backend" }
+manifest_producer-frontend = { path = "../../frontend" }
+clap = { version = "^4.4", features = ["derive"] }

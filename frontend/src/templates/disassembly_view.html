@@ -7,8 +7,8 @@
     <title>Disassembly View</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../src/frontend/templates/css/style.css">
-    <script src="../src/frontend/templates/js/script.js"></script>
+    <link rel="stylesheet" href="../frontend/src/templates/css/style.css">
+    <script src="../frontend/src/templates/js/script.js"></script>
 </head>
 
 <body>
@@ -53,15 +53,15 @@
             </div>
 
             <!-- Disassembled code section for each function -->
-            {% for function_name, disassembled_code in disassembly %}
+            {% for function in disassembly %}
             <section class="function-section">
                 <div class="box">
-                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="{{ function_name }}">
-                        {{ function_name }}
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="{{ function.name }}">
+                        {{ function.name }}
                     </button>
                     <div class="content" style="display: none;">
-                        <pre><code id="code-{{ function_name }}">{{ disassembled_code }}</code></pre>
-                        <button id="copy-btn-{{ function_name }}" class="button is-info" onclick="copyToClipboard('{{ function_name }}')">
+                        <pre><code id="code-{{ function.name }}">{{ function.disassembly }}</code></pre>
+                        <button id="copy-btn-{{ function.name }}" class="button is-info" onclick="copyToClipboard('{{ function.name }}')">
                             <span class="icon"><i class="fas fa-copy"></i></span>
                         </button>
                     </div>

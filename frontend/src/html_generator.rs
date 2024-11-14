@@ -1,35 +1,59 @@
 use std::{collections::HashMap, fs::File, io::Write};
 
-use common::{
+use crate::{
     error::Result,
-    minijinja::{context, Environment},
-    open, serde_json, BasicInfo, CallTree, TreeNode, FUNC,
+    subtrees_generator::{build_subtrees, identify_subtrees},
+    tree_generator::build_tree,
+    TreeNode,
 };
+use manifest_producer_backend::{BasicInfo, FunctionNode};
+
+use minijinja::{context, Environment};
+use serde_json;
 
 pub fn html_generator(
     basic_info: BasicInfo,
+    detected_functions: &HashMap<String, FunctionNode>,
+    root_nodes: &Vec<String>,
+    output_path: &str,
+) -> Result<()> {
+    let mut node_roots: HashMap<String, FunctionNode> = HashMap::new();
+    let mut sub_trees: HashMap<String, TreeNode> = HashMap::new();
+    let mut id_counter = 0;
+
+    render_index_page(basic_info, detected_functions.len(), root_nodes.len(), output_path)?;
+    render_functions_page(detected_functions, output_path)?;
+    render_disassembly_page(detected_functions, output_path)?;
+    render_root_page(root_nodes, output_path)?;
+
+    for root in root_nodes {
+        // Step 1: Identification of subtrees
+        identify_subtrees(&root, &detected_functions, &mut node_roots)?;
+
+        // Step 2: Cleaning nodes with jmp equal to zero and creating subtrees
+        build_subtrees(
+            &mut node_roots,
+            &detected_functions,
+            &mut sub_trees,
+            &mut id_counter,
+        )?;
+
+        // Step 3: Construction of the tree
+        build_tree(&root, &detected_functions, &mut sub_trees, &mut id_counter, output_path)?;
+
+        // Empty the structures for the next cycle
+        node_roots.clear();
+        sub_trees.clear();
+    }
+    Ok(())
+}
+
+pub(crate) fn render_index_page(
+    basic_info: BasicInfo,
     num_func: usize,
     num_root: usize,
-    functions: &Vec<FUNC>,
-    forest: &HashMap<String, CallTree>,
-    disassembly: &Vec<(String, String)>,
-    roots: &Vec<String>,
+    output_path: &str,
 ) -> Result<()> {
-    render_index_page(basic_info, num_func, num_root)?;
-    render_functions_page(functions, forest)?;
-    render_disassembly_page(disassembly)?;
-    render_root_page(roots)?;
-
-    Ok(())
-}
-
-pub fn open_index_page() -> Result<()> {
-    let index_path = "./public/index.html";
-    open::that(index_path)?;
-    Ok(())
-}
-
-pub fn render_index_page(basic_info: BasicInfo, num_func: usize, num_root: usize) -> Result<()> {
     let mut env = Environment::new();
     env.add_template("index.html", include_str!("templates/index.html"))?;
 
@@ -39,24 +63,17 @@ pub fn render_index_page(basic_info: BasicInfo, num_func: usize, num_root: usize
         num_func => num_func,
         num_root => num_root
     })?;
-
-    let mut file = File::create("public/index.html")?;
+    
+    let mut file = File::create(format!("{}/index.html", output_path))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
 
-pub fn render_functions_page(
-    functions: &Vec<FUNC>,
-    forest: &HashMap<String, CallTree>,
+pub(crate) fn render_functions_page(
+    detected_functions: &HashMap<String, FunctionNode>,
+    output_path: &str,
 ) -> Result<()> {
-    let mut combined: Vec<(FUNC, CallTree)> = Vec::new();
-
-    for func in functions {
-        let call_tree = forest.get(&func.name).cloned();
-        if let Some(call_tree) = call_tree {
-            combined.push((func.clone(), call_tree));
-        }
-    }
+    let functions: Vec<FunctionNode> = detected_functions.values().cloned().collect();
 
     let mut env = Environment::new();
     env.add_template(
@@ -65,33 +82,38 @@ pub fn render_functions_page(
     )?;
     let template = env.get_template("functions_list.html")?;
     let rendered = template.render(context! {
-        combined => combined
+        functions => functions
     })?;
 
-    let mut file = File::create("public/functions_list.html")?;
+    let mut file = File::create(format!("{}/functions_list.html", output_path))?;
     file.write_all(rendered.as_bytes())?;
 
     Ok(())
 }
 
-pub fn render_disassembly_page(disassembly: &Vec<(String, String)>) -> Result<()> {
+pub(crate) fn render_disassembly_page(
+    detected_functions: &HashMap<String, FunctionNode>,
+    output_path: &str,
+) -> Result<()> {
     let mut env = Environment::new();
     env.add_template(
         "disassembly_view.html",
         include_str!("templates/disassembly_view.html"),
     )?;
 
+    let disassembly: Vec<FunctionNode> = detected_functions.values().cloned().collect();
+
     let template = env.get_template("disassembly_view.html")?;
     let rendered = template.render(context! {
         disassembly => disassembly,
     })?;
 
-    let mut file = File::create("public/disassembly_view.html")?;
+    let mut file = File::create(format!("{}/disassembly_view.html", output_path))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
 
-pub fn render_root_page(roots: &Vec<String>) -> Result<()> {
+pub(crate) fn render_root_page(roots: &Vec<String>, output_path: &str) -> Result<()> {
     let mut env = Environment::new();
     env.add_template(
         "root_functions.html",
@@ -103,12 +125,12 @@ pub fn render_root_page(roots: &Vec<String>) -> Result<()> {
         roots => roots,
     })?;
 
-    let mut file = File::create("public/root_functions.html")?;
+    let mut file = File::create(format!("{}/root_functions.html", output_path))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
 
-pub fn render_tree_page(root_name: &str, js_tree: &TreeNode) -> Result<()> {
+pub(crate) fn render_tree_page(root_name: &str, js_tree: &TreeNode, output_path: &str) -> Result<()> {
     let mut env = Environment::new();
     env.add_template("call_graph.html", include_str!("templates/call_graph.html"))?;
 
@@ -121,7 +143,7 @@ pub fn render_tree_page(root_name: &str, js_tree: &TreeNode) -> Result<()> {
         js_tree => js_tree_json,
     })?;
 
-    let mut file = File::create(format!("public/call_graphs/{}.html", root_name))?;
+    let mut file = File::create(format!("{}/call_graphs/{}.html", output_path, root_name))?;
     file.write_all(rendered.as_bytes())?;
 
     Ok(())
