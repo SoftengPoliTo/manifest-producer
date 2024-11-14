@@ -2,8 +2,9 @@ use backend::{
     api_analyzer::{analyze_functions, calculate_invocation_count, find_root_nodes},
     elf_analyzer::{extract_functions_lang, parse_elf, pre_analysis, read_elf},
     func_analyzer::extract_functions,
+    error::Result,
 };
-use common::{error::Result, FunctionNode, TreeNode};
+use common::{FunctionNode, TreeNode};
 use frontend::{
     html_generator::html_generator,
     tree_generator::{build_subtrees, build_tree, identify_subtrees},

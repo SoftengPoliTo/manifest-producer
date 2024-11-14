@@ -6,17 +6,18 @@ use std::{
     path::Path,
 };
 
-use common::{
+use crate::{
     error::{Error, Result},
-    gimli::{self, AttributeValue, DwarfSections, EndianSlice, RunTimeEndian},
-    goblin::{
-        self,
-        elf::{Elf, SectionHeader},
-    },
-    memmap2::{self, Mmap},
-    object::{self, elf::SHT_PROGBITS, Object, ObjectSection},
     BasicInfo,
 };
+
+use gimli::{self, AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
+use goblin::{
+    self,
+    elf::{Elf, SectionHeader},
+};
+use memmap2::{self, Mmap};
+use object::{self, elf::SHT_PROGBITS, Object, ObjectSection};
 
 pub fn pre_analysis<'a>(elf: &'a Elf<'a>, elf_path: &'a str) -> Result<BasicInfo<'a>> {
     if is_stripped(elf) {
