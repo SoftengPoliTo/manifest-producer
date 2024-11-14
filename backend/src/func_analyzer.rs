@@ -1,10 +1,11 @@
-use common::{
-    cpp_demangle::{DemangleOptions, Symbol},
+use crate::{
     error::Result,
-    goblin::{self, elf::Elf},
-    rustc_demangle::demangle,
-    FUNC,
+    FUNC
 };
+use cpp_demangle::{DemangleOptions, Symbol};
+use goblin::{self, elf::Elf};
+use rustc_demangle::demangle;
+
 
 pub fn extract_functions<'a>(elf: &'a Elf<'a>, language: &str) -> Result<Vec<FUNC>> {
     let mut func_found = Vec::new();

@@ -1,20 +1,18 @@
-use common::{
-    capstone::{
-        arch::{self, BuildsCapstone, BuildsCapstoneSyntax},
-        Capstone,
-    },
-    error::{Error, Result},
-    goblin::elf::Elf,
-    indicatif::{ProgressBar, ProgressStyle},
-    CallTree, FUNC,
-};
-
-use std::collections::{HashMap, HashSet};
-
 use crate::{
     elf_analyzer::{find_text_section, get_name_addr},
     func_analyzer::{demangle_function_name, get_function},
+    error::{Result, Error},
+    CallTree, FUNC
 };
+
+use capstone::{
+    arch::{self, BuildsCapstone, BuildsCapstoneSyntax},
+    Capstone,
+};
+use goblin::elf::Elf;
+use indicatif::{ProgressBar, ProgressStyle};
+
+use std::collections::{HashMap, HashSet};
 
 type FunctionCallTrees = HashMap<String, CallTree>;
 type FunctionDisassemblies = Vec<(String, String)>;
