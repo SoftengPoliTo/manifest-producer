@@ -27,67 +27,40 @@ The **manifest-producer** project is organised in a workspace structure of Cargo
 manifest-producer/
 ├── Cargo.toml      
 ├── public/  
-    ├── call_graphs
-    ├── json
-    └── *.html
+│    ├── call_graphs/*html
+│    ├── json/*.json
+│    └── *.html
 ├── example/
 │   ├── Cargo.toml          
 │   └── src/
 │       └── main.rs 
 ├── backend/
-│   ├── Cargo.toml
-│   └── src/
-│       ├── lib.rs        
-│       ├── api_analyzer.rs 
-│       ├── elf_analyzer.rs 
-│       └── func_analyzer.rs
-├── common/
-│   ├── Cargo.toml   
-│   └── src/
-│       ├── lib.rs      
-│       └── error.rs  
+│      ├── Cargo.toml
+│      └── src/
+│        ├── lib.rs        
+│        ├── analyse.rs 
+│        ├── entry.rs 
+│        ├── inspect.rs 
+│        ├── detect.rs
+│        └── error.rs
 └── frontend/
-    ├── Cargo.toml  
-    └── src/
-        ├── templates/ 
-            ├── index.html
-            ├── functions_list.html
-            ├── disassembly_view.html
-            ├── root_functions.html
-            ├── call_graph.html
-            ├── css/
-                ├── style.css
-            ├── js/
-                ├── script.js
-        ├── lib.rs 
-        ├── html_generator.rs 
-        └── tree_generator.rs 
+      ├── Cargo.toml  
+      └── src/
+          ├── templates/ 
+          │   ├── index.html
+          │   ├── functions_list.html
+          │   ├── disassembly_view.html
+          │   ├── root_functions.html
+          │   ├── call_graph.html
+          │   ├── css/
+          │   │   └── style.css
+          │   └── js/
+          │       └── script.js
+          ├── lib.rs 
+          ├── html_generator.rs 
+          ├── subtrees_generator.rs 
+          └── tree_generator.rs 
 ```
-
-### Component details:
-
-- **example/**: 
-  - **Cargo.toml**: Specifies dependencies and configurations for the main application. This can be used as an example of library usage.
-  - **src/main.rs**: Application entry point, where the analysis of ELF binaries and report generation is initiated.
-
-  - **backend/**: 
-  - **Cargo.toml**: Specifies the necessary dependencies for the backend modules.
-  - **src/lib.rs**: Main backend module, which integrates the various analysis functionalities.
-  - **api_analyzer.rs**: Contains the logic for the API analysis of ELF binaries, identifying functions and entry points.
-  - **elf_analyzer.rs**: Module dedicated to the analysis of ELF structures, including information extraction and management of binaries.
-  - **func_analyzer.rs**: Deals with the analysis of functions within binaries, to determine their behaviour and interactions.
-
-  - **common/**: 
-  - **Cargo.toml**: Contains the dependencies shared between the various modules.
-  - **src/lib.rs**: Main module for common data structures and functionality used throughout the project.
-  - **error.rs**: Manages the definition and handling of errors for the project, enabling centralised and consistent error handling.
-
-  - **frontend/**: 
-  - **Cargo.toml**: Configuration and dependencies for frontend modules.
-  - **src/templates/**: Contains all HTML templates used to present the results of the analysis.
-  - **html_generator.rs**: Module that takes care of the generation of the HTML content, assembling the analysed information into a readable format.
-  - **tree_generator.rs**: Responsible for creating the call tree, visually representing the relationships between the analysed functions.
-
 
 ## Use
 
@@ -161,26 +134,6 @@ Copyright (c) 2023 Giuseppe Marco Bianco, manifest-producer contributors
 ### Authorisation Note
 
 For further details on the licence, see the [LICENSE](LICENSE) file in the repository.
-
-
-
-## Dependencies
-
-The project uses the following main dependencies:
-
-- [thiserror](https://crates.io/crates/thiserror) - A library for defining custom error types in Rust.
-- [serde_json](https://crates.io/crates/serde_json) - A JSON serialization and deserialization library for Rust.
-- [goblin](https://crates.io/crates/goblin) - A crate for handling PE, ELF, and Mach-O binaries.
-- [object](https://crates.io/crates/object) - A crate for working with object file formats.
-- [memmap2](https://crates.io/crates/memmap2) - A safe and easy-to-use wrapper around platform memory-mapped I/O APIs.
-- [gimli](https://crates.io/crates/gimli) - A library for working with the DWARF debugging format.
-- [rustc-demangle](https://crates.io/crates/rustc-demangle) - A demangler for Rust symbols.
-- [cpp_demangle](https://crates.io/crates/cpp_demangle) - A demangler for C++ symbols.
-- [capstone](https://crates.io/crates/capstone) - A disassembly framework with multiple architectures support.
-- [serde](https://crates.io/crates/serde) - A framework for serializing and deserializing Rust data structures.
-- [indicatif](https://crates.io/crates/indicatif) - A library for building progress bars and spinners in Rust.
-- [open](https://crates.io/crates/open) - A simple way to open files in the default application.
-- [minijinja](https://crates.io/crates/minijinja) - A fast and extensible templating engine for Rust.
 
 
 ## Contacts

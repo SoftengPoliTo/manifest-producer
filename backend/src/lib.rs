@@ -1,7 +1,8 @@
-pub mod api_analyzer;
-pub mod elf_analyzer;
-pub mod func_analyzer;
+pub mod analyse;
+pub mod detect;
+pub mod entry;
 pub mod error;
+pub mod inspect;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BasicInfo<'a> {
@@ -67,36 +68,30 @@ impl<'a> BasicInfo<'a> {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct FUNC {
+pub struct FunctionNode {
     pub name: String,
-    pub start_address: u64,
-    pub end_address: u64,
-}
-impl FUNC {
-    pub fn new(name: String, start_address: u64, end_address: u64) -> Self {
-        Self {
-            name,
-            start_address,
-            end_address,
-        }
-    }
+    pub start_addr: u64,
+    pub end_addr: u64,
+    pub invocation_entry: usize,
+    pub jmp: usize,
+    pub children: Vec<String>,
+    pub disassembly: Option<String>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct CallTree {
-    pub name: String,
-    pub invocation_count: usize,
-    pub nodes: Vec<String>,
-}
-impl CallTree {
-    pub fn new(name: String) -> Self {
+impl FunctionNode {
+    pub fn new(name: String, start_addr: u64, end_addr: u64) -> Self {
         Self {
             name,
-            invocation_count: 0,
-            nodes: vec![],
+            start_addr,
+            end_addr,
+            invocation_entry: 0,
+            jmp: 0,
+            children: Vec::new(),
+            disassembly: None,
         }
     }
-    pub fn add_node(&mut self, node: String) {
-        self.nodes.push(node);
+
+    pub fn set_disassembly(&mut self, disassembly: String) {
+        self.disassembly = Some(disassembly);
     }
 }

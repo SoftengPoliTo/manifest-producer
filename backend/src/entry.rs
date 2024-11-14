@@ -1,0 +1,149 @@
+use std::{
+    borrow,
+    collections::{HashMap, HashSet},
+    fs,
+};
+
+use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
+use memmap2::Mmap;
+use object::{Object, ObjectSection};
+
+use crate::{error::Result, FunctionNode};
+
+pub fn find_root_nodes(
+    binary_path: &str,
+    language: &str,
+    functions: &HashMap<String, FunctionNode>,
+) -> Result<Vec<String>> {
+    let filter = filtering_function(binary_path, language)?;
+    let root_nodes: Vec<_> = functions
+        .values()
+        .filter_map(|func| {
+            if func.invocation_entry == 0
+                && filter.contains(&func.name)
+                && !func.children.is_empty()
+            {
+                Some(func.name.clone())
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    if root_nodes.is_empty() {
+        Ok(vec!["main".to_string()])
+    } else {
+        Ok(root_nodes)
+    }
+}
+
+pub(crate) fn calculate_invocation_count(functions: &mut HashMap<String, FunctionNode>) {
+    let nodes_to_update: Vec<_> = functions
+        .values()
+        .flat_map(|node| node.children.clone())
+        .collect();
+
+    for node_name in nodes_to_update {
+        if let Some(func) = functions.get_mut(&node_name) {
+            func.invocation_entry += 1;
+        }
+    }
+}
+
+fn filtering_function(binary_path: &str, language: &str) -> Result<HashSet<String>> {
+    let file = fs::File::open(binary_path)?;
+    let mmap = unsafe { Mmap::map(&file)? };
+    let object = object::File::parse(&*mmap)?;
+    let endian = if object.is_little_endian() {
+        RunTimeEndian::Little
+    } else {
+        RunTimeEndian::Big
+    };
+
+    let load_section = |id: gimli::SectionId| -> Result<borrow::Cow<[u8]>> {
+        match object.section_by_name(id.name()) {
+            Some(ref section) => Ok(section.uncompressed_data()?),
+            None => Ok(borrow::Cow::Borrowed(&[][..])),
+        }
+    };
+
+    let dwarf_sections = DwarfSections::load(&load_section)?;
+    let borrow_section: &dyn for<'a> Fn(&'a borrow::Cow<[u8]>) -> EndianSlice<'a, RunTimeEndian> =
+        &|section| EndianSlice::new(section, endian);
+    let dwarf = dwarf_sections.borrow(&borrow_section);
+
+    let mut iter = dwarf.units();
+    let mut functions: HashSet<String> = HashSet::new();
+
+    while let Some(header) = iter.next()? {
+        let unit = dwarf.unit(header)?;
+        let mut entries = unit.entries();
+
+        while let Some((_, entry)) = entries.next_dfs()? {
+            if entry.tag() == gimli::DW_TAG_compile_unit {
+                if let Some(path_attr) = entry.attr(gimli::DW_AT_name)? {
+                    let file_name = match path_attr.value() {
+                        AttributeValue::DebugStrRef(name_ref) => {
+                            dwarf.string(name_ref)?.to_string_lossy().into_owned()
+                        }
+                        AttributeValue::DebugStrOffsetsIndex(index) => {
+                            let index_ref = dwarf.string_offset(&unit, index)?;
+                            dwarf.string(index_ref)?.to_string_lossy().into_owned()
+                        }
+                        _ => {
+                            // Unsupported attribute value type
+                            continue;
+                        }
+                    };
+
+                    let valid_extension = match language {
+                        "Rust" => file_name.contains(".rs"),
+                        "C99" => file_name.contains(".c"),
+                        "C_plus_plus_14" => file_name.contains(".cpp"),
+                        _ => false,
+                    };
+
+                    if valid_extension {
+                        let keywords = [
+                            "musl", "libc", "std", "library", "core", ".cargo", "crypto", "ssl",
+                            "compiler", "lib",
+                        ];
+                        if !keywords.iter().any(|&keyword| file_name.contains(keyword)) {
+                            let mut sub_entries = unit.entries();
+                            while let Some((_, sub_entry)) = sub_entries.next_dfs()? {
+                                if sub_entry.tag() == gimli::DW_TAG_subprogram {
+                                    if let Some(func_ref) = sub_entry.attr(gimli::DW_AT_name)? {
+                                        if let Some(function_name) = match func_ref.value() {
+                                            AttributeValue::DebugStrOffsetsIndex(func_name) => {
+                                                let index_func_ref =
+                                                    dwarf.string_offset(&unit, func_name)?;
+                                                Some(
+                                                    dwarf
+                                                        .string(index_func_ref)?
+                                                        .to_string_lossy()
+                                                        .into_owned(),
+                                                )
+                                            }
+                                            AttributeValue::DebugStrRef(func_name_ref) => Some(
+                                                dwarf
+                                                    .string(func_name_ref)?
+                                                    .to_string_lossy()
+                                                    .into_owned(),
+                                            ),
+                                            _ => None,
+                                        } {
+                                            if !functions.contains(&function_name) {
+                                                functions.insert(function_name);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Ok(functions)
+}
