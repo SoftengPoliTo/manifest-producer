@@ -50,7 +50,6 @@ backend/
 
 The project uses the following main dependencies:
 
-- [thiserror](https://crates.io/crates/thiserror) - A library for defining custom error types in Rust.
 - [serde_json](https://crates.io/crates/serde_json) - A JSON serialization and deserialization library for Rust.
 - [goblin](https://crates.io/crates/goblin) - A crate for handling PE, ELF, and Mach-O binaries.
 - [object](https://crates.io/crates/object) - A crate for working with object file formats.

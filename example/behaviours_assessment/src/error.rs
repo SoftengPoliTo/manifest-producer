@@ -1,11 +1,11 @@
+use clap::Error as ClapError;
 use manifest_producer_backend::error::Error as BackendError;
 use manifest_producer_frontend::error::Error as FrontendError;
-use clap::Error as ClapError;
 use std::error::Error as StdError;
 use std::fmt;
 
 #[derive(Debug)]
-pub enum AppError {
+pub(crate) enum AppError {
     Clap(ClapError),
     Backend(BackendError),
     Frontend(FrontendError),

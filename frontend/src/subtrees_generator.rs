@@ -17,7 +17,7 @@ pub(crate) fn identify_subtrees(
         ProgressStyle::default_spinner()
             .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
     );
-    progress_bar.enable_steady_tick(Duration::from_millis(100)); 
+    progress_bar.enable_steady_tick(Duration::from_millis(100));
 
     trace_roots(
         root_name,
@@ -115,7 +115,7 @@ fn subtree_generation(
     progress_bar: &ProgressBar,
     depth: usize,
 ) -> TreeNode {
-    progress_bar.set_message(format!("Detecting subtrees..."));
+    progress_bar.set_message("Detecting subtrees...");
 
     if active_stack.contains(&function_name.to_string()) || depth > 10 {
         let node = TreeNode::new(*id_counter, function_name);

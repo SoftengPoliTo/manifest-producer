@@ -24,7 +24,7 @@ pub fn inspect_binary<'a>(
     elf_path: &'a str,
     output_path: &'a str,
 ) -> Result<BasicInfo<'a>> {
-    if is_stripped(&elf) {
+    if is_stripped(elf) {
         return Err(Error::DebugInfo);
     }
     let file_name = get_name(elf_path)?;
@@ -48,7 +48,7 @@ pub fn inspect_binary<'a>(
         .language(language)
         .entry_point(entry_point);
 
-    let file = File::create(format!("{}json/basic_info.json", output_path))?;
+    let file = File::create(format!("{}/json/basic_info.json", output_path))?;
     serde_json::to_writer_pretty(file, &info)?;
 
     Ok(info)

@@ -1,0 +1,9 @@
+---
+source: backend/tests/integration_tests.rs
+expression: root_nodes_json
+snapshot_kind: text
+---
+[
+  "main",
+  "pow"
+]

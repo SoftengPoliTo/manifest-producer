@@ -1,7 +1,7 @@
-use std::{fs, path::Path};
 use crate::error::Result;
+use std::{fs, path::Path};
 
-pub fn setup_output_dir(output_path: &str) -> Result<()> {
+pub(crate) fn setup_output_dir(output_path: &str) -> Result<()> {
     let main_path = Path::new(output_path);
     if !main_path.exists() {
         fs::create_dir_all(main_path)?;
@@ -12,9 +12,9 @@ pub fn setup_output_dir(output_path: &str) -> Result<()> {
         fs::create_dir_all(&json_path)?;
     }
 
-    let call_graphs_path = main_path.join("call_graphs");
-    if !call_graphs_path.exists() {
-        fs::create_dir_all(&call_graphs_path)?;
+    let call_trees_path = main_path.join("call_trees");
+    if !call_trees_path.exists() {
+        fs::create_dir_all(&call_trees_path)?;
     }
 
     Ok(())
