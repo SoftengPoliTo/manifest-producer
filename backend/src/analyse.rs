@@ -46,7 +46,7 @@ pub fn analyse_functions(
     }
     calculate_invocation_count(functions);
 
-    let file = File::create(format!("{}json/functions_list.json", output_path))?;
+    let file = File::create(format!("{}/json/functions_list.json", output_path))?;
     serde_json::to_writer_pretty(file, &functions)?;
 
     progress_bar.finish_with_message("All the functions in the .text section have been analysed.");
@@ -80,7 +80,7 @@ fn analyse_code_slice(
 
     // Skip if there is no code to disassemble
     if code_slice.is_empty() {
-        return Ok((nodes, String::new())); 
+        return Ok((nodes, String::new()));
     }
 
     let instruction = cs.disasm_all(code_slice, start_address)?;
@@ -92,10 +92,8 @@ fn analyse_code_slice(
         if insn_name == "call" {
             let called_func_name = call_insn(elf, op_str, language);
             if let Some(func_name) = called_func_name {
-                if functions.contains_key(&func_name) {
-                    if !nodes.contains(&func_name) {
-                        nodes.push(func_name.clone());
-                    }
+                if functions.contains_key(&func_name) && !nodes.contains(&func_name) {
+                    nodes.push(func_name.clone());
                 }
                 disassembly_output.push_str(&format!(
                     "0x{:x}:\t{}\t{}   <{}>\n",

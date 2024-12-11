@@ -1,0 +1,220 @@
+---
+source: frontend/tests/integration_test.rs
+expression: content
+snapshot_kind: text
+---
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disassembly View</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../frontend/src/templates/css/style.css">
+    <script src="../frontend/src/templates/js/script.js"></script>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">
+                <h1 class="title is-4 has-text-white">Static Binary Analysis Report</h1>
+            </a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+
+            <!-- Header -->
+            <div class="box has-text-centered">
+                <h2 class="title is-4">
+                    <span class="icon has-text-info"><i class="fas fa-code"></i></span> Disassembled .text Section
+                </h2>
+                <div class="buttons is-centered">
+                    <a href="functions_list.html" class="button is-link is-light">
+                        <span class="icon is-small"><i class="fas fa-table"></i></span>
+                        <span>Back to Functions List</span>
+                    </a>
+                    <a href="index.html" class="button is-link is-light">
+                        <span class="icon is-small"><i class="fas fa-home"></i></span>
+                        <span>Back to Homepage</span>
+                    </a>
+                </div>
+
+            <!-- Search Bar for Functions -->
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="text" placeholder="Enter function name" id="searchInput" onkeyup="filterFunctions()">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Disassembled code section for each function -->
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child11">
+                        child11
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child11">0x4368c0:	endbr64	
+0x4368c4:	mov	$18446744073709551528, %rax
+0x4368cb:	mov	%fs:(%rax), %rdx
+0x4368cf:	nop	(%rax, %rax)
+</code></pre>
+                        <button id="copy-btn-child11" class="button is-info" onclick="copyToClipboard('child11')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child21">
+                        child21
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child21">0x4368c0:	endbr64	
+0x4368c4:	mov	$18446744073709551528, %rax
+0x4368cb:	mov	%fs:(%rax), %rdx
+0x4368cf:	nop	(%rax, %rax)
+</code></pre>
+                        <button id="copy-btn-child21" class="button is-info" onclick="copyToClipboard('child21')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child2">
+                        child2
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child2">0x4368c0:	endbr64	
+0x4368c4:	mov	$18446744073709551528, %rax
+0x4368cb:	mov	%fs:(%rax), %rdx
+0x4368cf:	nop	(%rax, %rax)
+</code></pre>
+                        <button id="copy-btn-child2" class="button is-info" onclick="copyToClipboard('child2')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child12">
+                        child12
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child12">0x4368c0:	endbr64	
+0x4368c4:	mov	$18446744073709551528, %rax
+0x4368cb:	mov	%fs:(%rax), %rdx
+0x4368cf:	nop	(%rax, %rax)
+</code></pre>
+                        <button id="copy-btn-child12" class="button is-info" onclick="copyToClipboard('child12')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="root">
+                        root
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-root">0x494340:	endbr64	
+0x494344:	mov	8(%rdx), %rcx
+0x494348:	mov	$1, %eax
+0x49434d:	cmp	%rcx, 8(%rsi)
+0x494351:	ja	0x494355
+0x494353:	sbb	%eax, %eax
+0x494355:	ret	
+</code></pre>
+                        <button id="copy-btn-root" class="button is-info" onclick="copyToClipboard('root')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child1">
+                        child1
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child1">0x44ff50:	endbr64	
+0x44ff54:	mov	$0xa, %eax
+0x44ff59:	syscall	
+0x44ff5b:	cmp	$-0xfff, %rax
+0x44ff61:	jae	0x44ff64
+0x44ff63:	ret	
+0x44ff64:	mov	$18446744073709551544, %rcx
+0x44ff6b:	neg	%eax
+0x44ff6d:	mov	%eax, %fs:(%rcx)
+0x44ff70:	or	$0xffffffffffffffff, %rax
+0x44ff74:	ret	
+</code></pre>
+                        <button id="copy-btn-child1" class="button is-info" onclick="copyToClipboard('child1')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+
+        </div>
+    </section>
+
+    <!-- Scroll buttons -->
+    <div class="scroll-buttons">
+        <button onclick="scrollToTop()" class="button is-info">
+            Scroll to Top
+        </button>
+        <button onclick="scrollToBottom()" class="button is-info">
+            Scroll to Bottom
+        </button>
+    </div>
+
+    <!-- Footer navigation -->
+    <div class="box is-centered">
+        <div class="buttons is-centered">
+            <a href="functions_list.html" class="button is-link is-light">
+                <span class="icon is-small"><i class="fas fa-table"></i></span>
+                <span>Back to Functions List</span>
+            </a>
+            <a href="index.html" class="button is-link is-light">
+                <span class="icon is-small"><i class="fas fa-home"></i></span>
+                <span>Back to Homepage</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Static Binary Analysis Report</strong> by Giuseppe Marco Bianco. The source code is licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE/MIT.txt">MIT</a>.
+            </p>
+        </div>
+    </footer>
+
+    
+</body>
+
+</html>

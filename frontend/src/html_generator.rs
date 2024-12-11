@@ -21,25 +21,36 @@ pub fn html_generator(
     let mut sub_trees: HashMap<String, TreeNode> = HashMap::new();
     let mut id_counter = 0;
 
-    render_index_page(basic_info, detected_functions.len(), root_nodes.len(), output_path)?;
+    render_index_page(
+        basic_info,
+        detected_functions.len(),
+        root_nodes.len(),
+        output_path,
+    )?;
     render_functions_page(detected_functions, output_path)?;
     render_disassembly_page(detected_functions, output_path)?;
     render_root_page(root_nodes, output_path)?;
 
     for root in root_nodes {
         // Step 1: Identification of subtrees
-        identify_subtrees(&root, &detected_functions, &mut node_roots)?;
+        identify_subtrees(root, detected_functions, &mut node_roots)?;
 
         // Step 2: Cleaning nodes with jmp equal to zero and creating subtrees
         build_subtrees(
             &mut node_roots,
-            &detected_functions,
+            detected_functions,
             &mut sub_trees,
             &mut id_counter,
         )?;
 
         // Step 3: Construction of the tree
-        build_tree(&root, &detected_functions, &mut sub_trees, &mut id_counter, output_path)?;
+        build_tree(
+            root,
+            detected_functions,
+            &mut sub_trees,
+            &mut id_counter,
+            output_path,
+        )?;
 
         // Empty the structures for the next cycle
         node_roots.clear();
@@ -63,7 +74,7 @@ pub(crate) fn render_index_page(
         num_func => num_func,
         num_root => num_root
     })?;
-    
+
     let mut file = File::create(format!("{}/index.html", output_path))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
@@ -130,11 +141,15 @@ pub(crate) fn render_root_page(roots: &Vec<String>, output_path: &str) -> Result
     Ok(())
 }
 
-pub(crate) fn render_tree_page(root_name: &str, js_tree: &TreeNode, output_path: &str) -> Result<()> {
+pub(crate) fn render_tree_page(
+    root_name: &str,
+    js_tree: &TreeNode,
+    output_path: &str,
+) -> Result<()> {
     let mut env = Environment::new();
-    env.add_template("call_graph.html", include_str!("templates/call_graph.html"))?;
+    env.add_template("call_tree.html", include_str!("templates/call_tree.html"))?;
 
-    let template = env.get_template("call_graph.html")?;
+    let template = env.get_template("call_tree.html")?;
 
     let js_tree_json = serde_json::to_string(&js_tree)?;
 
@@ -143,7 +158,7 @@ pub(crate) fn render_tree_page(root_name: &str, js_tree: &TreeNode, output_path:
         js_tree => js_tree_json,
     })?;
 
-    let mut file = File::create(format!("{}/call_graphs/{}.html", output_path, root_name))?;
+    let mut file = File::create(format!("{}/call_trees/{}.html", output_path, root_name))?;
     file.write_all(rendered.as_bytes())?;
 
     Ok(())

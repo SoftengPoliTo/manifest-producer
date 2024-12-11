@@ -46,7 +46,7 @@ fn generate_tree(
     progress_bar: &ProgressBar,
     depth: usize,
 ) -> TreeNode {
-    progress_bar.set_message(format!("Planting a tree..."));
+    progress_bar.set_message("Planting a tree...");
 
     if active_stack.contains(&function_name.to_string()) || depth > 10 {
         let node = TreeNode::new(*id_counter, function_name);
@@ -84,7 +84,7 @@ fn generate_tree(
     node
 }
 
-fn generate_json(tree: &TreeNode, root_name: &str, output_path: &str,) -> Result<()> {
+fn generate_json(tree: &TreeNode, root_name: &str, output_path: &str) -> Result<()> {
     let json_data = to_string_pretty(tree)?;
     let output_path = format!("{}/json/{}.json", output_path, root_name);
     let mut file = File::create(&output_path)?;

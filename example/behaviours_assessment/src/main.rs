@@ -1,6 +1,6 @@
+mod analysis;
 mod cli;
 mod dirs;
-mod analysis;
 mod error;
 
 use error::Result;
@@ -13,8 +13,8 @@ fn main() {
 }
 
 fn run() -> Result<()> {
-    let (elf_path, output_path) = cli::parse_arguments()?; 
-    dirs::setup_output_dir(&output_path)?;                
-    analysis::perform_analysis(&elf_path, &output_path)?;  
+    let (elf_path, output_path) = cli::parse_arguments()?;
+    dirs::setup_output_dir(&output_path)?;
+    analysis::perform_analysis(&elf_path, &output_path)?;
     Ok(())
 }

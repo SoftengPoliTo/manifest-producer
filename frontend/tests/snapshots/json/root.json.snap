@@ -1,0 +1,38 @@
+---
+source: frontend/tests/integration_test.rs
+expression: content
+snapshot_kind: text
+---
+{
+  "id": 0,
+  "text": "root",
+  "children": [
+    {
+      "id": 1,
+      "text": "child1",
+      "children": [
+        {
+          "id": 2,
+          "text": "child11",
+          "children": null
+        },
+        {
+          "id": 3,
+          "text": "child12",
+          "children": null
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "text": "child2",
+      "children": [
+        {
+          "id": 5,
+          "text": "child21",
+          "children": null
+        }
+      ]
+    }
+  ]
+}
