@@ -15,6 +15,25 @@ use indicatif::{ProgressBar, ProgressStyle};
 
 use std::{collections::HashMap, fs::File};
 
+/// Disassembles and analyses functions in an ELF binary.
+///
+/// # Overview
+/// Iterates through all detected functions from [`function_detection`], disassembles their machine code,
+/// and updates their [`FunctionNode`] structures with details like child functions and disassembly results.
+/// Results are also saved as JSON.
+///
+/// # Arguments
+/// - `elf`: A reference to an [`Elf`] structure.
+/// - `buffer`: Byte buffer of the ELF binary.
+/// - `functions`: A mutable `HashMap` of detected functions as `FunctionNode` objects.
+/// - `language`: The programming language of the binary.
+/// - `output_path`: Directory to save the JSON file with analysis results.
+///
+/// # Returns
+/// - A `Result<()>` indicating success or failure.
+///
+/// # See also
+/// - [`disassemble_function`]: Processes machine code for individual functions.
 pub fn analyse_functions(
     elf: &Elf,
     buffer: &[u8],

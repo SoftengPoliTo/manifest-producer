@@ -4,4 +4,3 @@ Cargo.lock
 public/*.html
 public/call_graphs/*.html
 public/json/*.json
-backend/tests/assets/*

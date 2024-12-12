@@ -100,20 +100,20 @@ use std::{collections::BTreeMap, env::temp_dir, fs, path::Path};
 
 #[test]
 fn test_c() {
-    run_analysis_test("./tests/assets/minimal-fake-firmware-c-static", "test_c");
+    run_analysis_test("./tests/binaries/minimal-fake-firmware-c-static", "test_c");
 }
 
 #[test]
 fn test_cpp() {
     run_analysis_test(
-        "./tests/assets/minimal-fake-firmware-cpp-static",
+        "./tests/binaries/minimal-fake-firmware-cpp-static",
         "test_cpp",
     );
 }
 
 #[test]
 fn test_rust() {
-    run_analysis_test("./tests/assets/fridge", "test_rust");
+    run_analysis_test("./tests/binaries/fridge", "test_rust");
 }
 
 fn run_analysis_test(binary_path: &str, test_name: &str) {

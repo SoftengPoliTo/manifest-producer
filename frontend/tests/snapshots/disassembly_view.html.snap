@@ -61,24 +61,6 @@ snapshot_kind: text
             
             <section class="function-section">
                 <div class="box">
-                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child11">
-                        child11
-                    </button>
-                    <div class="content" style="display: none;">
-                        <pre><code id="code-child11">0x4368c0:	endbr64	
-0x4368c4:	mov	$18446744073709551528, %rax
-0x4368cb:	mov	%fs:(%rax), %rdx
-0x4368cf:	nop	(%rax, %rax)
-</code></pre>
-                        <button id="copy-btn-child11" class="button is-info" onclick="copyToClipboard('child11')">
-                            <span class="icon"><i class="fas fa-copy"></i></span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="function-section">
-                <div class="box">
                     <button class="collapsible button is-link is-light is-fullwidth truncate" title="child21">
                         child21
                     </button>
@@ -115,6 +97,24 @@ snapshot_kind: text
             
             <section class="function-section">
                 <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="child11">
+                        child11
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-child11">0x4368c0:	endbr64	
+0x4368c4:	mov	$18446744073709551528, %rax
+0x4368cb:	mov	%fs:(%rax), %rdx
+0x4368cf:	nop	(%rax, %rax)
+</code></pre>
+                        <button id="copy-btn-child11" class="button is-info" onclick="copyToClipboard('child11')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
                     <button class="collapsible button is-link is-light is-fullwidth truncate" title="child12">
                         child12
                     </button>
@@ -125,27 +125,6 @@ snapshot_kind: text
 0x4368cf:	nop	(%rax, %rax)
 </code></pre>
                         <button id="copy-btn-child12" class="button is-info" onclick="copyToClipboard('child12')">
-                            <span class="icon"><i class="fas fa-copy"></i></span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="function-section">
-                <div class="box">
-                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="root">
-                        root
-                    </button>
-                    <div class="content" style="display: none;">
-                        <pre><code id="code-root">0x494340:	endbr64	
-0x494344:	mov	8(%rdx), %rcx
-0x494348:	mov	$1, %eax
-0x49434d:	cmp	%rcx, 8(%rsi)
-0x494351:	ja	0x494355
-0x494353:	sbb	%eax, %eax
-0x494355:	ret	
-</code></pre>
-                        <button id="copy-btn-root" class="button is-info" onclick="copyToClipboard('root')">
                             <span class="icon"><i class="fas fa-copy"></i></span>
                         </button>
                     </div>
@@ -171,6 +150,27 @@ snapshot_kind: text
 0x44ff74:	ret	
 </code></pre>
                         <button id="copy-btn-child1" class="button is-info" onclick="copyToClipboard('child1')">
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="function-section">
+                <div class="box">
+                    <button class="collapsible button is-link is-light is-fullwidth truncate" title="root">
+                        root
+                    </button>
+                    <div class="content" style="display: none;">
+                        <pre><code id="code-root">0x494340:	endbr64	
+0x494344:	mov	8(%rdx), %rcx
+0x494348:	mov	$1, %eax
+0x49434d:	cmp	%rcx, 8(%rsi)
+0x494351:	ja	0x494355
+0x494353:	sbb	%eax, %eax
+0x494355:	ret	
+</code></pre>
+                        <button id="copy-btn-root" class="button is-info" onclick="copyToClipboard('root')">
                             <span class="icon"><i class="fas fa-copy"></i></span>
                         </button>
                     </div>

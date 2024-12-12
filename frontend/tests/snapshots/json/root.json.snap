@@ -4,31 +4,31 @@ expression: content
 snapshot_kind: text
 ---
 {
-  "id": 0,
+  "id": 4,
   "text": "root",
   "children": [
     {
-      "id": 1,
+      "id": 2,
       "text": "child1",
       "children": [
         {
-          "id": 2,
+          "id": 3,
           "text": "child11",
           "children": null
         },
         {
-          "id": 3,
+          "id": 0,
           "text": "child12",
           "children": null
         }
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "text": "child2",
       "children": [
         {
-          "id": 5,
+          "id": 1,
           "text": "child21",
           "children": null
         }

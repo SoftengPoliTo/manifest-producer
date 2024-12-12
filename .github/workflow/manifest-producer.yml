@@ -1,0 +1,101 @@
+name: manifest-producer
+
+on:
+  commit:
+    branches:
+      - main
+      - new_code
+  push:
+    branches:
+      - main
+      - new_code
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+################################## FORMAT LAYER ######################
+
+  clippy-rustfmt:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        components: clippy, rustfmt
+
+    - name: Run rustfmt
+      run:
+        cargo fmt --all -- --check --verbose
+
+    - name: Run cargo clippy
+      run: cargo clippy --tests -- -Dclippy::all -Dclippy::pedantic
+
+################################## DOCS LAYER ########################
+
+  docs:
+
+    needs: [clippy-rustfmt]
+    runs-on: ubuntu-latest
+
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+
+    - name: Generate docs
+      run: cargo doc --verbose --no-deps
+
+################################## CODE COVERAGE LAYER ##################################
+
+  code-coverage:
+  
+    needs: [docs]
+    runs-on: ubutu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+
+    - name: Install grcov
+      env:
+        GRCOV_LINK: https://github.com/mozilla/grcov/releases/download
+        GRCOV_BINARY: grcov-x86_64-unknown-linux-musl.tar.bz2
+      run: |
+        curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
+        tar xj -C $HOME/.cargo/bin
+      
+    - name: Install llvm-tools-preview
+      run: |
+        rustup component add llvm-tools-preview
+
+    - name: Run tests
+      env:
+        RUSTFLAGS: "-Cinstrument-coverage"
+        LLVM_PROFILE_FILE: "manifest-producer-%p-%m.profraw"
+      run: |
+        cargo test --verbose
+
+    - name: Get coverage data for codecov
+      run: |
+        grcov . --binary-path ./target/debug/ -s . -t lcov --branch \
+              --ignore-not-existing --ignore "/*" --ignore "../*" \
+              --ignore "example/*" -o lcov.info
+
+    - name: Codecov upload
+      uses: codecov/codecov-action@v3
+      with:
+        files: lcov.info

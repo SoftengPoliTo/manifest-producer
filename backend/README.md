@@ -3,6 +3,7 @@
 ## Index
 - [Description](#description)
 - [Crate structure](#crate-structure)
+- [Integration tests](#tests)
 - [Dependencies](#dependencies)
 
 
@@ -15,36 +16,73 @@ The backend crate is intended for analysing and inspecting ELF binaries, with ad
 Here is a summary of the crate structure:
 ```
 backend/
-├── Cargo.toml
-└── src/
-    ├── lib.rs        
-    ├── analyse.rs 
-    ├── entry.rs 
-    ├── inspect.rs 
-    ├── detect.rs
-    └── error.rs
+  ├── Cargo.toml
+  ├── README.md
+  ├── tests/
+  │   ├── integration_test.rs     
+  │   ├── snapshot/
+  │   └── assets/ 
+  └── src/
+      ├── lib.rs        
+      ├── analyse.rs 
+      ├── entry.rs 
+      ├── inspect.rs 
+      ├── detect.rs
+      └── error.rs
 ```
 
 ### Component details:
 
   - **backend/**: 
-  - **Cargo.toml**: Specifies the necessary dependencies for the backend modules.
-  - **lib.rs**: Main backend module, which integrates the various analysis functionalities and structures.
-  - **analyse.rs**: It contains the main logic for analysing and disassembling functions. Includes:
-    - Disassembly of ELF binaries using `Capstone`.
-    - Management of function structure via `FunctionNode`.
-    - Export of results in JSON format.
-  - **detect.rs**: It deals with:
+  - **Cargo.toml**: 
+    Specifies the necessary dependencies for the backend modules.
+  - **lib.rs**: 
+    Main backend module, which integrates the various analysis functionalities and structures.
+  - **analyse.rs**: 
+    Handles function analysis and disassembly. Key functionalities:
+      - Disassembly of ELF binaries using `Capstone`.
+      - Management of function structures via `FunctionNode`.
+      - Export results in JSON format for easy integration.
+  - **detect.rs**: 
+    It deals with:
     - Detect and demangulate function names in ELF binaries.
     - Map symbols to their respective addresses and attributes.
     - Support languages such as Rust and C++ for decoding function names.
-  - **entry.rs**: Identifies root nodes for the representation of dependencies between functions. Other features:
+  - **entry.rs**: 
+    Identifies root nodes for the representation of dependencies between functions. Other features:
     - Computes the number of function invocations.
     - Filters functions from irrelevant libraries such as `musl` or `libc`.
-  - **inspect.rs**: Provides APIs for:
+  - **inspect.rs**: 
+    Provides APIs for:
     - Inspect an ELF binary (e.g. architecture target, file type, PIE).
     - Determine the predominant source language.
     - Examine sections such as .text for code disassembly.
+
+
+## Integration tests
+The crate backend includes a suite of integration tests to ensure the proper integration of the various modules. These tests run on various binaries compiled in C, C++ and Rust, and compare the results with previously generated snapshots to validate the consistency of the data produced.
+
+The binaries used for testing are contained in the `tests/assets` directory and are example binaries written in C, C++ and Rust. These are analysed to extract information such as the functions defined in the binary and the root nodes. The outputs are then compared with the reference data saved in the `tests/snapshots` directory.
+
+*The main integration tests are as follows:
+- *test_c*: Analyses a static C binary.
+- *test_cpp*: Analyses a static C++ binary.
+- *test_rust*: Analyses a Rust binary.
+
+To run the tests, simply use the command:
+```bash
+cargo insta test 
+```
+In particular, the tests verify that:
+- The JSON files generated for the binary details are correct.
+- The functions identified in the binary are consistent with those in the previous tests.
+- Extracted root nodes are aligned with the reference data.
+
+In the event of failure due to differences detected in comparison with previous snapshots, the following command allows you to view them one by one and decide whether to accept the changes or reject them:
+```bash
+cargo insta review
+```
+Integration tests are crucial to ensure that the system continues to function as intended even with changes to components or input binaries.
 
 ## Dependencies
 
