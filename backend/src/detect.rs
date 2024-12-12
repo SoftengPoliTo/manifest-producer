@@ -5,6 +5,24 @@ use cpp_demangle::{DemangleOptions, Symbol};
 use goblin::{self, elf::Elf};
 use rustc_demangle::demangle;
 
+/// Detects functions in an ELF binary from its symbol table.
+///
+/// # Overview
+/// This function scans the ELF symbol table, identifies functions, and processes them into
+/// [`FunctionNode`] structures with details like start and end addresses. Function names are demangled if necessary.
+///
+/// # Arguments
+/// - `elf`: A reference to an [`Elf`] structure containing the binary's symbol table.
+/// - `language`: The programming language for function name demangling.
+///
+/// # Returns
+/// - A `Result` containing a `HashMap<String, FunctionNode>` with function names as keys.
+///
+/// # Errors
+/// - Returns errors if symbol name demangling fails.
+///
+/// # See also
+/// - [`demangle_function_name`]: Demangles function names based on the language.
 pub fn function_detection<'a>(
     elf: &'a Elf<'a>,
     language: &str,

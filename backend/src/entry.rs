@@ -10,6 +10,22 @@ use object::{Object, ObjectSection};
 
 use crate::{error::Result, FunctionNode};
 
+/// Identifies root nodes in a set of analysed functions.
+///
+/// # Overview
+/// Root nodes are functions with no invocation entries but contain child functions and match specific filters.
+/// If no such nodes are found, "main" is returned as the default root.
+///
+/// # Arguments
+/// - `binary_path`: Path to the binary for filtering criteria.
+/// - `language`: The programming language of the binary (used for demangling).
+/// - `functions`: A map of function names to their [`FunctionNode`] representations.
+///
+/// # Returns
+/// - A `Result` containing a vector of root function names as `Vec<String>`.
+///
+/// # Errors
+/// - Propagates errors from [`filtering_function`] used for function selection.
 pub fn find_root_nodes(
     binary_path: &str,
     language: &str,

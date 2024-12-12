@@ -11,6 +11,55 @@ use manifest_producer_backend::{BasicInfo, FunctionNode};
 use minijinja::{context, Environment};
 use serde_json;
 
+/// Generates HTML reports from analysis results.
+///
+/// This function orchestrates the creation of various HTML pages that summarize the results
+/// of the analysis, including:
+/// - An index page with general information.
+/// - A page listing detected functions.
+/// - A disassembly page for in-depth function analysis.
+/// - A root page displaying entry points (root nodes).
+///
+/// Additionally, it identifies subtrees, cleans redundant nodes, and constructs trees
+/// for visual representation.
+///
+/// # Arguments
+/// - `basic_info`: Metadata about the binary being analyzed.
+/// - `detected_functions`: A map of function names to their associated `FunctionNode` objects.
+/// - `root_nodes`: A vector of root function names identified during analysis.
+/// - `output_path`: The directory where the HTML files should be saved.
+///
+/// # Workflow
+/// 1. Renders the main HTML pages using helper functions like [`render_index_page`].
+/// 2. Iterates over `root_nodes` to build and render subtrees and visual trees.
+/// 3. Cleans temporary structures (`node_roots` and `sub_trees`) after processing each root.
+///
+/// # Returns
+/// - `Ok(())`: If all HTML files are generated successfully.
+/// - `Err(e)`: If any operation fails, an error is returned.
+///
+/// # Errors
+/// Errors can arise from:
+/// - File I/O failures during HTML generation.
+/// - Invalid or incomplete data structures passed to the function.
+/// - Errors in subtree or tree construction.
+///
+/// # Example
+/// ```
+/// use manifest_producer_frontend::html_generator;
+/// use manifest_producer_backend::BasicInfo;
+/// use std::collections::HashMap;
+/// use manifest_producer_frontend::html_generator::html_generator;
+///
+/// let basic_info = BasicInfo::new("example.elf", "Executable");
+/// let detected_functions = HashMap::new();
+/// let root_nodes = vec!["main".to_string()];
+/// let output_path = "./output";
+///
+/// if let Err(err) = html_generator(basic_info, &detected_functions, &root_nodes, output_path) {
+///     eprintln!("HTML generation failed: {}", err);
+/// }
+/// ```
 pub fn html_generator(
     basic_info: BasicInfo,
     detected_functions: &HashMap<String, FunctionNode>,

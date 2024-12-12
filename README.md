@@ -26,16 +26,22 @@ The **manifest-producer** project is organised in a workspace structure of Cargo
 ```
 manifest-producer/
 ├── Cargo.toml      
-├── public/  
-│    ├── call_graphs/*html
-│    ├── json/*.json
-│    └── *.html
-├── example/
-│   ├── Cargo.toml          
+├── example/behaviours_assessment/
+│   ├── Cargo.toml  
+│   ├── README.md        
 │   └── src/
+│       ├── analysis.rs
+│       ├── cli.rs
+│       ├── dirs.rs
+│       ├── error.rs
 │       └── main.rs 
 ├── backend/
 │      ├── Cargo.toml
+│      ├── README.md
+│      ├── tests/
+│      │   ├── integration_test.rs     
+│      │   ├── snapshot/
+│      │   └── assets/ 
 │      └── src/
 │        ├── lib.rs        
 │        ├── analyse.rs 
@@ -44,7 +50,11 @@ manifest-producer/
 │        ├── detect.rs
 │        └── error.rs
 └── frontend/
-      ├── Cargo.toml  
+      ├── Cargo.toml 
+      ├── README.md 
+      ├── tests/
+      │    ├── integration_test.rs     
+      │    └── snapshot/ 
       └── src/
           ├── templates/ 
           │   ├── index.html
@@ -81,7 +91,7 @@ cd manifest-producer
 
 ### Execution of the example 
 ```bash
-cargo run -p manifest-producer <path_for_your_ELF_binary>
+cargo run -p manifest-producer <path_for_your_ELF_binary> [ -o <path_for_your_results_folder>]
 ```
 
 This command analyses the specified ELF binary and generates the corresponding output, which will be automatically opened in the system's default browser for display. In addition, the structures used to create the trees will be saved in json format. The overall results will be available in the `public/` folder.
@@ -141,7 +151,7 @@ For further details on the licence, see the [LICENSE](LICENSE) file in the repos
 For questions, issues, or contributions, feel free to reach out:
 
 - **Project Lead**: Giuseppe Marco Bianco  
-  - Email: [giuseppe.bianco1@uniurb.it](mailto:giuseppe.bianco1@uniurb.it)
+  - Email: [giuseppemarco.bianco@ibero.it](mailto:giuseppemarco.bianco@libero.it)
   - GitHub: [giusbianco](https://github.com/giusbianco)
 - **Repository**: [manifest-producer on GitHub](https://github.com/SoftengPoliTo/manifest-producer)
 
@@ -151,7 +161,7 @@ Contributions are welcome! If you find a bug, have suggestions, or would like to
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/prin-task-2.2/actions
 [codecov]: https://app.codecov.io/gh/SoftengPoliTo/prin-task-2.2
-[license]: LICENSES/MIT.txt
+[license]: LICENSE-MIT
 [status]: https://deps.rs/repo/github/SoftengPoliTo/prin-task-2.2
 
 <!-- Badges -->

@@ -74,15 +74,6 @@ snapshot_kind: text
                         <!-- Iterating over the tuple (FUNC, CallTree) dynamically -->
                         
                         <tr>
-                            <td class="truncate" title="child11">
-                                child11
-                            </td>
-                            <td>0x4499240</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                        
-                        <tr>
                             <td class="truncate" title="child21">
                                 child21
                             </td>
@@ -101,6 +92,15 @@ snapshot_kind: text
                         </tr>
                         
                         <tr>
+                            <td class="truncate" title="child11">
+                                child11
+                            </td>
+                            <td>0x4499240</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        
+                        <tr>
                             <td class="truncate" title="child12">
                                 child12
                             </td>
@@ -110,19 +110,19 @@ snapshot_kind: text
                         </tr>
                         
                         <tr>
-                            <td class="truncate" title="root">
-                                root
+                            <td class="truncate" title="child1">
+                                child1
                             </td>
-                            <td>0x4499220</td>
+                            <td>0x4445450</td>
                             <td>0</td>
                             <td>2</td>
                         </tr>
                         
                         <tr>
-                            <td class="truncate" title="child1">
-                                child1
+                            <td class="truncate" title="root">
+                                root
                             </td>
-                            <td>0x4445450</td>
+                            <td>0x4499220</td>
                             <td>0</td>
                             <td>2</td>
                         </tr>

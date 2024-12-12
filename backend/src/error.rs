@@ -19,27 +19,6 @@ pub enum Error {
     ProgressStyleError(indicatif::style::TemplateError),
 }
 
-impl Error {
-    pub fn description(&self) -> &str {
-        match self {
-            Error::Io(_) => "I/O error",
-            Error::InvalidFormat(_) => "Invalid format file",
-            Error::InvalidFileName => "No valid file name",
-            Error::Capstone(_) => "Capstone error",
-            Error::DebugInfo => "No Debug-info",
-            Error::LangNotFound => "Language not found",
-            Error::TextSectionNotFound => ".text section not found",
-            Error::DemanglingError(_) => "Demangling error",
-            Error::FormattingError(_) => "Formatting error",
-            Error::Json(_) => "JSON serialization error",
-            Error::GimliError(_) => "Gimli error",
-            Error::ObjectError(_) => "Object error",
-            Error::FunctionNotFound(_) => "Function not found",
-            Error::ProgressStyleError(_) => "Progress style error",
-        }
-    }
-}
-
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

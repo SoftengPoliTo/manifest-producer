@@ -1,23 +1,19 @@
 use std::error::Error as StdError;
 use std::fmt;
 
+/// Custom error type for the `frontend` crate.
+///
+/// This enum encapsulates various error types that may occur in the frontend module:
+/// - `Io`: Errors related to file input/output operations.
+/// - `Json`: Errors encountered during JSON serialization or deserialization.
+/// - `ProgressStyleError`: Errors in styling or formatting progress indicators using the `indicatif` crate.
+/// - `MiniJinjaError`: Errors raised by the `minijinja` templating engine.
 #[derive(Debug)]
 pub enum Error {
     Io(std::io::Error),
     Json(serde_json::Error),
     ProgressStyleError(indicatif::style::TemplateError),
     MiniJinjaError(minijinja::Error),
-}
-
-impl Error {
-    pub fn description(&self) -> &str {
-        match self {
-            Error::Io(_) => "I/O error",
-            Error::Json(_) => "JSON serialization error",
-            Error::ProgressStyleError(_) => "Progress style error",
-            Error::MiniJinjaError(_) => "MiniJinja error",
-        }
-    }
 }
 
 impl fmt::Display for Error {
