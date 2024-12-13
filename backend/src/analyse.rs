@@ -11,14 +11,13 @@ use capstone::{
     Capstone,
 };
 use goblin::elf::Elf;
-use indicatif::{ProgressBar, ProgressStyle};
 
 use std::{collections::HashMap, fs::File};
 
 /// Disassembles and analyses functions in an ELF binary.
 ///
 /// # Overview
-/// Iterates through all detected functions from [`function_detection`], disassembles their machine code,
+/// Iterates through all detected functions from [`crate::detect::function_detection`], disassembles their machine code,
 /// and updates their [`FunctionNode`] structures with details like child functions and disassembly results.
 /// Results are also saved as JSON.
 ///
@@ -32,8 +31,10 @@ use std::{collections::HashMap, fs::File};
 /// # Returns
 /// - A `Result<()>` indicating success or failure.
 ///
-/// # See also
-/// - [`disassemble_function`]: Processes machine code for individual functions.
+/// # Errors
+/// - Possible errors related to the disassembly of machine code.
+#[allow(clippy::implicit_hasher)]
+#[allow(clippy::module_name_repetitions)]
 pub fn analyse_functions(
     elf: &Elf,
     buffer: &[u8],
@@ -45,30 +46,20 @@ pub fn analyse_functions(
         return Ok(());
     }
 
-    let progress_bar = ProgressBar::new(functions.len() as u64);
-    progress_bar.set_style(
-        ProgressStyle::default_bar()
-            .template("[{elapsed_precise}] [{wide_bar:.green}] {percent}%\n{msg}")?
-            .progress_chars("#>-"),
-    );
-
     // I know, it's not elegant. At the moment I have no alternative but to clone, because
     // otherwise rust would not allow me to borrow functions as mutable more than once.
     let mut func_clone = functions.clone();
     for func in functions.values_mut() {
-        progress_bar.set_message(format!("Disassembling function: {}", func.name));
         let (nodes, disassembly) =
             disassemble_function(elf, func, buffer, &mut func_clone, language)?;
         func.children = nodes;
         func.set_disassembly(disassembly);
-        progress_bar.inc(1);
     }
     calculate_invocation_count(functions);
 
-    let file = File::create(format!("{}/json/functions_list.json", output_path))?;
+    let file = File::create(format!("{output_path}/json/functions_list.json"))?;
     serde_json::to_writer_pretty(file, &functions)?;
 
-    progress_bar.finish_with_message("All the functions in the .text section have been analysed.");
     Ok(())
 }
 
@@ -153,11 +144,11 @@ fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
 
 fn init_disassembly<'a>(elf: &'a Elf, api: &'a FunctionNode, buffer: &'a [u8]) -> Result<&'a [u8]> {
     let text_section = find_text_section(elf).ok_or(Error::TextSectionNotFound)?;
-    let text_start_index = text_section.sh_offset as usize;
+    let text_start_index = usize::try_from(text_section.sh_offset).unwrap();
 
     if api.start_addr > text_section.sh_addr {
-        let func_start_offset = (api.start_addr - text_section.sh_addr) as usize;
-        let func_end_offset = (api.end_addr - text_section.sh_addr) as usize;
+        let func_start_offset = usize::try_from(api.start_addr - text_section.sh_addr).unwrap(); // TODO: SISTEMA STA ROBA QUA!
+        let func_end_offset = usize::try_from(api.end_addr - text_section.sh_addr).unwrap(); // TODO: SISTEMA STA ROBA QUA!
         let code_slice =
             &buffer[text_start_index + func_start_offset..text_start_index + func_end_offset];
         Ok(code_slice)

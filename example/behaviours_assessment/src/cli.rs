@@ -39,8 +39,7 @@ pub fn parse_arguments() -> Result<(String, String)> {
     let default_output_path = "./public".to_string();
     let output_path = matches
         .get_one::<String>("output_path")
-        .map(|s| s.to_string())
-        .unwrap_or(default_output_path);
+        .map_or(default_output_path, std::string::ToString::to_string);
 
     Ok((elf_path, output_path))
 }

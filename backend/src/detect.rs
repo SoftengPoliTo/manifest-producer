@@ -21,8 +21,6 @@ use rustc_demangle::demangle;
 /// # Errors
 /// - Returns errors if symbol name demangling fails.
 ///
-/// # See also
-/// - [`demangle_function_name`]: Demangles function names based on the language.
 pub fn function_detection<'a>(
     elf: &'a Elf<'a>,
     language: &str,

@@ -8,16 +8,16 @@ snapshot_kind: text
   "text": "root",
   "children": [
     {
-      "id": 2,
+      "id": 3,
       "text": "child1",
       "children": [
         {
-          "id": 3,
+          "id": 0,
           "text": "child11",
           "children": null
         },
         {
-          "id": 0,
+          "id": 2,
           "text": "child12",
           "children": null
         }

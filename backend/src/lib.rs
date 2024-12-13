@@ -59,7 +59,7 @@ impl<'a> BasicInfo<'a> {
     /// assert_eq!(info.file_name, "example.elf");
     /// assert_eq!(info.file_type, "Executable");
     /// ```
-    ///
+    #[must_use]
     pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
         Self {
             file_name,
@@ -89,6 +89,7 @@ impl<'a> BasicInfo<'a> {
     /// let info = BasicInfo::new("example.elf", "Executable").file_size(1024);
     /// assert_eq!(info.file_size, 1024);
     /// ```
+    #[must_use]
     pub fn file_size(self, file_size: u64) -> Self {
         Self { file_size, ..self }
     }
@@ -100,6 +101,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated architecture.
+    #[must_use]
     pub fn arch(self, arch: &'a str) -> Self {
         Self { arch, ..self }
     }
@@ -111,6 +113,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated PIE status.
+    #[must_use]
     pub fn pie(self, pie: bool) -> Self {
         Self { pie, ..self }
     }
@@ -122,6 +125,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated linking type.
+    #[must_use]
     pub fn static_linking(self, static_linking: &'a str) -> Self {
         Self {
             static_linking,
@@ -136,6 +140,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated language.
+    #[must_use]
     pub fn language(self, language: String) -> Self {
         Self { language, ..self }
     }
@@ -147,6 +152,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated entry point.
+    #[must_use]
     pub fn entry_point(self, entry_point: u64) -> Self {
         Self {
             entry_point,
@@ -161,6 +167,7 @@ impl<'a> BasicInfo<'a> {
     ///
     /// # Returns
     /// A new `BasicInfo` instance with the updated stripped status.
+    #[must_use]
     pub fn stripped(self, stripped: bool) -> Self {
         Self { stripped, ..self }
     }
@@ -219,6 +226,7 @@ impl FunctionNode {
     /// );
     /// assert_eq!(func_node.name, "example_function");
     /// ```
+    #[must_use]
     pub fn new(name: String, start_addr: u64, end_addr: u64) -> Self {
         Self {
             name,

@@ -56,12 +56,13 @@ use serde_json;
 /// let root_nodes = vec!["main".to_string()];
 /// let output_path = "./output";
 ///
-/// if let Err(err) = html_generator(basic_info, &detected_functions, &root_nodes, output_path) {
+/// if let Err(err) = html_generator(&basic_info, &detected_functions, &root_nodes, output_path) {
 ///     eprintln!("HTML generation failed: {}", err);
 /// }
 /// ```
+#[allow(clippy::implicit_hasher)]
 pub fn html_generator(
-    basic_info: BasicInfo,
+    basic_info: &BasicInfo,
     detected_functions: &HashMap<String, FunctionNode>,
     root_nodes: &Vec<String>,
     output_path: &str,
@@ -82,7 +83,7 @@ pub fn html_generator(
 
     for root in root_nodes {
         // Step 1: Identification of subtrees
-        identify_subtrees(root, detected_functions, &mut node_roots)?;
+        identify_subtrees(root, detected_functions, &mut node_roots);
 
         // Step 2: Cleaning nodes with jmp equal to zero and creating subtrees
         build_subtrees(
@@ -90,7 +91,7 @@ pub fn html_generator(
             detected_functions,
             &mut sub_trees,
             &mut id_counter,
-        )?;
+        );
 
         // Step 3: Construction of the tree
         build_tree(
@@ -109,7 +110,7 @@ pub fn html_generator(
 }
 
 pub(crate) fn render_index_page(
-    basic_info: BasicInfo,
+    basic_info: &BasicInfo,
     num_func: usize,
     num_root: usize,
     output_path: &str,
@@ -124,7 +125,7 @@ pub(crate) fn render_index_page(
         num_root => num_root
     })?;
 
-    let mut file = File::create(format!("{}/index.html", output_path))?;
+    let mut file = File::create(format!("{output_path}/index.html"))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
@@ -145,7 +146,7 @@ pub(crate) fn render_functions_page(
         functions => functions
     })?;
 
-    let mut file = File::create(format!("{}/functions_list.html", output_path))?;
+    let mut file = File::create(format!("{output_path}/functions_list.html"))?;
     file.write_all(rendered.as_bytes())?;
 
     Ok(())
@@ -168,7 +169,7 @@ pub(crate) fn render_disassembly_page(
         disassembly => disassembly,
     })?;
 
-    let mut file = File::create(format!("{}/disassembly_view.html", output_path))?;
+    let mut file = File::create(format!("{output_path}/disassembly_view.html"))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
@@ -185,7 +186,7 @@ pub(crate) fn render_root_page(roots: &Vec<String>, output_path: &str) -> Result
         roots => roots,
     })?;
 
-    let mut file = File::create(format!("{}/root_functions.html", output_path))?;
+    let mut file = File::create(format!("{output_path}/root_functions.html"))?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
@@ -207,7 +208,7 @@ pub(crate) fn render_tree_page(
         js_tree => js_tree_json,
     })?;
 
-    let mut file = File::create(format!("{}/call_trees/{}.html", output_path, root_name))?;
+    let mut file = File::create(format!("{output_path}/call_trees/{root_name}.html"))?;
     file.write_all(rendered.as_bytes())?;
 
     Ok(())

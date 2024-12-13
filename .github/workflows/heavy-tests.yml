@@ -1,0 +1,24 @@
+name: heavy-tests
+
+on:
+  schedule:
+    - cron: '0 21 * * 2' # Every Tuesday at 21:00 UTC
+
+jobs:
+################################## BACKEND TESTS ##################################
+
+  ffmpeg-heavy-test:
+    name: Heavy Test for ffmpeg
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: llvm-tools-preview
+
+    - name: Run Backend Integration Test
+      run: cargo test --test heavy_test -- --nocapture --test-threads=1
+          

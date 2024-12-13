@@ -16,26 +16,24 @@ pub enum Error {
     GimliError(gimli::Error),
     ObjectError(object::Error),
     FunctionNotFound(String),
-    ProgressStyleError(indicatif::style::TemplateError),
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::Io(e) => write!(f, "I/O error -> {}", e),
-            Error::InvalidFormat(msg) => write!(f, "Invalid format file -> {}", msg),
+            Error::Io(e) => write!(f, "I/O error -> {e}"),
+            Error::InvalidFormat(msg) => write!(f, "Invalid format file -> {msg}"),
             Error::InvalidFileName => write!(f, "No valid file name"),
-            Error::Capstone(e) => write!(f, "Capstone error -> {}", e),
+            Error::Capstone(e) => write!(f, "Capstone error -> {e}"),
             Error::DebugInfo => write!(f, "No debug info available"),
             Error::LangNotFound => write!(f, "Programming language not found"),
             Error::TextSectionNotFound => write!(f, "'.text' section not found"),
-            Error::DemanglingError(e) => write!(f, "Demangling error -> {}", e),
-            Error::FormattingError(e) => write!(f, "Formatting error -> {}", e),
-            Error::Json(e) => write!(f, "JSON serialization error -> {}", e),
-            Error::GimliError(e) => write!(f, "Gimli error -> {}", e),
-            Error::ObjectError(e) => write!(f, "Object error -> {}", e),
-            Error::FunctionNotFound(func) => write!(f, "Function '{}' not found", func),
-            Error::ProgressStyleError(e) => write!(f, "Progress style error -> {}", e),
+            Error::DemanglingError(e) => write!(f, "Demangling error -> {e}"),
+            Error::FormattingError(e) => write!(f, "Formatting error -> {e}"),
+            Error::Json(e) => write!(f, "JSON serialization error -> {e}"),
+            Error::GimliError(e) => write!(f, "Gimli error -> {e}"),
+            Error::ObjectError(e) => write!(f, "Object error -> {e}"),
+            Error::FunctionNotFound(func) => write!(f, "Function '{func}' not found"),
         }
     }
 }
@@ -51,7 +49,6 @@ impl StdError for Error {
             Error::Json(e) => Some(e),
             Error::GimliError(e) => Some(e),
             Error::ObjectError(e) => Some(e),
-            Error::ProgressStyleError(e) => Some(e),
             _ => None,
         }
     }
@@ -102,12 +99,6 @@ impl From<gimli::Error> for Error {
 impl From<object::Error> for Error {
     fn from(err: object::Error) -> Self {
         Error::ObjectError(err)
-    }
-}
-
-impl From<indicatif::style::TemplateError> for Error {
-    fn from(err: indicatif::style::TemplateError) -> Self {
-        Error::ProgressStyleError(err)
     }
 }
 
