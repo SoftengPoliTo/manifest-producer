@@ -1,0 +1,16 @@
+---
+source: backend/tests/common/mod.rs
+expression: inspect_json
+snapshot_kind: text
+---
+{
+  "arch": "x86_64",
+  "entry_point": 4215296,
+  "file_name": "minimal-fake-firmware-cpp-static",
+  "file_size": 2522496,
+  "file_type": "Executable",
+  "language": "C_plus_plus_14",
+  "pie": false,
+  "static_linking": "Statically linked",
+  "stripped": false
+}

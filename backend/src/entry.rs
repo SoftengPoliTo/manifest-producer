@@ -25,11 +25,11 @@ use crate::{error::Result, FunctionNode};
 /// - A `Result` containing a vector of root function names as `Vec<String>`.
 ///
 /// # Errors
-/// - Propagates errors from [`filtering_function`] used for function selection.
-pub fn find_root_nodes(
+/// - Propagates errors from `filtering` used for function selection.
+pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
     binary_path: &str,
     language: &str,
-    functions: &HashMap<String, FunctionNode>,
+    functions: &HashMap<String, FunctionNode, S>,
 ) -> Result<Vec<String>> {
     let filter = filtering_function(binary_path, language)?;
     let root_nodes: Vec<_> = functions

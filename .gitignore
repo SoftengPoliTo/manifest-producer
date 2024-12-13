@@ -1,6 +1,4 @@
 /target
 Cargo.lock
 *.json
-public/*.html
-public/call_graphs/*.html
-public/json/*.json
+backend/tests/snapshots/heavy_test_c/functions_list.snap

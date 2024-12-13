@@ -1,7 +1,5 @@
-use crate::error::Result;
-use indicatif::{ProgressBar, ProgressStyle};
 use manifest_producer_backend::FunctionNode;
-use std::{collections::HashMap, time::Duration};
+use std::collections::HashMap;
 
 use crate::TreeNode;
 
@@ -9,26 +7,10 @@ pub(crate) fn identify_subtrees(
     root_name: &str,
     forest: &HashMap<String, FunctionNode>,
     node_roots: &mut HashMap<String, FunctionNode>,
-) -> Result<()> {
+) {
     let mut active_stack = Vec::new();
 
-    let progress_bar = ProgressBar::new_spinner();
-    progress_bar.set_style(
-        ProgressStyle::default_spinner()
-            .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
-    );
-    progress_bar.enable_steady_tick(Duration::from_millis(100));
-
-    trace_roots(
-        root_name,
-        forest,
-        node_roots,
-        &mut active_stack,
-        &progress_bar,
-        0,
-    );
-
-    Ok(())
+    trace_roots(root_name, forest, node_roots, &mut active_stack, 0);
 }
 
 fn trace_roots(
@@ -36,11 +18,8 @@ fn trace_roots(
     forest: &HashMap<String, FunctionNode>,
     node_roots: &mut HashMap<String, FunctionNode>,
     active_stack: &mut Vec<String>,
-    progress_bar: &ProgressBar,
     depth: usize,
 ) {
-    progress_bar.set_message(format!("Detection of subtrees (Depth: {})", depth));
-
     if active_stack.contains(&function_name.to_string()) || depth > 10 {
         return;
     }
@@ -60,14 +39,7 @@ fn trace_roots(
 
     if let Some(node) = forest.get(function_name) {
         for child_name in &node.children {
-            trace_roots(
-                child_name,
-                forest,
-                node_roots,
-                active_stack,
-                progress_bar,
-                depth + 1,
-            );
+            trace_roots(child_name, forest, node_roots, active_stack, depth + 1);
         }
     }
 
@@ -79,16 +51,10 @@ pub(crate) fn build_subtrees(
     detected_functions: &HashMap<String, FunctionNode>,
     sub_trees: &mut HashMap<String, TreeNode>,
     id_counter: &mut usize,
-) -> Result<()> {
+) {
     for (name, _node) in node_roots.iter() {
         // Construct the subtree for this node
         let mut active_stack = Vec::new();
-        let progress_bar = ProgressBar::new_spinner();
-        progress_bar.set_style(
-            ProgressStyle::default_spinner()
-                .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
-        );
-        progress_bar.enable_steady_tick(Duration::from_millis(100));
 
         let sub_tree = subtree_generation(
             name,
@@ -96,14 +62,10 @@ pub(crate) fn build_subtrees(
             sub_trees,
             &mut active_stack,
             id_counter,
-            &progress_bar,
             0,
         );
         sub_trees.insert(name.clone(), sub_tree);
-        progress_bar
-            .finish_with_message(format!("New subtrees generated for '{}' function.", name));
     }
-    Ok(())
 }
 
 fn subtree_generation(
@@ -112,11 +74,8 @@ fn subtree_generation(
     sub_trees: &mut HashMap<String, TreeNode>,
     active_stack: &mut Vec<String>,
     id_counter: &mut usize,
-    progress_bar: &ProgressBar,
     depth: usize,
 ) -> TreeNode {
-    progress_bar.set_message("Detecting subtrees...");
-
     if active_stack.contains(&function_name.to_string()) || depth > 10 {
         let node = TreeNode::new(*id_counter, function_name);
         *id_counter += 1;
@@ -140,7 +99,6 @@ fn subtree_generation(
                 sub_trees,
                 active_stack,
                 id_counter,
-                progress_bar,
                 depth + 1,
             );
             node.add_child(child_node);

@@ -40,6 +40,7 @@ use object::{self, elf::SHT_PROGBITS, Object, ObjectSection};
 /// # See also
 /// - [`read_elf`]: Reads the ELF binary into memory.
 /// - [`parse_elf`]: Parses binary data into an `Elf` structure.
+#[allow(clippy::module_name_repetitions)]
 pub fn inspect_binary<'a>(
     elf: &'a Elf<'a>,
     elf_path: &'a str,
@@ -59,7 +60,7 @@ pub fn inspect_binary<'a>(
     let pie = is_pie(elf);
     let language = get_language(elf_path)?;
     let file_size = get_file_size(elf_path)?;
-    let entry_point = get_entry_point(elf)?;
+    let entry_point = get_entry_point(elf);
 
     let info = BasicInfo::new(file_name, file_type)
         .file_size(file_size)
@@ -69,7 +70,7 @@ pub fn inspect_binary<'a>(
         .language(language)
         .entry_point(entry_point);
 
-    let file = File::create(format!("{}/json/basic_info.json", output_path))?;
+    let file = File::create(format!("{output_path}/json/basic_info.json"))?;
     serde_json::to_writer_pretty(file, &info)?;
 
     Ok(info)
@@ -142,8 +143,8 @@ fn get_file_size(elf_path: &str) -> Result<u64> {
     Ok(metadata.len())
 }
 
-fn get_entry_point(elf: &Elf) -> Result<u64> {
-    Ok(elf.header.e_entry)
+fn get_entry_point(elf: &Elf) -> u64 {
+    elf.header.e_entry
 }
 
 fn get_name(elf_path: &str) -> Result<&str> {
@@ -243,16 +244,19 @@ fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian)
 
         while let Some((_, entry)) = entries.next_dfs()? {
             if let Some(language_attr) = entry.attr_value(gimli::DW_AT_language)? {
-                let language = match language_attr {
-                    gimli::AttributeValue::Language(language) => language,
-                    _ => continue,
+                // let language = match language_attr {
+                //     gimli::AttributeValue::Language(language) => language,
+                //     _ => continue,
+                // };
+                let gimli::AttributeValue::Language(language) = language_attr else {
+                    continue;
                 };
                 increment_language_count(&mut language_counts, &language.to_string());
             }
         }
     }
     let mut max_count = 0;
-    let mut max_language = "".to_string();
+    let mut max_language = String::new();
 
     // The presence of C99 in the Rust program is due to the musl library, used to statically compile the binary
     if language_counts.contains_key("DW_LANG_C99") && language_counts.contains_key("DW_LANG_Rust") {

@@ -1,0 +1,8 @@
+---
+source: backend/tests/common/mod.rs
+expression: root_nodes_json
+snapshot_kind: text
+---
+[
+  "main"
+]

@@ -151,7 +151,7 @@ For further details on the licence, see the [LICENSE](LICENSE) file in the repos
 For questions, issues, or contributions, feel free to reach out:
 
 - **Project Lead**: Giuseppe Marco Bianco  
-  - Email: [giuseppemarco.bianco@ibero.it](mailto:giuseppemarco.bianco@libero.it)
+  - Email: [giuseppemarco.bianco@libero.it](mailto:giuseppemarco.bianco@libero.it)
   - GitHub: [giusbianco](https://github.com/giusbianco)
 - **Repository**: [manifest-producer on GitHub](https://github.com/SoftengPoliTo/manifest-producer)
 
@@ -159,13 +159,13 @@ Contributions are welcome! If you find a bug, have suggestions, or would like to
 
 
 <!-- Links -->
-[actions]: https://github.com/SoftengPoliTo/prin-task-2.2/actions
-[codecov]: https://app.codecov.io/gh/SoftengPoliTo/prin-task-2.2
+[actions]: https://github.com/SoftengPoliTo/manifest-producer/actions
+[codecov]: https://app.codecov.io/gh/SoftengPoliTo/manifest-producer
 [license]: LICENSE-MIT
-[status]: https://deps.rs/repo/github/SoftengPoliTo/prin-task-2.2
+[status]: https://deps.rs/repo/github/SoftengPoliTo/manifest-producer
 
 <!-- Badges -->
-[actions badge]: https://github.com/SoftengPoliTo/prin-task-2.2/workflows/manifest-producer/badge.svg
-[codecov badge]: https://codecov.io/gh/SoftengPoliTo/prin-task-2.2/branch/main/graph/badge.svg
+[actions badge]: https://github.com/SoftengPoliTo/manifest-producer/workflows/manifest-producer/badge.svg
+[codecov badge]: https://codecov.io/gh/SoftengPoliTo/manifest-producer/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[status badge]: https://deps.rs/repo/github/SoftengPoliTo/prin-task-2.2/status.svg
+[status badge]: https://deps.rs/repo/github/SoftengPoliTo/manifest-producer/status.svg

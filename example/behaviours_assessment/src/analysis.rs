@@ -6,6 +6,9 @@ use manifest_producer_backend::{
 };
 use manifest_producer_frontend::html_generator::html_generator;
 
+use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
+
 use crate::error::Result;
 
 /// Performs a full analysis on a given ELF binary and generates output results.
@@ -32,14 +35,25 @@ use crate::error::Result;
 /// - Issues reading the ELF file (e.g., file not found or inaccessible).
 /// - Parsing failures due to invalid or corrupted ELF binaries.
 /// - Analysis errors in downstream function calls.
+#[allow(clippy::module_name_repetitions)]
 pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
     let buffer = read_elf(elf_path)?;
     let elf = parse_elf(&buffer)?;
 
+    let progress_bar = ProgressBar::new_spinner();
+    progress_bar.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
+    );
+    progress_bar.enable_steady_tick(Duration::from_millis(100));
+
+    progress_bar.set_message("Inspection of the binary".to_string());
     let info = inspect_binary(&elf, elf_path, output_path)?;
 
+    progress_bar.set_message("Detection of the functions".to_string());
     let mut detected_functions = function_detection(&elf, &info.language)?;
 
+    progress_bar.set_message("Analysis of the functions".to_string());
     analyse_functions(
         &elf,
         &buffer,
@@ -48,9 +62,14 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
         output_path,
     )?;
 
+    progress_bar.set_message("Finding possible root nodes".to_string());
     let root_nodes = find_root_nodes(elf_path, &info.language, &detected_functions)?;
 
-    html_generator(info, &detected_functions, &root_nodes, output_path)?;
+    progress_bar.set_message("Planting tree(s)".to_string());
+    html_generator(&info, &detected_functions, &root_nodes, output_path)?;
 
+    progress_bar.finish_with_message(format!(
+        "manifest-producer completed the work succesfully! Results are exported in {output_path}"
+    ));
     Ok(())
 }

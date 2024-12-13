@@ -42,6 +42,7 @@ impl TreeNode {
     ///
     /// # Returns
     /// A `TreeNode` instance.
+    #[must_use]
     pub fn new(id: usize, text: &str) -> Self {
         TreeNode {
             id,
