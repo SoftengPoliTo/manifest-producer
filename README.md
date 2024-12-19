@@ -3,7 +3,6 @@
 [![Actions Status][actions badge]][actions]
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
-[![dependency status][status badge]][status]
 
 ## Index
 - [Description](#description)
@@ -47,6 +46,7 @@ manifest-producer/
 │        ├── analyse.rs 
 │        ├── entry.rs 
 │        ├── inspect.rs 
+│        ├── digest.rs
 │        ├── detect.rs
 │        └── error.rs
 └── frontend/
@@ -157,15 +157,12 @@ For questions, issues, or contributions, feel free to reach out:
 
 Contributions are welcome! If you find a bug, have suggestions, or would like to collaborate, please open an issue or submit a pull request.
 
-
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/manifest-producer/actions
 [codecov]: https://app.codecov.io/gh/SoftengPoliTo/manifest-producer
 [license]: LICENSE-MIT
-[status]: https://deps.rs/repo/github/SoftengPoliTo/manifest-producer
 
 <!-- Badges -->
 [actions badge]: https://github.com/SoftengPoliTo/manifest-producer/workflows/manifest-producer/badge.svg
 [codecov badge]: https://codecov.io/gh/SoftengPoliTo/manifest-producer/branch/main/graph/badge.svg
 [license badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[status badge]: https://deps.rs/repo/github/SoftengPoliTo/manifest-producer/status.svg

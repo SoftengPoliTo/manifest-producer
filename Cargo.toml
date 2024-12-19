@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "backend",
-    "frontend",
-    "example/behaviours_assessment",
+    "crates/backend",
+    "crates/frontend",
+    "examples/behaviours_assessment",
 ]
 resolver = "2"

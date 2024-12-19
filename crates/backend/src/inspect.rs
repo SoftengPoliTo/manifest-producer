@@ -244,10 +244,6 @@ fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian)
 
         while let Some((_, entry)) = entries.next_dfs()? {
             if let Some(language_attr) = entry.attr_value(gimli::DW_AT_language)? {
-                // let language = match language_attr {
-                //     gimli::AttributeValue::Language(language) => language,
-                //     _ => continue,
-                // };
                 let gimli::AttributeValue::Language(language) = language_attr else {
                     continue;
                 };

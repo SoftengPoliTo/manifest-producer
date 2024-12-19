@@ -1,6 +1,7 @@
 use manifest_producer_backend::{
     analyse::analyse_functions,
     detect::function_detection,
+    digest::{calculate_digest, compare_digests},
     entry::find_root_nodes,
     inspect::{inspect_binary, parse_elf, read_elf},
 };
@@ -46,6 +47,14 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
             .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
     );
     progress_bar.enable_steady_tick(Duration::from_millis(100));
+
+    progress_bar.set_message("SHA256 Digest Calculation".to_string());
+    let digest = calculate_digest(&buffer);
+    progress_bar.set_message("Compare Digests".to_string());
+    let _match_digest = compare_digests(
+        &digest,
+        "d54fcaf7f5c015872eacc91a054f9f9c13e34899f52ac38e3d56a08aeee25d92",
+    );
 
     progress_bar.set_message("Inspection of the binary".to_string());
     let info = inspect_binary(&elf, elf_path, output_path)?;
