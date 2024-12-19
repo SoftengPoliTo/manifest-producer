@@ -1,5 +1,6 @@
 pub mod analyse;
 pub mod detect;
+pub mod digest;
 pub mod entry;
 pub mod error;
 pub mod inspect;

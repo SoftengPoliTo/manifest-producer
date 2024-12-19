@@ -1,4 +1,4 @@
 /target
 Cargo.lock
 *.json
-backend/tests/snapshots/heavy_test_c/functions_list.snap
+crates/backend/tests/snapshots/heavy_test_c/functions_list.snap
