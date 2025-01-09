@@ -3,7 +3,11 @@ use std::collections::HashMap;
 use crate::{error::Result, FunctionNode};
 use cpp_demangle::{DemangleOptions, Symbol};
 use goblin::{self, elf::Elf};
+#[cfg(feature = "progress_bar")]
+use indicatif::{ProgressBar, ProgressStyle};
 use rustc_demangle::demangle;
+#[cfg(feature = "progress_bar")]
+use std::time::Duration;
 
 /// Detects functions in an ELF binary from its symbol table.
 ///
@@ -21,11 +25,26 @@ use rustc_demangle::demangle;
 /// # Errors
 /// - Returns errors if symbol name demangling fails.
 ///
+/// # Feature Flags
+/// - `progress_bar`: If enabled, displays a spinner indicating the function detection.
+///
 pub fn function_detection<'a>(
     elf: &'a Elf<'a>,
     language: &str,
 ) -> Result<HashMap<String, FunctionNode>> {
     let mut func_found = HashMap::new();
+
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(
+            ProgressStyle::default_spinner()
+                .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
+        );
+        pb.enable_steady_tick(Duration::from_millis(100));
+        pb.set_message("Detection of the functions".to_string());
+        pb
+    };
 
     for symbol in &elf.syms {
         if symbol.st_type() == goblin::elf::sym::STT_FUNC && symbol.st_shndx != 0 {
@@ -42,6 +61,12 @@ pub fn function_detection<'a>(
             }
         }
     }
+
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message(format!(
+        "Detection completed! Found {} functions",
+        func_found.len()
+    ));
 
     Ok(func_found)
 }

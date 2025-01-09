@@ -19,6 +19,12 @@ cpp_demangle = "0.4.3"
 serde_json = "1.0.132"
 serde = { version = "1.0.213", features = ["derive"] }
 sha2 = "0.10.8"
+regex = "1.11.1"
+indicatif = { version = "0.17.8", optional = true, default-features = false }
+
+[features]
+default = []
+progress_bar = ["indicatif"]
 
 [dev-dependencies]
 insta = "1.41.1"

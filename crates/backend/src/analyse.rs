@@ -3,6 +3,7 @@ use crate::{
     entry::calculate_invocation_count,
     error::{Error, Result},
     inspect::{find_text_section, get_name_addr},
+    syscall::detect_syscalls,
     FunctionNode,
 };
 
@@ -33,6 +34,10 @@ use std::{collections::HashMap, fs::File};
 ///
 /// # Errors
 /// - Possible errors related to the disassembly of machine code.
+///
+/// # Feature Flags
+/// - `progress_bar`: If enabled, displays a progress bar indicating the progress of the disassembly code.
+///
 #[allow(clippy::implicit_hasher)]
 #[allow(clippy::module_name_repetitions)]
 pub fn analyse_functions(
@@ -46,16 +51,36 @@ pub fn analyse_functions(
         return Ok(());
     }
 
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = indicatif::ProgressBar::new(functions.len() as u64);
+        pb.set_message("Machine code disassembly:".to_string());
+        pb.set_style(
+            indicatif::ProgressStyle::default_bar()
+                .template("{msg}\n{wide_bar} {pos}/{len} [{elapsed_precise}]")?,
+        );
+        pb
+    };
+
     // I know, it's not elegant. At the moment I have no alternative but to clone, because
     // otherwise rust would not allow me to borrow functions as mutable more than once.
     let mut func_clone = functions.clone();
     for func in functions.values_mut() {
-        let (nodes, disassembly) =
+        let (nodes, disassembly, flag) =
             disassemble_function(elf, func, buffer, &mut func_clone, language)?;
         func.children = nodes;
         func.set_disassembly(disassembly);
+        func.syscall = flag;
+
+        #[cfg(feature = "progress_bar")]
+        pb.inc(1);
     }
+
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message("Disassembly completed!");
+
     calculate_invocation_count(functions);
+    detect_syscalls(functions)?;
 
     let file = File::create(format!("{output_path}/json/functions_list.json"))?;
     serde_json::to_writer_pretty(file, &functions)?;
@@ -69,7 +94,7 @@ fn disassemble_function(
     buffer: &[u8],
     functions: &mut HashMap<String, FunctionNode>,
     language: &str,
-) -> Result<(Vec<String>, String)> {
+) -> Result<(Vec<String>, String, bool)> {
     let start_address = func.start_addr;
     analyse_code_slice(elf, buffer, func, start_address, functions, language)
 }
@@ -81,16 +106,17 @@ fn analyse_code_slice(
     start_address: u64,
     functions: &mut HashMap<String, FunctionNode>,
     language: &str,
-) -> Result<(Vec<String>, String)> {
+) -> Result<(Vec<String>, String, bool)> {
     let cs = cs_init()?;
     let code_slice = init_disassembly(elf, function, buffer)?;
 
     let mut nodes = Vec::new();
     let mut disassembly_output = String::new();
+    let mut flag = false;
 
     // Skip if there is no code to disassemble
     if code_slice.is_empty() {
-        return Ok((nodes, String::new()));
+        return Ok((nodes, String::new(), flag));
     }
 
     let instruction = cs.disasm_all(code_slice, start_address)?;
@@ -120,6 +146,13 @@ fn analyse_code_slice(
                     op_str
                 ));
             }
+        } else if insn_name == "syscall" {
+            flag = true;
+            disassembly_output.push_str(&format!(
+                "0x{:x}:\t{}\t\t(System Call Invoked)\n",
+                insn.address(),
+                insn_name
+            ));
         } else {
             disassembly_output.push_str(&format!(
                 "0x{:x}:\t{}\t{}\n",
@@ -130,7 +163,7 @@ fn analyse_code_slice(
         }
     }
 
-    Ok((nodes, disassembly_output))
+    Ok((nodes, disassembly_output, flag))
 }
 
 fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
@@ -144,11 +177,11 @@ fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
 
 fn init_disassembly<'a>(elf: &'a Elf, api: &'a FunctionNode, buffer: &'a [u8]) -> Result<&'a [u8]> {
     let text_section = find_text_section(elf).ok_or(Error::TextSectionNotFound)?;
-    let text_start_index = usize::try_from(text_section.sh_offset).unwrap();
+    let text_start_index = usize::try_from(text_section.sh_offset).unwrap(); // TODO: Try to remove unwrap()!
 
     if api.start_addr > text_section.sh_addr {
-        let func_start_offset = usize::try_from(api.start_addr - text_section.sh_addr).unwrap(); // TODO: SISTEMA STA ROBA QUA!
-        let func_end_offset = usize::try_from(api.end_addr - text_section.sh_addr).unwrap(); // TODO: SISTEMA STA ROBA QUA!
+        let func_start_offset = usize::try_from(api.start_addr - text_section.sh_addr).unwrap(); // TODO: Try to remove unwrap()!
+        let func_end_offset = usize::try_from(api.end_addr - text_section.sh_addr).unwrap(); // TODO: Try to remove unwrap()!
         let code_slice =
             &buffer[text_start_index + func_start_offset..text_start_index + func_end_offset];
         Ok(code_slice)

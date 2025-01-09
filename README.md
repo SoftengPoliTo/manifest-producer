@@ -74,7 +74,7 @@ manifest-producer/
 
 ## Use
 
-**manifest-producer** is designed primarily as a library for the analysis of ELF binaries, but also includes a practical example of use.
+**manifest-producer** is designed primarily as a library for the static reverse engineering of ELF binaries, but also includes a practical example of use.
 
 ### Requirements
 

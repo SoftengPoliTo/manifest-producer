@@ -16,6 +16,9 @@ pub enum Error {
     GimliError(gimli::Error),
     ObjectError(object::Error),
     FunctionNotFound(String),
+    InvalidRegex(String),
+    #[cfg(feature = "progress_bar")]
+    ProgressStyleError(indicatif::style::TemplateError),
 }
 
 impl fmt::Display for Error {
@@ -34,6 +37,9 @@ impl fmt::Display for Error {
             Error::GimliError(e) => write!(f, "Gimli error -> {e}"),
             Error::ObjectError(e) => write!(f, "Object error -> {e}"),
             Error::FunctionNotFound(func) => write!(f, "Function '{func}' not found"),
+            Error::InvalidRegex(regex) => write!(f, "Invalid regex '{regex}'"),
+            #[cfg(feature = "progress_bar")]
+            Error::ProgressStyleError(e) => write!(f, "Progress style error -> {e}"),
         }
     }
 }
@@ -49,6 +55,8 @@ impl StdError for Error {
             Error::Json(e) => Some(e),
             Error::GimliError(e) => Some(e),
             Error::ObjectError(e) => Some(e),
+            #[cfg(feature = "progress_bar")]
+            Error::ProgressStyleError(e) => Some(e),
             _ => None,
         }
     }
@@ -99,6 +107,19 @@ impl From<gimli::Error> for Error {
 impl From<object::Error> for Error {
     fn from(err: object::Error) -> Self {
         Error::ObjectError(err)
+    }
+}
+
+impl From<regex::Error> for Error {
+    fn from(err: regex::Error) -> Self {
+        Error::InvalidRegex(err.to_string())
+    }
+}
+
+#[cfg(feature = "progress_bar")]
+impl From<indicatif::style::TemplateError> for Error {
+    fn from(err: indicatif::style::TemplateError) -> Self {
+        Error::ProgressStyleError(err)
     }
 }
 

@@ -12,7 +12,7 @@ keywords = ["Behavioural assessment", "HTML", "JavaScript", "CallTree"]
 serde_json = "1.0.132"
 serde = { version = "1.0.213", features = ["derive"] }
 minijinja = "2.4.0"
-manifest_producer-backend = { path = "../backend" }
+manifest_producer-backend = { path = "../backend", features = ["default"]}
 
 [dev-dependencies]
 insta = "1.41.1"
