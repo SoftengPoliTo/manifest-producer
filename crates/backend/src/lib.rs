@@ -4,6 +4,7 @@ pub mod digest;
 pub mod entry;
 pub mod error;
 pub mod inspect;
+pub mod syscall;
 
 /// Represents the basic metadata extracted from an ELF binary.
 ///
@@ -191,6 +192,7 @@ impl<'a> BasicInfo<'a> {
 /// - `jmp`:  The number of times the function is identified for the construction of its subtree.
 /// - `children`: A list of function names that are called by this function.
 /// - `disassembly`: An optional field containing the disassembled machine code for the function.
+/// - `syscall`: Field set to false by default and indicating functions with system call invocations.
 ///
 /// # See also
 /// - [`analyse_functions`](crate::analyse::analyse_functions): Uses `FunctionNode` to build the call graph.
@@ -204,6 +206,8 @@ pub struct FunctionNode {
     pub jmp: usize,
     pub children: Vec<String>,
     pub disassembly: Option<String>,
+    pub syscall: bool,
+    pub syscall_info: Option<SyscallInfo>,
 }
 impl FunctionNode {
     /// Creates a new `FunctionNode`.
@@ -237,6 +241,8 @@ impl FunctionNode {
             jmp: 0,
             children: Vec::new(),
             disassembly: None,
+            syscall: false,
+            syscall_info: None,
         }
     }
 
@@ -260,4 +266,64 @@ impl FunctionNode {
     pub fn set_disassembly(&mut self, disassembly: String) {
         self.disassembly = Some(disassembly);
     }
+
+    /// Sets the system call information for the function.
+    ///
+    /// # Arguments
+    /// - `syscall_info`: A `SyscallInfo` object containing information about the system call.
+    ///
+    /// # Example
+    /// ```
+    /// use manifest_producer_backend::{FunctionNode, SyscallInfo};
+    ///
+    /// let syscall_info = SyscallInfo {
+    ///    id: 0,
+    ///   name: "read".to_string(),
+    ///  manpage: "https://manpages.debian.org/unstable/manpages-dev/read.2.en.html".to_string(),
+    /// };
+    ///
+    /// let mut func_node = FunctionNode::new(
+    ///    "example_function".to_string(),
+    ///   0x1000,
+    /// 0x2000,
+    /// );
+    /// func_node.set_syscall_info(syscall_info);
+    /// assert!(func_node.syscall_info.is_some());
+    /// ```
+    pub fn set_syscall_info(&mut self, syscall_info: SyscallInfo) {
+        self.syscall_info = Some(syscall_info);
+    }
+}
+
+/// Represents information about a Linux system call.
+///
+/// # Overview
+/// `SyscallInfo` provides metadata for a specific system call in the Linux kernel,
+/// including its unique identifier (`id`), human-readable name (`name`), and a reference to
+/// its manual page (`manpage`).
+///
+/// This structure is designed to support reverse engineering and static analysis of binaries
+/// by offering an efficient way to correlate system call numbers with their names and documentation.
+///
+/// # Fields
+/// - `id`: The unique numeric identifier of the system call.
+/// - `name`: The human-readable name of the system call (e.g., `"read"`, `"write"`).
+/// - `manpage`: A URL to the official Linux man page for the system call.
+///
+/// # Example
+/// ```
+/// use manifest_producer_backend::SyscallInfo;
+///
+/// let syscall = SyscallInfo {
+///     id: 0,
+///     name: "read".to_string(),
+///     manpage: "https://manpages.debian.org/unstable/manpages-dev/read.2.en.html".to_string(),
+/// };
+/// println!("Syscall {} - {}: {}", syscall.id, syscall.name, syscall.manpage);
+/// ```
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SyscallInfo {
+    pub id: u64,
+    pub name: String,
+    pub manpage: String,
 }

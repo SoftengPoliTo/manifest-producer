@@ -16,8 +16,12 @@ use goblin::{
     self,
     elf::{Elf, SectionHeader},
 };
+#[cfg(feature = "progress_bar")]
+use indicatif::{ProgressBar, ProgressStyle};
 use memmap2::{self};
 use object::{self, elf::SHT_PROGBITS, Object, ObjectSection};
+#[cfg(feature = "progress_bar")]
+use std::time::Duration;
 
 /// Analyses an ELF binary file, extracts basic information, and saves it in JSON format and in a `BasicInfo` structure.
 ///
@@ -37,15 +41,31 @@ use object::{self, elf::SHT_PROGBITS, Object, ObjectSection};
 /// - Returns [`Error::DebugInfo`] if the ELF is stripped of debug information.
 /// - Propagates errors related to file I/O or parsing.
 ///
+/// # Feature Flags
+/// - `progress_bar`: If enabled, displays a spinner indicating the binary inspection.
+///
 /// # See also
 /// - [`read_elf`]: Reads the ELF binary into memory.
 /// - [`parse_elf`]: Parses binary data into an `Elf` structure.
+///
 #[allow(clippy::module_name_repetitions)]
 pub fn inspect_binary<'a>(
     elf: &'a Elf<'a>,
     elf_path: &'a str,
     output_path: &'a str,
 ) -> Result<BasicInfo<'a>> {
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(
+            ProgressStyle::default_spinner()
+                .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
+        );
+        pb.enable_steady_tick(Duration::from_millis(100));
+        pb.set_message("Inspection of the binary".to_string());
+        pb
+    };
+
     if is_stripped(elf) {
         return Err(Error::DebugInfo);
     }
@@ -72,6 +92,11 @@ pub fn inspect_binary<'a>(
 
     let file = File::create(format!("{output_path}/json/basic_info.json"))?;
     serde_json::to_writer_pretty(file, &info)?;
+
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message(format!(
+        "Inspection completed! basic_info.json saved in {output_path}/json"
+    ));
 
     Ok(info)
 }

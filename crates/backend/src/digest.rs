@@ -14,6 +14,7 @@ use sha2::{Digest, Sha256};
 ///
 /// # Errors
 /// - This function does not produce any errors directly.
+///
 #[allow(clippy::module_name_repetitions)]
 #[must_use]
 pub fn calculate_digest(buffer: &[u8]) -> String {
@@ -38,6 +39,7 @@ pub fn calculate_digest(buffer: &[u8]) -> String {
 ///
 /// # Errors
 /// - This function does not produce any errors since it's a direct string comparison.
+///
 #[allow(clippy::module_name_repetitions)]
 #[must_use]
 pub fn compare_digests(digest1: &str, digest2: &str) -> bool {

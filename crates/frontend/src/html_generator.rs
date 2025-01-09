@@ -30,7 +30,7 @@ use serde_json;
 /// - `output_path`: The directory where the HTML files should be saved.
 ///
 /// # Workflow
-/// 1. Renders the main HTML pages using helper functions like [`render_index_page`].
+/// 1. Renders the main HTML pages using helper functions.
 /// 2. Iterates over `root_nodes` to build and render subtrees and visual trees.
 /// 3. Cleans temporary structures (`node_roots` and `sub_trees`) after processing each root.
 ///

@@ -1,14 +1,11 @@
 use manifest_producer_backend::{
     analyse::analyse_functions,
     detect::function_detection,
-    digest::{calculate_digest, compare_digests},
+    // digest::{calculate_digest, compare_digests},
     entry::find_root_nodes,
     inspect::{inspect_binary, parse_elf, read_elf},
 };
 use manifest_producer_frontend::html_generator::html_generator;
-
-use indicatif::{ProgressBar, ProgressStyle};
-use std::time::Duration;
 
 use crate::error::Result;
 
@@ -41,28 +38,14 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
     let buffer = read_elf(elf_path)?;
     let elf = parse_elf(&buffer)?;
 
-    let progress_bar = ProgressBar::new_spinner();
-    progress_bar.set_style(
-        ProgressStyle::default_spinner()
-            .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
-    );
-    progress_bar.enable_steady_tick(Duration::from_millis(100));
+    // let digest = calculate_digest(&buffer);
+    // let _match_digest = compare_digests(
+    //     &digest,
+    //     "d54fcaf7f5c015872eacc91a054f9f9c13e34899f52ac38e3d56a08aeee25d92", // Inserted by the developer
+    // );
 
-    progress_bar.set_message("SHA256 Digest Calculation".to_string());
-    let digest = calculate_digest(&buffer);
-    progress_bar.set_message("Compare Digests".to_string());
-    let _match_digest = compare_digests(
-        &digest,
-        "d54fcaf7f5c015872eacc91a054f9f9c13e34899f52ac38e3d56a08aeee25d92",
-    );
-
-    progress_bar.set_message("Inspection of the binary".to_string());
     let info = inspect_binary(&elf, elf_path, output_path)?;
-
-    progress_bar.set_message("Detection of the functions".to_string());
     let mut detected_functions = function_detection(&elf, &info.language)?;
-
-    progress_bar.set_message("Analysis of the functions".to_string());
     analyse_functions(
         &elf,
         &buffer,
@@ -70,15 +53,8 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
         &info.language,
         output_path,
     )?;
-
-    progress_bar.set_message("Finding possible root nodes".to_string());
     let root_nodes = find_root_nodes(elf_path, &info.language, &detected_functions)?;
-
-    progress_bar.set_message("Planting tree(s)".to_string());
     html_generator(&info, &detected_functions, &root_nodes, output_path)?;
 
-    progress_bar.finish_with_message(format!(
-        "manifest-producer completed the work succesfully! Results are exported in {output_path}"
-    ));
     Ok(())
 }

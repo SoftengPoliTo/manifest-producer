@@ -9,7 +9,6 @@ readme = "README.md"
 keywords = ["Behaviour assessment", "IoT Firmware", "ELF binaries", "Rust"]
 
 [dependencies]
-manifest_producer-backend = { path = "../../crates/backend" }
+manifest_producer-backend = { path = "../../crates/backend"}
 manifest_producer-frontend = { path = "../../crates/frontend" }
 clap = { version = "^4.4", features = ["derive"] }
-indicatif = "0.17.8"

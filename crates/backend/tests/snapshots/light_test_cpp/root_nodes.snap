@@ -1,5 +1,5 @@
 ---
-source: backend/tests/common/mod.rs
+source: crates/backend/tests/common/mod.rs
 expression: root_nodes_json
 snapshot_kind: text
 ---

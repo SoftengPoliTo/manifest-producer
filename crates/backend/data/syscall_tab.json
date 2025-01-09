@@ -1,0 +1,1837 @@
+[
+    {
+        "id": 0,
+        "name": "read",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/read.2.en.html"
+    },
+    {
+        "id": 1,
+        "name": "write",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/write.2.en.html"
+    },
+    {
+        "id": 2,
+        "name": "open",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/open.2.en.html"
+    },
+    {
+        "id": 3,
+        "name": "close",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/close.2.en.html"
+    },
+    {
+        "id": 4,
+        "name": "stat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/stat.2.en.html"
+    },
+    {
+        "id": 5,
+        "name": "fstat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fstat.2.en.html"
+    },
+    {
+        "id": 6,
+        "name": "lstat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lstat.2.en.html"
+    },
+    {
+        "id": 7,
+        "name": "poll",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/poll.2.en.html"
+    },
+    {
+        "id": 8,
+        "name": "lseek",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lseek.2.en.html"
+    },
+    {
+        "id": 9,
+        "name": "mmap",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mmap.2.en.html"
+    },
+    {
+        "id": 10,
+        "name": "mprotect",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mprotect.2.en.html"
+    },
+    {
+        "id": 11,
+        "name": "munmap",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/munmap.2.en.html"
+    },
+    {
+        "id": 12,
+        "name": "brk",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/brk.2.en.html"
+    },
+    {
+        "id": 13,
+        "name": "rt_sigaction",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigaction.2.en.html"
+    },
+    {
+        "id": 14,
+        "name": "rt_sigprocmask",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigprocmask.2.en.html"
+    },
+    {
+        "id": 15,
+        "name": "rt_sigreturn",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigreturn.2.en.html"
+    },
+    {
+        "id": 16,
+        "name": "ioctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ioctl.2.en.html"
+    },
+    {
+        "id": 17,
+        "name": "pread64",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pread64.2.en.html"
+    },
+    {
+        "id": 18,
+        "name": "pwrite64",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pwrite64.2.en.html"
+    },
+    {
+        "id": 19,
+        "name": "readv",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/readv.2.en.html"
+    },
+    {
+        "id": 20,
+        "name": "writev",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/writev.2.en.html"
+    },
+    {
+        "id": 21,
+        "name": "access",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/access.2.en.html"
+    },
+    {
+        "id": 22,
+        "name": "pipe",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pipe.2.en.html"
+    },
+    {
+        "id": 23,
+        "name": "select",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/select.2.en.html"
+    },
+    {
+        "id": 24,
+        "name": "sched_yield",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_yield.2.en.html"
+    },
+    {
+        "id": 25,
+        "name": "mremap",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mremap.2.en.html"
+    },
+    {
+        "id": 26,
+        "name": "msync",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/msync.2.en.html"
+    },
+    {
+        "id": 27,
+        "name": "mincore",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mincore.2.en.html"
+    },
+    {
+        "id": 28,
+        "name": "madvise",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/madvise.2.en.html"
+    },
+    {
+        "id": 29,
+        "name": "shmget",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/shmget.2.en.html"
+    },
+    {
+        "id": 30,
+        "name": "shmat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/shmat.2.en.html"
+    },
+    {
+        "id": 31,
+        "name": "shmctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/shmctl.2.en.html"
+    },
+    {
+        "id": 32,
+        "name": "dup",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/dup.2.en.html"
+    },
+    {
+        "id": 33,
+        "name": "dup2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/dup2.2.en.html"
+    },
+    {
+        "id": 34,
+        "name": "pause",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pause.2.en.html"
+    },
+    {
+        "id": 35,
+        "name": "nanosleep",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/nanosleep.2.en.html"
+    },
+    {
+        "id": 36,
+        "name": "getitimer",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getitimer.2.en.html"
+    },
+    {
+        "id": 37,
+        "name": "alarm",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/alarm.2.en.html"
+    },
+    {
+        "id": 38,
+        "name": "setitimer",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setitimer.2.en.html"
+    },
+    {
+        "id": 39,
+        "name": "getpid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpid.2.en.html"
+    },
+    {
+        "id": 40,
+        "name": "sendfile",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sendfile.2.en.html"
+    },
+    {
+        "id": 41,
+        "name": "socket",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/socket.2.en.html"
+    },
+    {
+        "id": 42,
+        "name": "connect",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/connect.2.en.html"
+    },
+    {
+        "id": 43,
+        "name": "accept",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/accept.2.en.html"
+    },
+    {
+        "id": 44,
+        "name": "sendto",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sendto.2.en.html"
+    },
+    {
+        "id": 45,
+        "name": "recvfrom",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/recvfrom.2.en.html"
+    },
+    {
+        "id": 46,
+        "name": "sendmsq",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sendmsq.2.en.html"
+    },
+    {
+        "id": 48,
+        "name": "recvmsq",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/recvmsq.2.en.html"
+    },
+    {
+        "id": 49,
+        "name": "shutdown",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/shutdown.2.en.html"
+    },
+    {
+        "id": 50,
+        "name": "bind",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/bind.2.en.html"
+    },
+    {
+        "id": 51,
+        "name": "getsockname",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getsockname.2.en.html"
+    },
+    {
+        "id": 52,
+        "name": "getpeername",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpeername.2.en.html"
+    },
+    {
+        "id": 53,
+        "name": "socketpair",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/socketpair.2.en.html"
+    },
+    {
+        "id": 54,
+        "name": "setsockopt",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setsockopt.2.en.html"
+    },
+    {
+        "id": 55,
+        "name": "getsockopt",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getsockopt.2.en.html"
+    },
+    {
+        "id": 56,
+        "name": "clone",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clone.2.en.html"
+    },
+    {
+        "id": 57,
+        "name": "fork",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fork.2.en.html"
+    },
+    {
+        "id": 58,
+        "name": "vfork",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/vfork.2.en.html"
+    },
+    {
+        "id": 59,
+        "name": "execve",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/execve.2.en.html"
+    },
+    {
+        "id": 60,
+        "name": "exit",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/exit.2.en.html"
+    },
+    {
+        "id": 61,
+        "name": "wait4",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/wait4.2.en.html"
+    },
+    {
+        "id": 62,
+        "name": "kill",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/kill.2.en.html"
+    },
+    {
+        "id": 63,
+        "name": "uname",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/uname.2.en.html"
+    },
+    {
+        "id": 64,
+        "name": "semget",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/semget.2.en.html"
+    },
+    {
+        "id": 65,
+        "name": "semop",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/semop.2.en.html"
+    },
+    {
+        "id": 66,
+        "name": "semctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/semctl.2.en.html"
+    },
+    {
+        "id": 67,
+        "name": "shmdt",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/shmdt.2.en.html"
+    },
+    {
+        "id": 68,
+        "name": "msgget",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/msgget.2.en.html"
+    },
+    {
+        "id": 69,
+        "name": "msgsnd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/msgsnd.2.en.html"
+    },
+    {
+        "id": 70,
+        "name": "msgrcv",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/msgrcv.2.en.html"
+    },
+    {
+        "id": 71,
+        "name": "msgctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/msgctl.2.en.html"
+    },
+    {
+        "id": 72,
+        "name": "fcntl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fcntl.2.en.html"
+    },
+    {
+        "id": 73,
+        "name": "flock",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/flock.2.en.html"
+    },
+    {
+        "id": 74,
+        "name": "fsync",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fsync.2.en.html"
+    },
+    {
+        "id": 75,
+        "name": "fdatasync",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fdatasync.2.en.html"
+    },
+    {
+        "id": 76,
+        "name": "truncate",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/truncate.2.en.html"
+    },
+    {
+        "id": 77,
+        "name": "ftruncate",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ftruncate.2.en.html"
+    },
+    {
+        "id": 78,
+        "name": "getdents",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getdents.2.en.html"
+    },
+    {
+        "id": 79,
+        "name": "getcwd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getcwd.2.en.html"
+    },
+    {
+        "id": 80,
+        "name": "chdir",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/chdir.2.en.html"
+    },
+    {
+        "id": 81,
+        "name": "fchdir",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fchdir.2.en.html"
+    },
+    {
+        "id": 82,
+        "name": "rename",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rename.2.en.html"
+    },
+    {
+        "id": 83,
+        "name": "mkdir",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mkdir.2.en.html"
+    },
+    {
+        "id": 84,
+        "name": "rmdir",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rmdir.2.en.html"
+    },
+    {
+        "id": 85,
+        "name": "creat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/creat.2.en.html"
+    },
+    {
+        "id": 86,
+        "name": "link",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/link.2.en.html"
+    },
+    {
+        "id": 87,
+        "name": "unlink",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/unlink.2.en.html"
+    },
+    {
+        "id": 88,
+        "name": "symlink",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/symlink.2.en.html"
+    },
+    {
+        "id": 89,
+        "name": "readlink",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/readlink.2.en.html"
+    },
+    {
+        "id": 90,
+        "name": "chmod",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/chmod.2.en.html"
+    },
+    {
+        "id": 91,
+        "name": "fchmod",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fchmod.2.en.html"
+    },
+    {
+        "id": 92,
+        "name": "chown",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/chown.2.en.html"
+    },
+    {
+        "id": 93,
+        "name": "fchown",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fchown.2.en.html"
+    },
+    {
+        "id": 94,
+        "name": "lchown",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lchown.2.en.html"
+    },
+    {
+        "id": 95,
+        "name": "umask",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/umask.2.en.html"
+    },
+    {
+        "id": 96,
+        "name": "gettimeofday",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/gettimeofday.2.en.html"
+    },
+    {
+        "id": 97,
+        "name": "getrlimit",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getrlimit.2.en.html"
+    },
+    {
+        "id": 98,
+        "name": "getrusage",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getrusage.2.en.html"
+    },
+    {
+        "id": 99,
+        "name": "sysinfo",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sysinfo.2.en.html"
+    },
+    {
+        "id": 100,
+        "name": "times",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/times.2.en.html"
+    },
+    {
+        "id": 101,
+        "name": "ptrace",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ptrace.2.en.html"
+    },
+    {
+        "id": 102,
+        "name": "getuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getuid.2.en.html"
+    },
+    {
+        "id": 103,
+        "name": "syslog",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/syslog.2.en.html"
+    },
+    {
+        "id": 104,
+        "name": "getgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getgid.2.en.html"
+    },
+    {
+        "id": 105,
+        "name": "setuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setuid.2.en.html"
+    },
+    {
+        "id": 106,
+        "name": "setgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setgid.2.en.html"
+    },
+    {
+        "id": 107,
+        "name": "geteuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/geteuid.2.en.html"
+    },
+    {
+        "id": 108,
+        "name": "getegid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getegid.2.en.html"
+    },
+    {
+        "id": 109,
+        "name": "setpgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setpgid.2.en.html"
+    },
+    {
+        "id": 110,
+        "name": "getppid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getppid.2.en.html"
+    },
+    {
+        "id": 111,
+        "name": "getpgrp",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpgrp.2.en.html"
+    },
+    {
+        "id": 112,
+        "name": "setsid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setsid.2.en.html"
+    },
+    {
+        "id": 113,
+        "name": "setreuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setreuid.2.en.html"
+    },
+    {
+        "id": 114,
+        "name": "setregid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setregid.2.en.html"
+    },
+    {
+        "id": 115,
+        "name": "getgroups",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getgroups.2.en.html"
+    },
+    {
+        "id": 116,
+        "name": "setgroups",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setgroups.2.en.html"
+    },
+    {
+        "id": 117,
+        "name": "setresuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setresuid.2.en.html"
+    },
+    {
+        "id": 118,
+        "name": "getresuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getresuid.2.en.html"
+    },
+    {
+        "id": 119,
+        "name": "setresgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setresgid.2.en.html"
+    },
+    {
+        "id": 120,
+        "name": "getresgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getresgid.2.en.html"
+    },
+    {
+        "id": 121,
+        "name": "getpgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpgid.2.en.html"
+    },
+    {
+        "id": 122,
+        "name": "setfsuid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setfsuid.2.en.html"
+    },
+    {
+        "id": 123,
+        "name": "setfsgid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setfsgid.2.en.html"
+    },
+    {
+        "id": 124,
+        "name": "getsid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getsid.2.en.html"
+    },
+    {
+        "id": 125,
+        "name": "capget",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/capget.2.en.html"
+    },
+    {
+        "id": 126,
+        "name": "capset",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/capset.2.en.html"
+    },
+    {
+        "id": 127,
+        "name": "rt_sigpending",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigpending.2.en.html"
+    },
+    {
+        "id": 128,
+        "name": "rt_sigtimedwait",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigtimedwait.2.en.html"
+    },
+    {
+        "id": 129,
+        "name": "rt_sigqueueinfo",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigqueueinfo.2.en.html"
+    },
+    {
+        "id": 130,
+        "name": "rt_sigsuspend",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_sigsuspend.2.en.html"
+    },
+    {
+        "id": 131,
+        "name": "sigaltstack",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sigaltstack.2.en.html"
+    },
+    {
+        "id": 132,
+        "name": "utime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/utime.2.en.html"
+    },
+    {
+        "id": 133,
+        "name": "mknod",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mknod.2.en.html"
+    },
+    {
+        "id": 134,
+        "name": "uselib",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/uselib.2.en.html"
+    },
+    {
+        "id": 135,
+        "name": "personality",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/personality.2.en.html"
+    },
+    {
+        "id": 136,
+        "name": "ustat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ustat.2.en.html"
+    },
+    {
+        "id": 137,
+        "name": "statfs",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/statfs.2.en.html"
+    },
+    {
+        "id": 138,
+        "name": "fstatfs",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fstatfs.2.en.html"
+    },
+    {
+        "id": 139,
+        "name":"sysfs",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sysfs.2.en.html"
+    },
+    {
+        "id": 140,
+        "name": "getpriority",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpriority.2.en.html"
+    },
+    {
+        "id": 141,
+        "name": "setpriority",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setpriority.2.en.html"
+    },
+    {
+        "id": 142,
+        "name": "sched_setparam",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_setparam.2.en.html"
+    },
+    {
+        "id": 143,
+        "name": "sched_getparam",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_getparam.2.en.html"
+    },
+    {
+        "id": 144,
+        "name": "sched_setscheduler",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_setscheduler.2.en.html"
+    },
+    {
+        "id": 145,
+        "name": "sched_getscheduler",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_getscheduler.2.en.html"
+    },
+    {
+        "id": 146,
+        "name": "sched_get_priority_max",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_get_priority_max.2.en.html"
+    },
+    {
+        "id": 147,
+        "name": "sched_get_priority_min",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_get_priority_min.2.en.html"
+    },
+    {
+        "id": 148,
+        "name": "sched_rr_get_interval",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_rr_get_interval.2.en.html"
+    },
+    {
+        "id": 149,
+        "name": "mlock",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mlock.2.en.html"
+    },
+    {
+        "id": 150,
+        "name": "munlock",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/munlock.2.en.html"
+    },
+    {
+        "id": 151,
+        "name": "mlockall",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mlockall.2.en.html"
+    },
+    {
+        "id": 152,
+        "name": "munlockall",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/munlockall.2.en.html"
+    },
+    {
+        "id": 153,
+        "name": "vhangup",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/vhangup.2.en.html"
+    },
+    {
+        "id": 154,
+        "name": "modify_ldt",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/modify_ldt.2.en.html"
+    },
+    {
+        "id": 155,
+        "name": "pivot_root",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pivot_root.2.en.html"
+    },
+    {
+        "id": 156,
+        "name": "_sysctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/_sysctl.2.en.html"
+    },
+    {
+        "id": 157,
+        "name": "prctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/prctl.2.en.html"
+    },
+    {
+        "id": 158,
+        "name": "arch_prctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/arch_prctl.2.en.html"
+    },
+    {
+        "id": 159,
+        "name": "adjtimex",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/adjtimex.2.en.html"
+    },
+    {
+        "id": 160,
+        "name": "setrlimit",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setrlimit.2.en.html"
+    },
+    {
+        "id": 161,
+        "name": "chroot",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/chroot.2.en.html"
+    },
+    {
+        "id": 162,
+        "name": "sync",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sync.2.en.html"
+    },
+    {
+        "id": 163,
+        "name": "acct",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/acct.2.en.html"
+    },
+    {
+        "id": 164,
+        "name": "settimeofday",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/settimeofday.2.en.html"
+    },
+    {
+        "id": 165,
+        "name": "mount",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mount.2.en.html"
+    },
+    {
+        "id": 166,
+        "name": "umount2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/umount2.2.en.html"
+    },
+    {
+        "id": 167,
+        "name": "swapon",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/swapon.2.en.html"
+    },
+    {
+        "id": 168,
+        "name": "swapoff",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/swapoff.2.en.html"
+    },
+    {
+        "id": 169,
+        "name": "reboot",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/reboot.2.en.html"
+    },
+    {
+        "id": 170,
+        "name": "sethostname",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sethostname.2.en.html"
+    },
+    {
+        "id": 171,
+        "name": "setdomainname",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setdomainname.2.en.html"
+    },
+    {
+        "id": 172,
+        "name": "iopl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/iopl.2.en.html"
+    },
+    {
+        "id": 173,
+        "name": "ioperm",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ioperm.2.en.html"
+    },
+    {
+        "id": 174,
+        "name": "create_module",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/create_module.2.en.html"
+    },
+    {
+        "id": 175,
+        "name": "init_module",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/init_module.2.en.html"
+    },
+    {
+        "id": 176,
+        "name": "delete_module",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/delete_module.2.en.html"
+    },
+    {
+        "id": 177,
+        "name": "get_kernel_syms",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/get_kernel_syms.2.en.html"
+    },
+    {
+        "id": 178,
+        "name": "query_module",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/query_module.2.en.html"
+    },
+    {
+        "id": 179,
+        "name": "quotactl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/quotactl.2.en.html"
+    },
+    {
+        "id": 180,
+        "name": "nfsservctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/nfsservctl.2.en.html"
+    },
+    {
+        "id": 181,
+        "name": "getpmsg",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getpmsg.2.en.html"
+    },
+    {
+        "id": 182,
+        "name": "putpmsg",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/putpmsg.2.en.html"
+    },
+    {
+        "id": 183,
+        "name": "afs_syscall",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/afs_syscall.2.en.html"
+    },
+    {
+        "id": 184,
+        "name": "tuxcall",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/tuxcall.2.en.html"
+    },
+    {
+        "id": 185,
+        "name": "security",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/security.2.en.html"
+    },
+    {
+        "id": 186,
+        "name": "gettid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/gettid.2.en.html"
+    },
+    {
+        "id": 187,
+        "name": "readahead",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/readahead.2.en.html"
+    },
+    {
+        "id": 188,
+        "name": "setxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setxattr.2.en.html"
+    },
+    {
+        "id": 189,
+        "name": "lsetxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lsetxattr.2.en.html"
+    },
+    {
+        "id": 190,
+        "name": "fsetxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fsetxattr.2.en.html"
+    },
+    {
+        "id": 191,
+        "name": "getxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getxattr.2.en.html"
+    },
+    {
+        "id": 192,
+        "name": "lgetxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lgetxattr.2.en.html"
+    },
+    {
+        "id": 193,
+        "name": "fgetxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fgetxattr.2.en.html"
+    },
+    {
+        "id": 194,
+        "name": "listxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/listxattr.2.en.html"
+    },
+    {
+        "id": 195,
+        "name": "llistxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/llistxattr.2.en.html"
+    },
+    {
+        "id": 196,
+        "name": "flistxattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/flistxattr.2.en.html"
+    },
+    {
+        "id": 197,
+        "name": "removexattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/removexattr.2.en.html"
+    },
+    {
+        "id": 198,
+        "name": "lremovexattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lremovexattr.2.en.html"
+    },
+    {
+        "id": 199,
+        "name": "fremovexattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fremovexattr.2.en.html"
+    },
+    {
+        "id": 200,
+        "name": "tkill",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/tkill.2.en.html"
+    },
+    {
+        "id": 201,
+        "name": "time",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/time.2.en.html"
+    },
+    {
+        "id": 202,
+        "name": "futex",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futex.2.en.html"
+    },
+    {
+        "id": 203,
+        "name": "sched_setaffinity",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_setaffinity.2.en.html"
+    },
+    {
+        "id": 204,
+        "name": "sched_getaffinity",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_getaffinity.2.en.html"
+    },
+    {
+        "id": 205,
+        "name": "set_thread_area",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/set_thread_area.2.en.html"
+    },
+    {
+        "id": 206,
+        "name": "io_setup",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_setup.2.en.html"
+    },
+    {
+        "id": 207,
+        "name": "io_destroy",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_destroy.2.en.html"
+    },
+    {
+        "id": 208,
+        "name": "io_getevents",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_getevents.2.en.html"
+    },
+    {
+        "id": 209,
+        "name": "io_submit",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_submit.2.en.html"
+    },
+    {
+        "id": 210,
+        "name": "io_cancel",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_cancel.2.en.html"
+    },
+    {
+        "id": 211,
+        "name": "get_thread_area",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/get_thread_area.2.en.html"
+    },
+    {
+        "id": 212,
+        "name": "lookup_dcookie",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/lookup_dcookie.2.en.html"
+    },
+    {
+        "id": 213,
+        "name": "epoll_create",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_create.2.en.html"
+    },
+    {
+        "id": 214,
+        "name": "epoll_ctl_old",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_ctl_old.2.en.html"
+    },
+    {
+        "id": 215,
+        "name": "epoll_wait_old",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_wait_old.2.en.html"
+    },
+    {
+        "id": 216,
+        "name": "remap_file_pages",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/remap_file_pages.2.en.html"
+    },
+    {
+        "id": 217,
+        "name": "getdents64",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getdents64.2.en.html"
+    },
+    {
+        "id": 218,
+        "name": "set_tid_address",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/set_tid_address.2.en.html"
+    },
+    {
+        "id": 219,
+        "name": "restart_syscall",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/restart_syscall.2.en.html"
+    },
+    {
+        "id": 220,
+        "name": "semtimedop",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/semtimedop.2.en.html"
+    },
+    {
+        "id": 221,
+        "name": "fadvise64",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fadvise64.2.en.html"
+    },
+    {
+        "id": 222,
+        "name": "timer_create",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timer_create.2.en.html"
+    },
+    {
+        "id": 223,
+        "name": "timer_settime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timer_settime.2.en.html"
+    },
+    {
+        "id": 224,
+        "name": "timer_gettime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timer_gettime.2.en.html"
+    },
+    {
+        "id": 225,
+        "name": "timer_getoverrun",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timer_getoverrun.2.en.html"
+    },
+    {
+        "id": 226,
+        "name": "timer_delete",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timer_delete.2.en.html"
+    },
+    {
+        "id": 227,
+        "name": "clock_settime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clock_settime.2.en.html"
+    },
+    {
+        "id": 228,
+        "name": "clock_gettime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clock_gettime.2.en.html"
+    },
+    {
+        "id": 229,
+        "name": "clock_getres",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clock_getres.2.en.html"
+    },
+    {
+        "id": 230,
+        "name": "clock_nanosleep",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clock_nanosleep.2.en.html"
+    },
+    {
+        "id": 231,
+        "name": "exit_group",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/exit_group.2.en.html"
+    },
+    {
+        "id": 232,
+        "name": "epoll_wait",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_wait.2.en.html"
+    },
+    {
+        "id": 233,
+        "name": "epoll_ctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_ctl.2.en.html"
+    },
+    {
+        "id": 234,
+        "name": "tgkill",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/tgkill.2.en.html"
+    },
+    {
+        "id": 235,
+        "name": "utimes",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/utimes.2.en.html"
+    },
+    {
+        "id": 236,
+        "name": "vserver",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/vserver.2.en.html"
+    },
+    {
+        "id": 237,
+        "name": "mbind",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mbind.2.en.html"
+    },
+    {
+        "id": 238,
+        "name": "set_mempolicy",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/set_mempolicy.2.en.html"
+    },
+    {
+        "id": 239,
+        "name": "get_mempolicy",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/get_mempolicy.2.en.html"
+    },
+    {
+        "id": 240,
+        "name": "mq_open",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_open.2.en.html"
+    },
+    {
+        "id": 241,
+        "name": "mq_unlink",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_unlink.2.en.html"
+    },
+    {
+        "id": 242,
+        "name": "mq_timedsend",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_timedsend.2.en.html"
+    },
+    {
+        "id": 243,
+        "name": "mq_timedreceive",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_timedreceive.2.en.html"
+    },
+    {
+        "id": 244,
+        "name": "mq_notify",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_notify.2.en.html"
+    },
+    {
+        "id": 245,
+        "name": "mq_getsetattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mq_getsetattr.2.en.html"
+    },
+    {
+        "id": 246,
+        "name": "kexec_load",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/kexec_load.2.en.html"
+    },
+    {
+        "id": 247,
+        "name": "waitid",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/waitid.2.en.html"
+    },
+    {
+        "id": 248,
+        "name": "add_key",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/add_key.2.en.html"
+    },
+    {
+        "id": 249,
+        "name": "request_key",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/request_key.2.en.html"
+    },
+    {
+        "id": 250,
+        "name": "keyctl",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/keyctl.2.en.html"
+    },
+    {
+        "id": 251,
+        "name": "ioprio_set",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ioprio_set.2.en.html"
+    },
+    {
+        "id": 252,
+        "name": "ioprio_get",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ioprio_get.2.en.html"
+    },
+    {
+        "id": 253,
+        "name": "inotify_init",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/inotify_init.2.en.html"
+    },
+    {
+        "id": 254,
+        "name": "inotify_add_watch",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/inotify_add_watch.2.en.html"
+    },
+    {
+        "id": 255,
+        "name": "inotify_rm_watch",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/inotify_rm_watch.2.en.html"
+    },
+    {
+        "id": 256,
+        "name": "migrate_pages",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/migrate_pages.2.en.html"
+    },
+    {
+        "id": 257,
+        "name": "openat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/openat.2.en.html"
+    },
+    {
+        "id": 258,
+        "name": "mkdirat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mkdirat.2.en.html"
+    },
+    {
+        "id": 259,
+        "name": "mknodat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mknodat.2.en.html"
+    },
+    {
+        "id": 260,
+        "name": "fchownat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fchownat.2.en.html"
+    },
+    {
+        "id": 261,
+        "name": "futimesat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futimesat.2.en.html"
+    },
+    {
+        "id": 262,
+        "name": "newfstatat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/newfstatat.2.en.html"
+    },
+    {
+        "id": 263,
+        "name": "unlinkat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/unlinkat.2.en.html"
+    },
+    {
+        "id": 264,
+        "name": "renameat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/renameat.2.en.html"
+    },
+    {
+        "id": 265,
+        "name": "linkat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/linkat.2.en.html"
+    },
+    {
+        "id": 266,
+        "name": "symlinkat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/symlinkat.2.en.html"
+    },
+    {
+        "id": 267,
+        "name": "readlinkat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/readlinkat.2.en.html"
+    },
+    {
+        "id": 268,
+        "name": "fchmodat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fchmodat.2.en.html"
+    },
+    {
+        "id": 269,
+        "name": "faccessat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/faccessat.2.en.html"
+    },
+    {
+        "id": 270,
+        "name": "pselect6",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pselect6.2.en.html"
+    },
+    {
+        "id": 271,
+        "name": "ppoll",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/ppoll.2.en.html"
+    },
+    {
+        "id": 272,
+        "name": "unshare",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/unshare.2.en.html"
+    },
+    {
+        "id": 273,
+        "name": "set_robust_list",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/set_robust_list.2.en.html"
+    },
+    {
+        "id": 274,
+        "name": "get_robust_list",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/get_robust_list.2.en.html"
+    },
+    {
+        "id": 275,
+        "name": "splice",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/splice.2.en.html"
+    },
+    {
+        "id": 276,
+        "name": "tee",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/tee.2.en.html"
+    },
+    {
+        "id": 277,
+        "name": "sync_file_range",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sync_file_range.2.en.html"
+    },
+    {
+        "id": 278,
+        "name": "vmsplice",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/vmsplice.2.en.html"
+    },
+    {
+        "id": 279,
+        "name": "move_pages",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/move_pages.2.en.html"
+    },
+    {
+        "id": 280,
+        "name": "utimensat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/utimensat.2.en.html"
+    },
+    {
+        "id": 281,
+        "name": "epoll_pwait",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_pwait.2.en.html"
+    },
+    {
+        "id": 282,
+        "name": "signalfd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/signalfd.2.en.html"
+    },
+    {
+        "id": 283,
+        "name": "timerfd_create",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timerfd_create.2.en.html"
+    },
+    {
+        "id": 284,
+        "name": "eventfd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/eventfd.2.en.html"
+    },
+    {
+        "id": 285,
+        "name": "fallocate",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fallocate.2.en.html"
+    },
+    {
+        "id": 286,
+        "name": "timerfd_settime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timerfd_settime.2.en.html"
+    },
+    {
+        "id": 287,
+        "name": "timerfd_gettime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/timerfd_gettime.2.en.html"
+    },
+    {
+        "id": 288,
+        "name": "accept4",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/accept4.2.en.html"
+    },
+    {
+        "id": 289,
+        "name": "signalfd4",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/signalfd4.2.en.html"
+    },
+    {
+        "id": 290,
+        "name": "eventfd2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/eventfd2.2.en.html"
+    },
+    {
+        "id": 291,
+        "name": "epoll_create1",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_create1.2.en.html"
+    },
+    {
+        "id": 292,
+        "name": "dup3",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/dup3.2.en.html"
+    },
+    {
+        "id": 293,
+        "name": "pipe2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pipe2.2.en.html"
+    },
+    {
+        "id": 294,
+        "name": "inotify_init1",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/inotify_init1.2.en.html"
+    },
+    {
+        "id": 295,
+        "name": "preadv",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/preadv.2.en.html"
+    },
+    {
+        "id": 296,
+        "name": "pwritev",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pwritev.2.en.html"
+    },
+    {
+        "id": 297,
+        "name": "rt_tgsigqueueinfo",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rt_tgsigqueueinfo.2.en.html"
+    },
+    {
+        "id": 298,
+        "name": "perf_event_open",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/perf_event_open.2.en.html"
+    },
+    {
+        "id": 299,
+        "name": "recvmmsg",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/recvmmsg.2.en.html"
+    },
+    {
+        "id": 300,
+        "name": "fanotify_init",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fanotify_init.2.en.html"
+    },
+    {
+        "id": 301,
+        "name": "fanotify_mark",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fanotify_mark.2.en.html"
+    },
+    {
+        "id": 302,
+        "name": "prlimit64",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/prlimit64.2.en.html"
+    },
+    {
+        "id": 303,
+        "name": "name_to_handle_at",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/name_to_handle_at.2.en.html"
+    },
+    {
+        "id": 304,
+        "name": "open_by_handle_at",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/open_by_handle_at.2.en.html"
+    },
+    {
+        "id": 305,
+        "name": "clock_adjtime",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clock_adjtime.2.en.html"
+    },
+    {
+        "id": 306,
+        "name": "syncfs",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/syncfs.2.en.html"
+    },
+    {
+        "id": 307,
+        "name": "sendmmsg",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sendmmsg.2.en.html"
+    },
+    {
+        "id": 308,
+        "name": "setns",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/setns.2.en.html"
+    },
+    {
+        "id": 309,
+        "name": "getcpu",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getcpu.2.en.html"
+    },
+    {
+        "id": 310,
+        "name": "process_vm_readv",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/process_vm_readv.2.en.html"
+    },
+    {
+        "id": 311,
+        "name": "process_vm_writev",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/process_vm_writev.2.en.html"
+    },
+    {
+        "id": 312,
+        "name": "kcmp",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/kcmp.2.en.html"
+    },
+    {
+        "id": 313,
+        "name": "finit_module",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/finit_module.2.en.html"
+    },
+    {
+        "id": 314,
+        "name": "sched_setattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_setattr.2.en.html"
+    },
+    {
+        "id": 315,
+        "name": "sched_getattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/sched_getattr.2.en.html"
+    },
+    {
+        "id": 316,
+        "name": "renameat2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/renameat2.2.en.html"
+    },
+    {
+        "id": 317,
+        "name": "seccomp",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/seccomp.2.en.html"
+    },
+    {
+        "id": 318,
+        "name": "getrandom",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/getrandom.2.en.html"
+    },
+    {
+        "id": 319,
+        "name": "memfd_create",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/memfd_create.2.en.html"
+    },
+    {
+        "id": 320,
+        "name": "kexec_file_load",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/kexec_file_load.2.en.html"
+    },
+    {
+        "id": 321,
+        "name": "bpf",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/bpf.2.en.html"
+    },
+    {
+        "id": 322,
+        "name": "execveat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/execveat.2.en.html"
+    },
+    {
+        "id": 323,
+        "name": "userfaultfd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/userfaultfd.2.en.html"
+    },
+    {
+        "id": 324,
+        "name": "membarrier",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/membarrier.2.en.html"
+    },
+    {
+        "id": 325,
+        "name": "mlock2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mlock2.2.en.html"
+    },
+    {
+        "id": 326,
+        "name": "copy_file_range",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/copy_file_range.2.en.html"
+    },
+    {
+        "id": 327,
+        "name": "preadv2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/preadv2.2.en.html"
+    },
+    {
+        "id": 328,
+        "name": "pwritev2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pwritev2.2.en.html"
+    },
+    {
+        "id": 329,
+        "name": "pkey_mprotect",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pkey_mprotect.2.en.html"
+    },
+    {
+        "id": 330,
+        "name": "pkey_alloc",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pkey_alloc.2.en.html"
+    },
+    {
+        "id": 331,
+        "name": "pkey_free",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pkey_free.2.en.html"
+    },
+    {
+        "id": 332,
+        "name": "statx",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/statx.2.en.html"
+    },
+    {
+        "id": 333,
+        "name": "io_pgetevents",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_pgetevents.2.en.html"
+    },
+    {
+        "id": 334,
+        "name": "rseq",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/rseq.2.en.html"
+    },
+    {
+        "id": 424,
+        "name": "pidfd_send_signal",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pidfd_send_signal.2.en.html"
+    },
+    {
+        "id": 425,
+        "name": "io_uring_setup",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_uring_setup.2.en.html"
+    },
+    {
+        "id": 426,
+        "name": "io_uring_enter",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_uring_enter.2.en.html"
+    },
+    {
+        "id": 427,
+        "name": "io_uring_register",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/io_uring_register.2.en.html"
+    },
+    {
+        "id": 428,
+        "name": "open_tree",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/open_tree.2.en.html"
+    },
+    {
+        "id": 429,
+        "name": "move_mount",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/move_mount.2.en.html"
+    },
+    {
+        "id": 430,
+        "name": "fsopen",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fsopen.2.en.html"
+    },
+    {
+        "id": 431,
+        "name": "fsconfig",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fsconfig.2.en.html"
+    },
+    {
+        "id": 432,
+        "name": "fsmount",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fsmount.2.en.html"
+    },
+    {
+        "id": 433,
+        "name": "fspick",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/fspick.2.en.html"
+    },
+    {
+        "id": 434,
+        "name": "pidfd_open",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pidfd_open.2.en.html"
+    },
+    {
+        "id": 435,
+        "name": "clone3",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/clone3.2.en.html"
+    },
+    {
+        "id": 436,
+        "name": "close_range",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/close_range.2.en.html"
+    },
+    {
+        "id": 437,
+        "name": "openat2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/openat2.2.en.html"
+    },
+    {
+        "id": 438,
+        "name": "pidfd_getfd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/pidfd_getfd.2.en.html"
+    },
+    {
+        "id": 439,
+        "name": "faccessat2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/faccessat2.2.en.html"
+    },
+    {
+        "id": 440,
+        "name": "process_madvise",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/process_madvise.2.en.html"
+    },
+    {
+        "id": 441,
+        "name": "epoll_pwait2",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/epoll_pwait2.2.en.html"
+    },
+    {
+        "id": 442,
+        "name": "mount_setattr",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/mount_setattr.2.en.html"
+    },
+    {
+        "id": 443,
+        "name": "quotactl_fd",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/quotactl_fd.2.en.html"
+    },
+    {
+        "id": 444,
+        "name": "landlock_create_ruleset",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/landlock_create_ruleset.2.en.html"
+    },
+    {
+        "id": 445,
+        "name": "landlock_add_rule",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/landlock_add_rule.2.en.html"
+    },
+    {
+        "id": 446,
+        "name": "landlock_restrict_self",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/landlock_restrict_self.2.en.html"
+    },
+    {
+        "id": 447,
+        "name": "memfd_secret",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/memfd_secret.2.en.html"
+    },
+    {
+        "id": 448,
+        "name": "process_mrelease",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/process_mrelease.2.en.html"
+    },
+    {
+        "id": 449,
+        "name": "futex_waitv",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futex_waitv.2.en.html"
+    },
+    {
+        "id": 450,
+        "name": "set_mempolicy_home_node",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/set_mempolicy_home_node.2.en.html"
+    },
+    {
+        "id": 451,
+        "name": "cachestat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/cachestat.2.en.html"
+    },
+    {
+        "id": 452,
+        "name": "cachestat",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/cachestat.2.en.html"
+    },
+    {
+        "id": 453,
+        "name": "map_shadow_stack",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/map_shadow_stack.2.en.html"
+    },
+    {
+        "id": 454,
+        "name": "futex_wake",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futex_wake.2.en.html"
+    },
+    {
+        "id": 455,
+        "name": "futex_wait",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futex_wait.2.en.html"
+    },
+    {
+        "id": 456,
+        "name": "futex_requeue",
+        "manpage": "https://manpages.debian.org/unstable/manpages-dev/futex_requeue.2.en.html"
+    }
+]

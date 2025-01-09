@@ -10,6 +10,11 @@ use object::{Object, ObjectSection};
 
 use crate::{error::Result, FunctionNode};
 
+#[cfg(feature = "progress_bar")]
+use indicatif::{ProgressBar, ProgressStyle};
+#[cfg(feature = "progress_bar")]
+use std::time::Duration;
+
 /// Identifies root nodes in a set of analysed functions.
 ///
 /// # Overview
@@ -26,11 +31,26 @@ use crate::{error::Result, FunctionNode};
 ///
 /// # Errors
 /// - Propagates errors from `filtering` used for function selection.
+///
+/// # Feature Flags
+/// - `progress_bar`: If enabled, displays a spinner indicating the possible root nodes detection.
+///
 pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
     binary_path: &str,
     language: &str,
     functions: &HashMap<String, FunctionNode, S>,
 ) -> Result<Vec<String>> {
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(
+            ProgressStyle::default_spinner()
+                .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
+        );
+        pb.enable_steady_tick(Duration::from_millis(100));
+        pb.set_message("Finding possible root nodes".to_string());
+        pb
+    };
     let filter = filtering_function(binary_path, language)?;
     let root_nodes: Vec<_> = functions
         .values()
@@ -45,6 +65,10 @@ pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
             }
         })
         .collect();
+
+    // TODO: Add a default root node if no root nodes are found
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message(format!("Found {} possible root(s)", root_nodes.len()));
 
     if root_nodes.is_empty() {
         Ok(vec!["main".to_string()])
