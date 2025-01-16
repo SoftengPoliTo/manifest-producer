@@ -14,6 +14,7 @@
 
 
 ## Description
+
 **manifest-producer** is a project that provides a backend and frontend library for the analysis of ELF binaries. The main goal is to gather as much information as possible on ELF binaries and create call trees for functions that the tool considers to be potential entry points for possible executables. 
 
 All collected data is presented in a user-friendly manner, generating a series of HTML templates displaying the information obtained from the analysis. This tool aims to provide an in-depth analysis of the behaviour of ELF binaries and to compare the results of the analysis with the manufacturer's statements.
@@ -22,6 +23,7 @@ All collected data is presented in a user-friendly manner, generating a series o
 ## Project Structure
 
 The **manifest-producer** project is organised in a workspace structure of Cargo, consisting of several packages (crates) that cooperate with each other. Here is a summary of the project structure:
+
 ```
 manifest-producer/
 ├── Cargo.toml      
@@ -90,6 +92,7 @@ cd manifest-producer
 ```
 
 ### Execution of the example 
+
 ```bash
 cargo run -p manifest-producer <path_for_your_ELF_binary> [ -o <path_for_your_results_folder>]
 ```
@@ -102,6 +105,7 @@ This command analyses the specified ELF binary and generates the corresponding o
 Contributions to the manifest-producer project are always welcome! If you wish to contribute, please follow these simple steps:
 
 ### How to Contribute
+
 1. **Fork the Repository**: Start by fork the repository on GitHub to get your own copy to work on.
 
 2. **Create a Branch**: Create a new branch for your feature or bug fix. It is recommended to follow the naming convention feature/name-feature or bugfix/name-bug.
@@ -124,6 +128,7 @@ git push origin feature/name-feature
 6. **Create a Pull Request**: Go to your fork on GitHub and click on ‘New Pull Request’. Follow the instructions to send your pull request to the main project.
 
 ### Guidelines
+
 * Ensure that the code is formatted according to Rust standards.
 * Follow the coding conventions of the project.
 * Be open to feedback and discussion on your pull request.
@@ -135,16 +140,7 @@ Thank you for your interest and support of the `manifest-producer` project!
 
 The **manifest-producer** project is distributed under the MIT licence. This means that you may use, copy, modify, merge, publish, distribute, sublicence and/or sell copies of the software, provided that you include the following copyright notice and permission notice in your work.
 
-### Copyright Notice
-
-```plaintext
-Copyright (c) 2023 Giuseppe Marco Bianco, manifest-producer contributors
-```
-
-### Authorisation Note
-
 For further details on the licence, see the [LICENSE](LICENSE) file in the repository.
-
 
 ## Contacts
 

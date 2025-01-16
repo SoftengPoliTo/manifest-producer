@@ -12,11 +12,13 @@ pub mod tree_generator;
 /// with web-based visualization tools.
 ///
 /// # Fields
+///
 /// - `id`: A unique identifier for the node.
 /// - `text`: A label describing the node.
 /// - `children`: An optional vector of child nodes.
 ///
 /// # Example
+///
 /// ```
 /// use manifest_producer_frontend::TreeNode;
 ///
@@ -26,6 +28,7 @@ pub mod tree_generator;
 ///
 /// assert!(root.children.is_some());
 /// ```
+///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TreeNode {
     pub id: usize,
@@ -37,11 +40,14 @@ impl TreeNode {
     /// Creates a new `TreeNode` with no children.
     ///
     /// # Arguments
+    ///
     /// - `id`: A unique identifier for the node.
     /// - `text`: A label describing the node.
     ///
     /// # Returns
+    ///
     /// A `TreeNode` instance.
+    ///
     #[must_use]
     pub fn new(id: usize, text: &str) -> Self {
         TreeNode {
@@ -54,7 +60,9 @@ impl TreeNode {
     /// Adds a child node to the current node.
     ///
     /// # Arguments
+    ///
     /// - `child`: A `TreeNode` instance to be added as a child.
+    ///
     pub fn add_child(&mut self, child: TreeNode) {
         if let Some(ref mut children) = self.children {
             children.push(child);

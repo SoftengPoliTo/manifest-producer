@@ -10,29 +10,29 @@ use object::{Object, ObjectSection};
 
 use crate::{error::Result, FunctionNode};
 
-#[cfg(feature = "progress_bar")]
-use indicatif::{ProgressBar, ProgressStyle};
-#[cfg(feature = "progress_bar")]
-use std::time::Duration;
-
 /// Identifies root nodes in a set of analysed functions.
 ///
 /// # Overview
+///
 /// Root nodes are functions with no invocation entries but contain child functions and match specific filters.
 /// If no such nodes are found, "main" is returned as the default root.
 ///
 /// # Arguments
+///
 /// - `binary_path`: Path to the binary for filtering criteria.
 /// - `language`: The programming language of the binary (used for demangling).
 /// - `functions`: A map of function names to their [`FunctionNode`] representations.
 ///
 /// # Returns
+///
 /// - A `Result` containing a vector of root function names as `Vec<String>`.
 ///
 /// # Errors
+///
 /// - Propagates errors from `filtering` used for function selection.
 ///
 /// # Feature Flags
+///
 /// - `progress_bar`: If enabled, displays a spinner indicating the possible root nodes detection.
 ///
 pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
@@ -42,6 +42,9 @@ pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
 ) -> Result<Vec<String>> {
     #[cfg(feature = "progress_bar")]
     let pb = {
+        use indicatif::{ProgressBar, ProgressStyle};
+        use std::time::Duration;
+
         let pb = ProgressBar::new_spinner();
         pb.set_style(
             ProgressStyle::default_spinner()

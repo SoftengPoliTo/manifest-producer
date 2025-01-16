@@ -1,5 +1,5 @@
 [package]
-name = "manifest_producer-frontend"
+name = "manifest-producer-frontend"
 version = "0.1.0"
 edition = "2021"
 authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
@@ -12,7 +12,7 @@ keywords = ["Behavioural assessment", "HTML", "JavaScript", "CallTree"]
 serde_json = "1.0.132"
 serde = { version = "1.0.213", features = ["derive"] }
 minijinja = "2.4.0"
-manifest_producer-backend = { path = "../backend", features = ["default"]}
+manifest-producer-backend = { path = "../backend", features = ["default"]}
 
 [dev-dependencies]
 insta = "1.41.1"

@@ -2,7 +2,7 @@ name: heavy-tests
 
 on:
   schedule:
-    - cron: '0 21 * * 2' # Every Tuesday at 21:00 UTC
+    - cron: '0 21 * * 2'
 
 jobs:
 ################################## BACKEND TESTS ##################################

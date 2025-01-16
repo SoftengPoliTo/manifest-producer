@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - new-code # to be removed
   pull_request:
     branches:
       - main
-      - new-code # to be removed
 
 env:
   GRCOV_VERSION: "0.8.20"
@@ -65,9 +63,11 @@ jobs:
 
     - name: Run Backend Unit Tests
       env: 
-        RUSTGLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "digest-%p-%m.profraw"
-      run: cargo test --lib --features "progress_bar" -- --nocapture
+        RUSTFLAGS: "-Cinstrument-coverage"
+        LLVM_PROFILE_FILE: "unit-%p-%m.profraw"
+      run: |
+        cargo test --lib -- --nocapture
+        cargo test --lib --features "progress_bar" -- --nocapture
 
 
     - name: Get coverage data for codecov

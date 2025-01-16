@@ -1,12 +1,17 @@
 [package]
-name = "manifest_producer-backend"
+name = "manifest-producer-backend"
 version = "0.1.0"
 edition = "2021"
 authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
-description = "The backend crate is intended for analysing and inspecting ELF binaries, with advanced features for feature detection, disassembly, and function relationship analysis. Designed for certifiers, developers, researchers and security analysts, this crate leverages libraries such as Goblin, Capstone, and Gimli to provide a versatile suite of tools for understanding the behaviour of binary files, both at the structure and execution level. and to compare the results of the analysis with the manufacturer's statements."
+description = """
+The backend crate is intended for analysing and inspecting ELF binaries, with advanced features for feature detection, disassembly, 
+and function relationship analysis. Designed for certifiers, developers, researchers, and security analysts, this crate leverages libraries such as 
+Goblin, Capstone, and Gimli to provide a versatile suite of tools for understanding the behaviour of binary files, 
+both at the structure and execution level, and to compare the results of the analysis with the manufacturer's statements.
+"""
 license = "MIT"
 readme = "README.md"
-keywords = ["Behaviours assessment", "IoT"]
+keywords = ["behaviours assessment", "IoT", "reverse engineering", "static analysis"]
 
 [dependencies]
 gimli = "0.31.1"

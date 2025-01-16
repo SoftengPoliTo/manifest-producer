@@ -3,29 +3,30 @@ use std::collections::HashMap;
 use crate::{error::Result, FunctionNode};
 use cpp_demangle::{DemangleOptions, Symbol};
 use goblin::{self, elf::Elf};
-#[cfg(feature = "progress_bar")]
-use indicatif::{ProgressBar, ProgressStyle};
 use rustc_demangle::demangle;
-#[cfg(feature = "progress_bar")]
-use std::time::Duration;
 
 /// Detects functions in an ELF binary from its symbol table.
 ///
 /// # Overview
+///
 /// This function scans the ELF symbol table, identifies functions, and processes them into
 /// [`FunctionNode`] structures with details like start and end addresses. Function names are demangled if necessary.
 ///
 /// # Arguments
+///
 /// - `elf`: A reference to an [`Elf`] structure containing the binary's symbol table.
 /// - `language`: The programming language for function name demangling.
 ///
 /// # Returns
+///
 /// - A `Result` containing a `HashMap<String, FunctionNode>` with function names as keys.
 ///
 /// # Errors
+///
 /// - Returns errors if symbol name demangling fails.
 ///
 /// # Feature Flags
+///
 /// - `progress_bar`: If enabled, displays a spinner indicating the function detection.
 ///
 pub fn function_detection<'a>(
@@ -36,6 +37,9 @@ pub fn function_detection<'a>(
 
     #[cfg(feature = "progress_bar")]
     let pb = {
+        use indicatif::{ProgressBar, ProgressStyle};
+        use std::time::Duration;
+
         let pb = ProgressBar::new_spinner();
         pb.set_style(
             ProgressStyle::default_spinner()

@@ -9,11 +9,13 @@ pub mod syscall;
 /// Represents the basic metadata extracted from an ELF binary.
 ///
 /// # Overview
+///
 /// The `BasicInfo` structure contains essential information about an ELF binary,
 /// such as its name, type, architecture, size, and entry point.
 /// This structure is typically used to summarise key properties of a binary in a readable format.
 ///
 /// # Fields
+///
 /// - `file_name`: The name of the ELF file.
 /// - `file_type`: The type of the ELF file (e.g., `Executable`, `Shared Object`).
 /// - `file_size`: The size of the ELF file in bytes.
@@ -25,10 +27,12 @@ pub mod syscall;
 /// - `entry_point`: The address of the entry point in the binary.
 ///
 /// # Usage
+///
 /// This structure is used in [`inspect_binary`](crate::inspect::inspect_binary)
 /// to save the extracted information and return it to the caller.
 ///
 /// # See also
+///
 /// - [`inspect_binary`](crate::inspect::inspect_binary): Uses this structure to encapsulate extracted binary data.
 ///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -47,13 +51,16 @@ impl<'a> BasicInfo<'a> {
     /// Creates a new `BasicInfo` instance with the provided file name and file type.
     ///
     /// # Arguments
+    ///
     /// - `file_name`: The name of the ELF file.
     /// - `file_type`: The type of the ELF file.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with default values for all other fields.
     ///
     /// # Example
+    ///
     /// ```
     /// use manifest_producer_backend::BasicInfo;
     ///
@@ -61,6 +68,7 @@ impl<'a> BasicInfo<'a> {
     /// assert_eq!(info.file_name, "example.elf");
     /// assert_eq!(info.file_type, "Executable");
     /// ```
+    ///
     #[must_use]
     pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
         Self {
@@ -79,18 +87,22 @@ impl<'a> BasicInfo<'a> {
     /// Sets the file size of the binary.
     ///
     /// # Arguments
+    ///
     /// - `file_size`: The size of the binary in bytes.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated file size.
     ///
     /// # Example
+    ///
     /// ```
     /// use manifest_producer_backend::BasicInfo;
     ///
     /// let info = BasicInfo::new("example.elf", "Executable").file_size(1024);
     /// assert_eq!(info.file_size, 1024);
     /// ```
+    ///
     #[must_use]
     pub fn file_size(self, file_size: u64) -> Self {
         Self { file_size, ..self }
@@ -99,10 +111,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets the architecture of the binary.
     ///
     /// # Arguments
+    ///
     /// - `arch`: The architecture string (e.g., `x86_64`).
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated architecture.
+    ///
     #[must_use]
     pub fn arch(self, arch: &'a str) -> Self {
         Self { arch, ..self }
@@ -111,10 +126,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets whether the binary is position-independent (PIE).
     ///
     /// # Arguments
+    ///
     /// - `pie`: A boolean indicating whether the binary is PIE.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated PIE status.
+    ///
     #[must_use]
     pub fn pie(self, pie: bool) -> Self {
         Self { pie, ..self }
@@ -123,10 +141,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets the static or dynamic linking type of the binary.
     ///
     /// # Arguments
+    ///
     /// - `static_linking`: A string indicating the linking type.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated linking type.
+    ///
     #[must_use]
     pub fn static_linking(self, static_linking: &'a str) -> Self {
         Self {
@@ -138,10 +159,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets the programming language of the binary.
     ///
     /// # Arguments
+    ///
     /// - `language`: A string indicating the language.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated language.
+    ///
     #[must_use]
     pub fn language(self, language: String) -> Self {
         Self { language, ..self }
@@ -150,10 +174,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets the entry point address of the binary.
     ///
     /// # Arguments
+    ///
     /// - `entry_point`: The address of the entry point.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated entry point.
+    ///
     #[must_use]
     pub fn entry_point(self, entry_point: u64) -> Self {
         Self {
@@ -165,10 +192,13 @@ impl<'a> BasicInfo<'a> {
     /// Sets whether the binary is stripped.
     ///
     /// # Arguments
+    ///
     /// - `stripped`: A boolean indicating whether the binary is stripped.
     ///
     /// # Returns
+    ///
     /// A new `BasicInfo` instance with the updated stripped status.
+    ///
     #[must_use]
     pub fn stripped(self, stripped: bool) -> Self {
         Self { stripped, ..self }
@@ -178,6 +208,7 @@ impl<'a> BasicInfo<'a> {
 /// Represents a node in the call tree of a binary's functions.
 ///
 /// # Overview
+///
 /// `FunctionNode` captures details about an individual function in an ELF binary,
 /// including its name, address range, invocation count, and any child functions
 /// it may call (based on disassembly).
@@ -185,6 +216,7 @@ impl<'a> BasicInfo<'a> {
 /// This structure is central to analysing and representing the relationships between functions.
 ///
 /// # Fields
+///
 /// - `name`: The demangled name of the function.
 /// - `start_addr`: The start address of the function in the binary.
 /// - `end_addr`: The end address of the function in the binary.
@@ -195,8 +227,10 @@ impl<'a> BasicInfo<'a> {
 /// - `syscall`: Field set to false by default and indicating functions with system call invocations.
 ///
 /// # See also
+///
 /// - [`analyse_functions`](crate::analyse::analyse_functions): Uses `FunctionNode` to build the call graph.
 /// - [`function_detection`](crate::detect::function_detection): Creates initial `FunctionNode` objects.
+///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FunctionNode {
     pub name: String,
@@ -213,14 +247,17 @@ impl FunctionNode {
     /// Creates a new `FunctionNode`.
     ///
     /// # Arguments
+    ///
     /// - `name`: The name of the function.
     /// - `start_addr`: The starting memory address of the function in the binary.
     /// - `end_addr`: The ending memory address of the function in the binary.
     ///
     /// # Returns
+    ///
     /// - A new instance of `FunctionNode` with the provided name, address range, and default values for other fields.
     ///
     /// # Example
+    ///
     /// ```
     /// use manifest_producer_backend::FunctionNode;
     ///
@@ -231,6 +268,7 @@ impl FunctionNode {
     /// );
     /// assert_eq!(func_node.name, "example_function");
     /// ```
+    ///
     #[must_use]
     pub fn new(name: String, start_addr: u64, end_addr: u64) -> Self {
         Self {
@@ -249,9 +287,11 @@ impl FunctionNode {
     /// Sets the disassembly for the function.
     ///
     /// # Arguments
+    ///
     /// - `disassembly`: A string containing the disassembled machine code for the function.
     ///
     /// # Example
+    ///
     /// ```
     /// use manifest_producer_backend::FunctionNode;
     ///
@@ -263,6 +303,7 @@ impl FunctionNode {
     /// func_node.set_disassembly("MOV RAX, RBX\nCALL 0x1020".to_string());
     /// assert!(func_node.disassembly.is_some());
     /// ```
+    ///
     pub fn set_disassembly(&mut self, disassembly: String) {
         self.disassembly = Some(disassembly);
     }
@@ -270,9 +311,11 @@ impl FunctionNode {
     /// Sets the system call information for the function.
     ///
     /// # Arguments
+    ///
     /// - `syscall_info`: A `SyscallInfo` object containing information about the system call.
     ///
     /// # Example
+    ///
     /// ```
     /// use manifest_producer_backend::{FunctionNode, SyscallInfo};
     ///
@@ -290,6 +333,7 @@ impl FunctionNode {
     /// func_node.set_syscall_info(syscall_info);
     /// assert!(func_node.syscall_info.is_some());
     /// ```
+    ///
     pub fn set_syscall_info(&mut self, syscall_info: SyscallInfo) {
         self.syscall_info = Some(syscall_info);
     }
@@ -298,6 +342,7 @@ impl FunctionNode {
 /// Represents information about a Linux system call.
 ///
 /// # Overview
+///
 /// `SyscallInfo` provides metadata for a specific system call in the Linux kernel,
 /// including its unique identifier (`id`), human-readable name (`name`), and a reference to
 /// its manual page (`manpage`).
@@ -306,11 +351,13 @@ impl FunctionNode {
 /// by offering an efficient way to correlate system call numbers with their names and documentation.
 ///
 /// # Fields
+///
 /// - `id`: The unique numeric identifier of the system call.
 /// - `name`: The human-readable name of the system call (e.g., `"read"`, `"write"`).
 /// - `manpage`: A URL to the official Linux man page for the system call.
 ///
 /// # Example
+///
 /// ```
 /// use manifest_producer_backend::SyscallInfo;
 ///
@@ -321,6 +368,7 @@ impl FunctionNode {
 /// };
 /// println!("Syscall {} - {}: {}", syscall.id, syscall.name, syscall.manpage);
 /// ```
+///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SyscallInfo {
     pub id: u64,

@@ -12,15 +12,19 @@ type HandlerFn = Box<dyn Fn(&str, &mut RegisterMap, &mut SyscallSet)>;
 /// Detects system calls within the provided functions and updates their information.
 ///
 /// # Arguments
+///
 /// - `functions`: A mutable reference to a `HashMap` containing function names as keys and `FunctionNode` as values.
 ///
 /// # Returns
+///
 /// - A `Result` indicating success or failure.
 ///
 /// # Errors
+///
 /// - Returns errors if loading the syscall table or extracting syscall numbers fails.
 ///
 /// # Feature Flags
+///
 /// - `progress_bar`: If enabled, displays a progress bar indicating the progress of syscall detection.
 ///
 pub fn detect_syscalls<S: ::std::hash::BuildHasher>(
