@@ -28,7 +28,6 @@ pub mod tree_generator;
 ///
 /// assert!(root.children.is_some());
 /// ```
-///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TreeNode {
     pub id: usize,
@@ -47,7 +46,6 @@ impl TreeNode {
     /// # Returns
     ///
     /// A `TreeNode` instance.
-    ///
     #[must_use]
     pub fn new(id: usize, text: &str) -> Self {
         TreeNode {
@@ -62,7 +60,6 @@ impl TreeNode {
     /// # Arguments
     ///
     /// - `child`: A `TreeNode` instance to be added as a child.
-    ///
     pub fn add_child(&mut self, child: TreeNode) {
         if let Some(ref mut children) = self.children {
             children.push(child);

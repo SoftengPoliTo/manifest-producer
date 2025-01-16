@@ -53,7 +53,6 @@ use std::time::Duration;
 ///
 /// - [`read_elf`]: Reads the ELF binary into memory.
 /// - [`parse_elf`]: Parses binary data into an `Elf` structure.
-///
 #[allow(clippy::module_name_repetitions)]
 pub fn inspect_binary<'a>(
     elf: &'a Elf<'a>,
@@ -124,7 +123,6 @@ pub fn inspect_binary<'a>(
 /// # See also
 ///
 /// - [`parse_elf`]: Processes the returned byte vector to parse the ELF binary.
-///
 pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
     let mut file = File::open(file_path)?;
     let mut buffer = Vec::new();
@@ -149,7 +147,6 @@ pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
 /// # See also
 ///
 /// - [`read_elf`]: Reads ELF file contents into memory.
-///
 pub fn parse_elf(elf_data: &[u8]) -> Result<Elf> {
     Ok(Elf::parse(elf_data)?)
 }

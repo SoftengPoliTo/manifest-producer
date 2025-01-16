@@ -37,7 +37,6 @@ use crate::error::Result;
 /// - Parsing failures due to invalid or corrupted ELF binaries.
 /// - Analysis errors in downstream function calls.
 /// - HTML generation failures.
-///
 #[allow(clippy::module_name_repetitions)]
 pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
     let buffer = read_elf(elf_path)?;

@@ -28,7 +28,6 @@ use rustc_demangle::demangle;
 /// # Feature Flags
 ///
 /// - `progress_bar`: If enabled, displays a spinner indicating the function detection.
-///
 pub fn function_detection<'a>(
     elf: &'a Elf<'a>,
     language: &str,

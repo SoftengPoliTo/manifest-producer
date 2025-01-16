@@ -7,7 +7,6 @@ use std::fmt;
 /// - `Io`: Errors related to file input/output operations.
 /// - `Json`: Errors encountered during JSON serialization or deserialization.
 /// - `MiniJinjaError`: Errors raised by the `minijinja` templating engine.
-///
 #[derive(Debug)]
 pub enum Error {
     Io(std::io::Error),

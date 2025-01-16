@@ -34,7 +34,6 @@ use crate::{error::Result, FunctionNode};
 /// # Feature Flags
 ///
 /// - `progress_bar`: If enabled, displays a spinner indicating the possible root nodes detection.
-///
 pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
     binary_path: &str,
     language: &str,

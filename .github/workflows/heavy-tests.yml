@@ -2,11 +2,9 @@ name: heavy-tests
 
 on:
   schedule:
-    - cron: '0 21 * * 2'
+    - cron: '0 21 * * 2' # Every Tuesday at 21:00 UTC
 
 jobs:
-################################## BACKEND TESTS ##################################
-
   ffmpeg-heavy-test:
     name: Heavy Test for ffmpeg
     runs-on: ubuntu-latest

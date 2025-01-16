@@ -10,6 +10,15 @@ fn test_c() {
 }
 
 #[test]
+#[cfg(feature = "progress_bar")]
+fn test_c_bar() {
+    run_analysis_test(
+        "./tests/binaries/minimal-fake-firmware-c-static",
+        "light_test_c_bar",
+    );
+}
+
+#[test]
 fn test_cpp() {
     run_analysis_test(
         "./tests/binaries/minimal-fake-firmware-cpp-static",
