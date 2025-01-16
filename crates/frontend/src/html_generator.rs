@@ -66,7 +66,6 @@ use serde_json;
 ///     eprintln!("HTML generation failed: {}", err);
 /// }
 /// ```
-///
 #[allow(clippy::implicit_hasher)]
 pub fn html_generator(
     basic_info: &BasicInfo,

@@ -42,7 +42,6 @@ use std::{collections::HashMap, fs::File};
 /// # Feature Flags
 ///
 /// - `progress_bar`: If enabled, displays a progress bar indicating the progress of the disassembly code.
-///
 #[allow(clippy::implicit_hasher)]
 pub fn analyse_functions(
     elf: &Elf,

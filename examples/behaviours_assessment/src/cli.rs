@@ -20,7 +20,6 @@ use clap::{Arg, Command};
 /// let (elf_path, output_path) = parse_arguments().unwrap();
 /// assert_eq!(output_path, "./public");
 /// ```
-///
 pub fn parse_arguments() -> Result<(String, String)> {
     let matches = Command::new("cargo run")
         .arg(

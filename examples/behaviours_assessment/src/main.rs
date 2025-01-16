@@ -21,7 +21,6 @@ use error::Result;
 ///
 /// - `0`: Success.
 /// - `1`: An error occurred during execution.
-///
 pub fn main() {
     if let Err(e) = run() {
         eprintln!("{e}");

@@ -26,7 +26,6 @@ type HandlerFn = Box<dyn Fn(&str, &mut RegisterMap, &mut SyscallSet)>;
 /// # Feature Flags
 ///
 /// - `progress_bar`: If enabled, displays a progress bar indicating the progress of syscall detection.
-///
 pub fn detect_syscalls<S: ::std::hash::BuildHasher>(
     functions: &mut HashMap<String, FunctionNode, S>,
 ) -> Result<()> {

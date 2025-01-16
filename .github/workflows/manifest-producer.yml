@@ -55,26 +55,19 @@ jobs:
         curl -L "$GRCOV_LINK/v$GRCOV_VERSION/$GRCOV_BINARY" |
         tar xj -C $HOME/.cargo/bin
 
-    - name: Run Backend Integration Tests
+    - name: Run Backend Tests
       env:
         RUSTFLAGS: "-Cinstrument-coverage"
         LLVM_PROFILE_FILE: "backend-%p-%m.profraw"
-      run: cargo test --test light_tests -- --nocapture 
-
-    - name: Run Backend Unit Tests
-      env: 
-        RUSTFLAGS: "-Cinstrument-coverage"
-        LLVM_PROFILE_FILE: "unit-%p-%m.profraw"
       run: |
-        cargo test --lib -- --nocapture
+        cargo test --features "progress_bar" --test light_tests -- --nocapture
         cargo test --lib --features "progress_bar" -- --nocapture
-
-
+  
     - name: Get coverage data for codecov
       run: |
         grcov . --binary-path ./target/debug/ -s . -t lcov --branch \
               --ignore-not-existing --ignore "/*" --ignore "../*" \
-              --ignore "example/*" -o backend.info
+              --ignore "example/*" --ignore "crates/frontend/*" -o backend.info 
 
     - name: Upload Backend Coverage
       uses: codecov/codecov-action@v4
