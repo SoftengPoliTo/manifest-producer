@@ -1,12 +1,13 @@
 use std::error::Error as StdError;
 use std::fmt;
 
-/// Custom error type for the `frontend` crate.
+/// Custom error type
 ///
 /// This enum encapsulates various error types that may occur in the frontend module:
 /// - `Io`: Errors related to file input/output operations.
 /// - `Json`: Errors encountered during JSON serialization or deserialization.
 /// - `MiniJinjaError`: Errors raised by the `minijinja` templating engine.
+///
 #[derive(Debug)]
 pub enum Error {
     Io(std::io::Error),

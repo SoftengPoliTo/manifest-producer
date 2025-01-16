@@ -8,8 +8,7 @@ use manifest_producer_backend::{
 use serde_json::Value;
 use std::{collections::BTreeMap, env::temp_dir, fs, path::Path};
 
-#[allow(dead_code)]
-pub(crate) fn run_analysis_test(binary_path: &str, test_name: &str) {
+pub fn run_analysis_test(binary_path: &str, test_name: &str) {
     let output_path = setup_test_environment(test_name);
 
     let elf_buffer = read_elf(binary_path).unwrap();

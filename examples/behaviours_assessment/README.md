@@ -1,4 +1,6 @@
-# behaviours_assessment Example
+# behaviours_assessment Tool
+
+[![LICENSE][license badge]][license]
 
 ## Description
 
@@ -20,6 +22,7 @@ Designed for certifiers, developers, and researchers, the tool facilitates under
 ## Project Structure
 
 The tool is implemented in the following structure:
+
 ```
 behaviours_assessment/ 
 ├── Cargo.toml
@@ -65,6 +68,7 @@ Follow these steps to analyze an ELF binary:
     - **JSON Files:** Containing structured data for function interactions and analysis results.
 
 ## Reverse Engineering Use Case
+
 The `behaviours_assessment tool` is particularly valuable for **static reverse engineering** workflows:
 
 - **Understand Functionality:** Explore the relationships between functions and their dependencies.
@@ -72,3 +76,9 @@ The `behaviours_assessment tool` is particularly valuable for **static reverse e
 - **Symbol Demangling:** Decode function names from languages like Rust and C++ for clarity.
 
 These features help analysts efficiently deduce the behavior and intent of an ELF binary.
+
+<!-- Links -->
+[license]: LICENSE-MIT
+
+<!-- Badges -->
+[license badge]: https://img.shields.io/badge/license-MIT-blue.svg

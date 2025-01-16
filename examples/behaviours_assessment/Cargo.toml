@@ -3,12 +3,16 @@ name = "manifest-producer"
 version = "0.1.0"
 edition = "2021"
 authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
-description = "The purpose of the software is to analyze an ELF binary—typically a firmware for an IoT device—by disassembling it and reconstructing a call tree. This call tree is instrumental in understanding the device's behavior, which is crucial for certification purposes. The analysis helps verify whether the device aligns with the functionalities declared by the developer."
+description = """
+The purpose of the software is to analyze an ELF binary—typically a firmware for an IoT device—by disassembling it and reconstructing a call tree. 
+This call tree is instrumental in understanding the device's behavior, which is crucial for certification purposes. 
+The analysis helps verify whether the device aligns with the functionalities declared by the developer.
+"""
 license = "MIT"
 readme = "README.md"
-keywords = ["Behaviour assessment", "IoT Firmware", "ELF binaries", "Rust"]
+keywords = ["Behaviours assessment", "IoT Firmware", "ELF binaries", "Rust"]
 
 [dependencies]
-manifest_producer-backend = { path = "../../crates/backend"}
-manifest_producer-frontend = { path = "../../crates/frontend" }
+manifest-producer-backend = { path = "../../crates/backend"}
+manifest-producer-frontend = { path = "../../crates/frontend" }
 clap = { version = "^4.4", features = ["derive"] }

@@ -18,11 +18,13 @@ use std::{collections::HashMap, fs::File};
 /// Disassembles and analyses functions in an ELF binary.
 ///
 /// # Overview
+///
 /// Iterates through all detected functions from [`crate::detect::function_detection`], disassembles their machine code,
 /// and updates their [`FunctionNode`] structures with details like child functions and disassembly results.
 /// Results are also saved as JSON.
 ///
 /// # Arguments
+///
 /// - `elf`: A reference to an [`Elf`] structure.
 /// - `buffer`: Byte buffer of the ELF binary.
 /// - `functions`: A mutable `HashMap` of detected functions as `FunctionNode` objects.
@@ -30,16 +32,18 @@ use std::{collections::HashMap, fs::File};
 /// - `output_path`: Directory to save the JSON file with analysis results.
 ///
 /// # Returns
+///
 /// - A `Result<()>` indicating success or failure.
 ///
 /// # Errors
+///
 /// - Possible errors related to the disassembly of machine code.
 ///
 /// # Feature Flags
+///
 /// - `progress_bar`: If enabled, displays a progress bar indicating the progress of the disassembly code.
 ///
 #[allow(clippy::implicit_hasher)]
-#[allow(clippy::module_name_repetitions)]
 pub fn analyse_functions(
     elf: &Elf,
     buffer: &[u8],
@@ -191,10 +195,11 @@ fn init_disassembly<'a>(elf: &'a Elf, api: &'a FunctionNode, buffer: &'a [u8]) -
 }
 
 fn cs_init() -> Result<Capstone> {
-    Ok(Capstone::new()
+    Capstone::new()
         .x86()
         .mode(arch::x86::ArchMode::Mode64)
         .syntax(arch::x86::ArchSyntax::Att)
         .detail(true)
-        .build()?)
+        .build()
+        .map_err(Into::into)
 }

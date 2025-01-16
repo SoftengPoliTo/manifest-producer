@@ -12,15 +12,16 @@ use error::Result;
 /// exits gracefully if any step fails.
 ///
 /// # Workflow
+///
 /// 1. Parses command-line arguments using [`cli::parse_arguments`].
 /// 2. Sets up the output directory via [`dirs::setup_output_dir`].
 /// 3. Invokes the analysis pipeline via [`analysis::perform_analysis`].
 ///
 /// # Exit Codes
+///
 /// - `0`: Success.
 /// - `1`: An error occurred during execution.
 ///
-/// # Example
 pub fn main() {
     if let Err(e) = run() {
         eprintln!("{e}");

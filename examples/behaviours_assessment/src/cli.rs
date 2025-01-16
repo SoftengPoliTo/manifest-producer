@@ -4,19 +4,23 @@ use clap::{Arg, Command};
 /// Parses command-line arguments for the behaviours assessment tool.
 ///
 /// # Returns
+///
 /// - `Ok((elf_path, output_path))`: A tuple containing the path to the ELF binary and the output directory.
 /// - `Err(e)`: If argument parsing fails, an error is returned.
 ///
 /// # Arguments Parsed
+///
 /// - `elf_path` (required): Path to the ELF binary to be analyzed.
 ///
 /// # Example
+///
 /// ```
 /// use behaviours_assessment::cli::parse_arguments;
 ///
 /// let (elf_path, output_path) = parse_arguments().unwrap();
 /// assert_eq!(output_path, "./public");
 /// ```
+///
 pub fn parse_arguments() -> Result<(String, String)> {
     let matches = Command::new("cargo run")
         .arg(

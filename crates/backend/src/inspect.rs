@@ -26,25 +26,31 @@ use std::time::Duration;
 /// Analyses an ELF binary file, extracts basic information, and saves it in JSON format and in a `BasicInfo` structure.
 ///
 /// # Overview
+///
 /// This function is a key entry point for binary inspection. It collects details about the file,
 /// such as size, architecture, entry point, and whether it is PIE-enabled or statically linked. Results are saved in JSON.
 ///
 /// # Arguments
+///
 /// - `elf`: A reference to an [`Elf`] structure (see [`parse_elf`]) representing the parsed ELF binary.
 /// - `elf_path`: The file path of the ELF binary.
 /// - `output_path`: Directory path where the JSON file with extracted data is saved.
 ///
 /// # Returns
+///
 /// - A `Result` containing a [`BasicInfo`] structure with details about the binary.
 ///
 /// # Errors
+///
 /// - Returns [`Error::DebugInfo`] if the ELF is stripped of debug information.
 /// - Propagates errors related to file I/O or parsing.
 ///
 /// # Feature Flags
+///
 /// - `progress_bar`: If enabled, displays a spinner indicating the binary inspection.
 ///
 /// # See also
+///
 /// - [`read_elf`]: Reads the ELF binary into memory.
 /// - [`parse_elf`]: Parses binary data into an `Elf` structure.
 ///
@@ -104,16 +110,21 @@ pub fn inspect_binary<'a>(
 /// Reads the contents of an ELF file into a byte buffer.
 ///
 /// # Arguments
+///
 /// - `file_path`: The file path to the ELF binary.
 ///
 /// # Returns
+///
 /// - A `Result` containing a byte vector (`Vec<u8>`) with the ELF file contents.
 ///
 /// # Errors
+///
 /// - Returns standard I/O errors (e.g., file not found or permission issues).
 ///
 /// # See also
+///
 /// - [`parse_elf`]: Processes the returned byte vector to parse the ELF binary.
+///
 pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
     let mut file = File::open(file_path)?;
     let mut buffer = Vec::new();
@@ -124,16 +135,21 @@ pub fn read_elf(file_path: &str) -> Result<Vec<u8>> {
 /// Parses an ELF binary from raw bytes.
 ///
 /// # Arguments
+///
 /// - `elf_data`: A reference to a byte array (`&[u8]`) containing ELF binary data.
 ///
 /// # Returns
+///
 /// - A `Result` containing an [`Elf`] structure.
 ///
 /// # Errors
+///
 /// - Returns parsing errors from the [`goblin`] library.
 ///
 /// # See also
+///
 /// - [`read_elf`]: Reads ELF file contents into memory.
+///
 pub fn parse_elf(elf_data: &[u8]) -> Result<Elf> {
     Ok(Elf::parse(elf_data)?)
 }
