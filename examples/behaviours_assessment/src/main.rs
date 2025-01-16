@@ -21,7 +21,6 @@ use error::Result;
 ///
 /// - `0`: Success.
 /// - `1`: An error occurred during execution.
-///
 pub fn main() {
     if let Err(e) = run() {
         eprintln!("{e}");
@@ -30,9 +29,10 @@ pub fn main() {
 }
 
 fn run() -> Result<()> {
-    let (elf_path, output_path) = cli::parse_arguments()?;
+    let (elf_path, output_path, max_depth) = cli::parse_arguments();
     dirs::setup_output_dir(&output_path)?;
-    analysis::perform_analysis(&elf_path, &output_path)?;
+    analysis::perform_analysis(&elf_path, &output_path, max_depth)?;
+    open::that(format!("{output_path}/index.html"))?;
 
     Ok(())
 }

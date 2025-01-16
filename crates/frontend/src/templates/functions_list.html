@@ -1,120 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Functions List</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../crates/frontend/src/templates/css/style.css">
-    <script src="../crates/frontend/src/templates/js/script.js"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #3273dc, #209cee);
+        }
+        .filters-card {
+            position: sticky;
+            top: 1rem;
+            z-index: 10;
+        }
+        .table-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .syscall-badge {
+            background-color: #ff3860;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .function-name {
+            cursor: pointer;
+        }
+        .function-name:hover {
+            color: #3273dc;
+        }
+        .modal-card-body {
+            max-height: 80vh;
+        }
+    </style>
 </head>
 
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">
-                <h1 class="title is-4 has-text-white">Static Binary Analysis Report</h1>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Main content -->
-    <section class="section">
-        <div class="container">
-
-            <div class="buttons">
-                <!-- Back to Homepage button -->
-                <a href="index.html" class="button is-link is-light">
-                    <span class="icon"><i class="fas fa-home"></i></span>
-                    <span>Back to Homepage</span>
-                </a>
-                <!-- To Disassembly view button -->
-                <a href="disassembly_view.html" class="button is-link is-light">
-                    <span class="icon"><i class="fas fa-code"></i></span>
-                    <span>To Disassembly View</span>
-                </a>
-            </div>
-
-            
-            <!-- Search bar -->
-            <div class="field">
-                <div class="control has-icons-left">
-                    <input class="input" type="text" id="searchInput" placeholder="Search for functions..." onkeyup="filterTable()">
-                    <span class="icon is-left">
-                        <i class="fas fa-search"></i>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Functions List Section -->
-            <div class="box">
-                <h2 class="title is-4">
-                    <span class="icon has-text-info"><i class="fas fa-list-alt"></i></span> Extracted Functions
-                </h2>
-
-                <table class="table is-fullwidth is-striped" id="functionsTable">
-                    <thead>
-                        <tr>
-                            <th class="sortable" onclick="sortTable(0)" title="Name of the function">Name <span class="icon"><i class="fas fa-sort"></i></span></th>
-                            <th class="sortable" onclick="sortTable(1, 'num')" title="Starting memory address of the function">Start Address <span class="icon"><i class="fas fa-sort"></i></span></th>
-                            <th class="sortable" onclick="sortTable(2, 'num')" title="Number of times the function is invoked">Invocation Count <span class="icon"><i class="fas fa-sort"></i></span></th>
-                            <th class="sortable" onclick="sortTable(3, 'num')" title="Number of direct calls made by the function">Direct Call <span class="icon"><i class="fas fa-sort"></i></span></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Iterating over the tuple (FUNC, CallTree) dynamically -->
-                        {% for func in functions %}
-                        <tr>
-                            <td class="truncate" title="{{ func.name }}">
-                                {{ func.name }}
-                            </td>
-                            <td>0x{{ func.start_addr }}</td>
-                            <td>{{ func.invocation_entry }}</td>
-                            <td>{{ func.children | length }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="buttons">
-                <a href="index.html" class="button is-info is-light">
-                    <span class="icon is-small"><i class="fas fa-home"></i></span>
-                    <span>Back to Homepage</span>
-                <a href="disassembly_view.html" class="button is-link is-light">
-                    <span class="icon"><i class="fas fa-code"></i></span>
-                    <span>To Disassembly View</span>
-                </a>
-                </a>
-
-
+    <!-- Hero Section -->
+    <section class="hero is-small hero-gradient">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-3 has-text-white">List of Detected Functions</h1>
+                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="index.html" class="has-text-white">Home</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Functions</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </section>
 
-    <!-- Scroll buttons -->
-    <div class="scroll-buttons">
-        <button onclick="scrollToTop()" class="button is-info">
-            Scroll to Top
-        </button>
-        <button onclick="scrollToBottom()" class="button is-info">
-            Scroll to Bottom
-        </button>
+    <!-- Main content -->
+    <section class="section">
+        <div class="container">
+            <!-- Filters Card -->
+            <div class="card filters-card mb-4">
+                <div class="card-content">
+                    <div class="columns is-multiline">
+                        <!-- Search -->
+                        <div class="column is-4">
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" id="searchInput" placeholder="Search functions...">
+                                    <span class="icon is-left">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Filters -->
+                        <div class="column is-8">
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="syscallFilter">
+                                        Show only functions with syscalls
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Functions Table -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Call frequency</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for func in functions %}
+                                <tr>
+                                    <td>
+                                        <span class="function-name" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage }}')">
+                                            {{ func.name }}
+                                            {% if func.syscall %}
+                                            <span class="syscall-badge">syscall</span>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td><code>0x{{ func.start_addr }}</code></td>
+                                    <td>{{ func.invocation_entry }}</td>
+                                    <td>
+                                        {% if func.syscall %}
+                                        <span class="tag is-danger">System Call</span>
+                                        {% else %}
+                                        <span class="tag is-info">Function</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="buttons are-small">
+                                            <button class="button is-info" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage | safe }}')">
+                                                <span class="icon"><i class="fas fa-info-circle"></i></span>
+                                            </button>
+                                            {% if func.disassembly %}
+                                            <button class="button is-primary" onclick="showDisassembly('{{ func.name }}', `{{ func.disassembly | safe }}`)">
+                                                <span class="icon"><i class="fas fa-code"></i></span>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Details Modal -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Details</p>
+                <button class="delete" aria-label="close" onclick="closeModal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <div id="modalContent">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
+            </section>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Footer Section -->
+    <footer class="footer has-background-white-ter">
         <div class="content has-text-centered">
             <p>
-                <strong>Static Binary Analysis Report</strong> by Giuseppe Marco Bianco. The source code is licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE/MIT.txt">MIT</a>.
+                <strong>Static Binary Analysis Report</strong>.
+                <br>
+                Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT">MIT</a>.
             </p>
         </div>
     </footer>
 
-</body>
+    <script>
 
+        function filterTable() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const syscallOnly = document.getElementById('syscallFilter').checked;
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const name = row.querySelector('.function-name').textContent.toLowerCase();
+                const isSyscall = row.querySelector('.syscall-badge') !== null;
+                const show = name.includes(input) && (!syscallOnly || isSyscall);
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function showDetails(functionName, isSyscall, syscallName, syscallManpage) {
+            const modal = document.getElementById('detailsModal');
+            const content = document.getElementById('modalContent');
+
+            isSyscall = (isSyscall === "true" || isSyscall === "1");
+
+            let detailsHTML = `
+                <h3 class="title is-4">${functionName}</h3>
+                <div class="content">
+                    <p><strong>Type:</strong> ${isSyscall ? 'System Call' : 'Function'}</p>
+            `;
+
+            if (isSyscall) {
+                detailsHTML += `
+                    <p><strong>System Call Name:</strong> ${syscallName || 'N/A'}</p>
+                    <p><strong>Manpage:</strong> ${syscallManpage ? `<a href="${syscallManpage}" target="_blank" rel="noopener noreferrer">${syscallManpage}</a>` : 'N/A'}</p>
+                `;
+            }
+
+            detailsHTML += `</div>`;
+
+            content.innerHTML = detailsHTML;
+            modal.classList.add('is-active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').classList.remove('is-active');
+        }
+
+        function showDisassembly(functionName, disassemblyCode) {
+            const modal = document.getElementById("detailsModal");
+            const content = document.getElementById("modalContent");
+
+            const formattedCode = disassemblyCode && disassemblyCode.trim() !== "" 
+                ? `<pre><code>${disassemblyCode}</code></pre>` 
+                : "<p><em>No disassembly available for this function.</em></p>";
+
+            content.innerHTML = `
+                <h3 class="title is-4">${functionName} - Disassembly</h3>
+                ${formattedCode}
+            `;
+
+            modal.classList.add("is-active");
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', filterTable);
+        document.getElementById('syscallFilter').addEventListener('change', filterTable);
+        document.querySelector('.modal-background').addEventListener('click', closeModal);
+    </script>
+</body>
 </html>

@@ -1,4 +1,3 @@
-use crate::error::Result;
 use clap::{Arg, Command};
 
 /// Parses command-line arguments for the behaviours assessment tool.
@@ -11,28 +10,31 @@ use clap::{Arg, Command};
 /// # Arguments Parsed
 ///
 /// - `elf_path` (required): Path to the ELF binary to be analyzed.
-///
-/// # Example
-///
-/// ```
-/// use behaviours_assessment::cli::parse_arguments;
-///
-/// let (elf_path, output_path) = parse_arguments().unwrap();
-/// assert_eq!(output_path, "./public");
-/// ```
-///
-pub fn parse_arguments() -> Result<(String, String)> {
-    let matches = Command::new("cargo run")
+pub fn parse_arguments() -> (String, String, Option<usize>) {
+    let matches = Command::new("behaviours-assessment")
+        .version("0.1.0")
+        .author("Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>")
+        .about("Inspect the behaviours of a binary")
         .arg(
             Arg::new("elf_path")
                 .help("The path to the ELF binary to analyse")
-                .required(true),
+                .required(true)
+                .value_name("ELF_PATH"),
         )
-        .try_get_matches()?;
+        .arg(
+            Arg::new("depth")
+                .help("An optional positive number for call graph depth")
+                .value_name("DEPTH")
+                .num_args(1)
+                .value_parser(clap::value_parser!(usize)),
+        )
+        .get_matches();
 
-    let elf_path = matches.get_one::<String>("elf_path").unwrap().clone();
+    let elf_path = matches.get_one::<String>("elf_path").unwrap().to_string();
+    let name = elf_path.split('/').last().unwrap();
+    let output_path = format!("./examples/results/{name}");
 
-    let output_path = "./public".to_string();
+    let depth = matches.get_one::<usize>("depth").copied();
 
-    Ok((elf_path, output_path))
+    (elf_path, output_path, depth)
 }

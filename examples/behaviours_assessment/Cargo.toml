@@ -1,5 +1,5 @@
 [package]
-name = "manifest-producer"
+name = "behaviour-assessment"
 version = "0.1.0"
 edition = "2021"
 authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
@@ -13,6 +13,7 @@ readme = "README.md"
 keywords = ["Behaviours assessment", "IoT Firmware", "ELF binaries", "Rust"]
 
 [dependencies]
-manifest-producer-backend = { path = "../../crates/backend"}
+manifest-producer-backend = { path = "../../crates/backend" , features = ["progress_bar"] }
 manifest-producer-frontend = { path = "../../crates/frontend" }
 clap = { version = "^4.4", features = ["derive"] }
+open = "5.3.2"

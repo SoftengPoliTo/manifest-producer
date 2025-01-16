@@ -2,11 +2,9 @@ name: heavy-tests
 
 on:
   schedule:
-    - cron: '0 21 * * 2'
+    - cron: '0 21 * * 2' # Every Tuesday at 21:00 UTC
 
 jobs:
-################################## BACKEND TESTS ##################################
-
   ffmpeg-heavy-test:
     name: Heavy Test for ffmpeg
     runs-on: ubuntu-latest
@@ -18,7 +16,19 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         components: llvm-tools-preview
+    
+    - name: Set working directory and reconstruct heavy file
+      working-directory: ${{ github.workspace }}/crates/backend/tests
+      run: |
+        cat binaries/ffmpeg_g.* > binaries/ffmpeg
+        cat snapshots/heavy_test_c/functions_list.snap.part_a* > snapshots/heavy_test_c/functions_list.snap
 
     - name: Run Backend Integration Test
-      run: cargo test --test heavy_test -- --nocapture --test-threads=1
-          
+      working-directory: ${{ github.workspace }}/crates/backend/tests
+      run: cargo test --test heavy_tests -- --nocapture 
+
+    - name: Remove heavy file
+      working-directory: ${{ github.workspace }}/crates/backend/tests
+      run: |
+        rm binaries/ffmpeg
+        rm snapshots/heavy_test_c/functions_list.snap

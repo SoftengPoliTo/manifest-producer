@@ -1,83 +1,131 @@
-use std::{
-    borrow,
-    collections::{HashMap, HashSet},
-    fs,
+use std::collections::HashMap;
+
+use regex::Regex;
+
+use crate::{
+    error::{Error, Result},
+    FunctionNode,
 };
 
-use gimli::{AttributeValue, DwarfSections, EndianSlice, RunTimeEndian};
-use memmap2::Mmap;
-use object::{Object, ObjectSection};
-
-use crate::{error::Result, FunctionNode};
-
-/// Identifies root nodes in a set of analysed functions.
+/// Identifies the main function starting from the _start function in the disassembly.
 ///
 /// # Overview
 ///
-/// Root nodes are functions with no invocation entries but contain child functions and match specific filters.
-/// If no such nodes are found, "main" is returned as the default root.
+/// The `find_main` function extracts the address of the `main` function by analyzing
+/// the disassembly of the `_start` function. In the x86-64 calling convention, the first argument
+/// to a function is passed in the `%rdi` register. Before invoking `__libc_start_main`, the address
+/// of the `main` function is loaded into `%rdi`. The `find_main` function looks for a `mov` instruction
+/// that loads the address of `main` into `%rdi` in the disassembly of `_start`. This is the point at which
+/// the address of `main` is set up for `__libc_start_main`. Once the address is extracted, it searches
+/// through the functions to find the one corresponding to `main`. If the `main` function cannot be found,
+/// an error is returned.
 ///
 /// # Arguments
 ///
-/// - `binary_path`: Path to the binary for filtering criteria.
-/// - `language`: The programming language of the binary (used for demangling).
-/// - `functions`: A map of function names to their [`FunctionNode`] representations.
+/// - `functions`: A mutable reference to a `HashMap` mapping function names to their corresponding
+///   [`FunctionNode`] structures. The function names should include `_start` and possibly `main`.
 ///
 /// # Returns
 ///
-/// - A `Result` containing a vector of root function names as `Vec<String>`.
+/// - A `Result` containing the [`FunctionNode`] corresponding to the `main` function if found,
+///   or an error if not.
 ///
 /// # Errors
 ///
-/// - Propagates errors from `filtering` used for function selection.
+/// - `Error::FunctionNotFound("main")`: If the main function is not found in the map of functions,
+///   or if no valid main function address is extracted from `_start`'s disassembly.
+/// - `Error::FunctionNotFound("_start")`: If the `_start` function is not present in the functions map.
+/// - `Error::FunctionNotFound("_start disassembly")`: If no disassembly is available for `_start`.
+/// - `Error::InvalidRegex`: If there is an issue while parsing the disassembly with the regex used
+///   to extract the main address.
 ///
 /// # Feature Flags
 ///
-/// - `progress_bar`: If enabled, displays a spinner indicating the possible root nodes detection.
+/// - `progress_bar`: If enabled, displays a spinner indicating the extraction process of the main function.
 ///
-pub fn find_root_nodes<S: ::std::hash::BuildHasher>(
-    binary_path: &str,
-    language: &str,
+pub fn find_main<S: ::std::hash::BuildHasher>(
     functions: &HashMap<String, FunctionNode, S>,
-) -> Result<Vec<String>> {
+) -> Result<FunctionNode> {
     #[cfg(feature = "progress_bar")]
     let pb = {
         use indicatif::{ProgressBar, ProgressStyle};
         use std::time::Duration;
 
         let pb = ProgressBar::new_spinner();
-        pb.set_style(
-            ProgressStyle::default_spinner()
-                .template("{spinner:.green} {msg}\nElapsed: {elapsed_precise}")?,
-        );
+        pb.set_style(ProgressStyle::default_spinner().template("{spinner:.green} {msg}\n")?);
         pb.enable_steady_tick(Duration::from_millis(100));
-        pb.set_message("Finding possible root nodes".to_string());
+        pb.set_message("Extracting main function: _start -> main...".to_string());
         pb
     };
-    let filter = filtering_function(binary_path, language)?;
-    let root_nodes: Vec<_> = functions
-        .values()
-        .filter_map(|func| {
-            if func.invocation_entry == 0
-                && filter.contains(&func.name)
-                && !func.children.is_empty()
-            {
-                Some(func.name.clone())
-            } else {
-                None
+
+    if let Some(start) = functions.get("_start") {
+        if let Some(disassembly) = &start.disassembly {
+            let main_addr = extract_main(disassembly)?;
+            if main_addr != 0 {
+                for func in functions {
+                    if func.1.start_addr == main_addr {
+                        #[cfg(feature = "progress_bar")]
+                        pb.finish_with_message("Main function found!");
+                        return Ok(func.1.clone());
+                    }
+                }
+                return Err(Error::FunctionNotFound("main".to_string()));
             }
-        })
-        .collect();
-
-    // TODO: Add a default root node if no root nodes are found
-    #[cfg(feature = "progress_bar")]
-    pb.finish_with_message(format!("Found {} possible root(s)", root_nodes.len()));
-
-    if root_nodes.is_empty() {
-        Ok(vec!["main".to_string()])
-    } else {
-        Ok(root_nodes)
+        } else {
+            return Err(Error::FunctionNotFound("_start disassembly".to_string()));
+        }
+    } else if let Some(start) = functions.get("__dls2") {
+        if let Some(disassembly) = &start.disassembly {
+            let main_addr = extract_main(disassembly)?;
+            if main_addr != 0 {
+                for func in functions {
+                    if func.1.start_addr == main_addr {
+                        #[cfg(feature = "progress_bar")]
+                        pb.finish_with_message("Main function found!");
+                        return Ok(func.1.clone());
+                    }
+                }
+                return Err(Error::FunctionNotFound("main".to_string()));
+            }
+        } else {
+            return Err(Error::FunctionNotFound("_start disassembly".to_string()));
+        }
     }
+
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message("Main function not found.");
+    Err(Error::FunctionNotFound("main".to_string()))
+}
+
+fn extract_main(disassembly: &str) -> Result<u64> {
+    let re_c = Regex::new(r"mov\s+\$([a-fA-F0-9x]+),\s+%rdi")?;
+    let re_rust = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;
+
+    for line in disassembly.lines() {
+        if let Some(caps) = re_c.captures(line) {
+            let addr_str = caps.get(1).unwrap().as_str();
+            let addr = if let Some(addr_str) = addr_str.strip_prefix("0x") {
+                u64::from_str_radix(addr_str, 16).unwrap()
+            } else {
+                return Ok(0);
+            };
+            return Ok(addr);
+        }
+        if let Some(caps) = re_rust.captures(line) {
+            let lea_instruction_address_str = caps.get(1).unwrap().as_str();
+            let lea_instruction_address =
+                u64::from_str_radix(lea_instruction_address_str, 16).unwrap();
+
+            let offset_str = caps.get(2).unwrap().as_str();
+            let offset = u64::from_str_radix(offset_str, 16).unwrap();
+
+            let rip_value = lea_instruction_address + 7;
+            let main_address = rip_value + offset;
+
+            return Ok(main_address);
+        }
+    }
+    Ok(0)
 }
 
 pub(crate) fn calculate_invocation_count(functions: &mut HashMap<String, FunctionNode>) {
@@ -91,102 +139,4 @@ pub(crate) fn calculate_invocation_count(functions: &mut HashMap<String, Functio
             func.invocation_entry += 1;
         }
     }
-}
-
-fn filtering_function(binary_path: &str, language: &str) -> Result<HashSet<String>> {
-    let file = fs::File::open(binary_path)?;
-    let mmap = unsafe { Mmap::map(&file)? };
-    let object = object::File::parse(&*mmap)?;
-    let endian = if object.is_little_endian() {
-        RunTimeEndian::Little
-    } else {
-        RunTimeEndian::Big
-    };
-
-    let load_section = |id: gimli::SectionId| -> Result<borrow::Cow<[u8]>> {
-        match object.section_by_name(id.name()) {
-            Some(ref section) => Ok(section.uncompressed_data()?),
-            None => Ok(borrow::Cow::Borrowed(&[][..])),
-        }
-    };
-
-    let dwarf_sections = DwarfSections::load(&load_section)?;
-    let borrow_section: &dyn for<'a> Fn(&'a borrow::Cow<[u8]>) -> EndianSlice<'a, RunTimeEndian> =
-        &|section| EndianSlice::new(section, endian);
-    let dwarf = dwarf_sections.borrow(&borrow_section);
-
-    let mut iter = dwarf.units();
-    let mut functions: HashSet<String> = HashSet::new();
-
-    while let Some(header) = iter.next()? {
-        let unit = dwarf.unit(header)?;
-        let mut entries = unit.entries();
-
-        while let Some((_, entry)) = entries.next_dfs()? {
-            if entry.tag() == gimli::DW_TAG_compile_unit {
-                if let Some(path_attr) = entry.attr(gimli::DW_AT_name)? {
-                    let file_name = match path_attr.value() {
-                        AttributeValue::DebugStrRef(name_ref) => {
-                            dwarf.string(name_ref)?.to_string_lossy().into_owned()
-                        }
-                        AttributeValue::DebugStrOffsetsIndex(index) => {
-                            let index_ref = dwarf.string_offset(&unit, index)?;
-                            dwarf.string(index_ref)?.to_string_lossy().into_owned()
-                        }
-                        _ => {
-                            // Unsupported attribute value type
-                            continue;
-                        }
-                    };
-
-                    let valid_extension = match language {
-                        "Rust" => file_name.contains(".rs"),
-                        "C99" => file_name.contains(".c"),
-                        "C_plus_plus_14" => file_name.contains(".cpp"),
-                        _ => false,
-                    };
-
-                    if valid_extension {
-                        let keywords = [
-                            "musl", "libc", "std", "library", "core", ".cargo", "crypto", "ssl",
-                            "compiler", "lib",
-                        ];
-                        if !keywords.iter().any(|&keyword| file_name.contains(keyword)) {
-                            let mut sub_entries = unit.entries();
-                            while let Some((_, sub_entry)) = sub_entries.next_dfs()? {
-                                if sub_entry.tag() == gimli::DW_TAG_subprogram {
-                                    if let Some(func_ref) = sub_entry.attr(gimli::DW_AT_name)? {
-                                        if let Some(function_name) = match func_ref.value() {
-                                            AttributeValue::DebugStrOffsetsIndex(func_name) => {
-                                                let index_func_ref =
-                                                    dwarf.string_offset(&unit, func_name)?;
-                                                Some(
-                                                    dwarf
-                                                        .string(index_func_ref)?
-                                                        .to_string_lossy()
-                                                        .into_owned(),
-                                                )
-                                            }
-                                            AttributeValue::DebugStrRef(func_name_ref) => Some(
-                                                dwarf
-                                                    .string(func_name_ref)?
-                                                    .to_string_lossy()
-                                                    .into_owned(),
-                                            ),
-                                            _ => None,
-                                        } {
-                                            if !functions.contains(&function_name) {
-                                                functions.insert(function_name);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    Ok(functions)
 }

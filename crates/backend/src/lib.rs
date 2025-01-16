@@ -34,7 +34,6 @@ pub mod syscall;
 /// # See also
 ///
 /// - [`inspect_binary`](crate::inspect::inspect_binary): Uses this structure to encapsulate extracted binary data.
-///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BasicInfo<'a> {
     pub file_name: &'a str,
@@ -68,7 +67,6 @@ impl<'a> BasicInfo<'a> {
     /// assert_eq!(info.file_name, "example.elf");
     /// assert_eq!(info.file_type, "Executable");
     /// ```
-    ///
     #[must_use]
     pub fn new(file_name: &'a str, file_type: &'a str) -> Self {
         Self {
@@ -102,7 +100,6 @@ impl<'a> BasicInfo<'a> {
     /// let info = BasicInfo::new("example.elf", "Executable").file_size(1024);
     /// assert_eq!(info.file_size, 1024);
     /// ```
-    ///
     #[must_use]
     pub fn file_size(self, file_size: u64) -> Self {
         Self { file_size, ..self }
@@ -117,7 +114,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated architecture.
-    ///
     #[must_use]
     pub fn arch(self, arch: &'a str) -> Self {
         Self { arch, ..self }
@@ -132,7 +128,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated PIE status.
-    ///
     #[must_use]
     pub fn pie(self, pie: bool) -> Self {
         Self { pie, ..self }
@@ -147,7 +142,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated linking type.
-    ///
     #[must_use]
     pub fn static_linking(self, static_linking: &'a str) -> Self {
         Self {
@@ -165,7 +159,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated language.
-    ///
     #[must_use]
     pub fn language(self, language: String) -> Self {
         Self { language, ..self }
@@ -180,7 +173,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated entry point.
-    ///
     #[must_use]
     pub fn entry_point(self, entry_point: u64) -> Self {
         Self {
@@ -198,7 +190,6 @@ impl<'a> BasicInfo<'a> {
     /// # Returns
     ///
     /// A new `BasicInfo` instance with the updated stripped status.
-    ///
     #[must_use]
     pub fn stripped(self, stripped: bool) -> Self {
         Self { stripped, ..self }
@@ -230,7 +221,6 @@ impl<'a> BasicInfo<'a> {
 ///
 /// - [`analyse_functions`](crate::analyse::analyse_functions): Uses `FunctionNode` to build the call graph.
 /// - [`function_detection`](crate::detect::function_detection): Creates initial `FunctionNode` objects.
-///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FunctionNode {
     pub name: String,
@@ -268,7 +258,6 @@ impl FunctionNode {
     /// );
     /// assert_eq!(func_node.name, "example_function");
     /// ```
-    ///
     #[must_use]
     pub fn new(name: String, start_addr: u64, end_addr: u64) -> Self {
         Self {
@@ -283,7 +272,6 @@ impl FunctionNode {
             syscall_info: None,
         }
     }
-
     /// Sets the disassembly for the function.
     ///
     /// # Arguments
@@ -303,11 +291,9 @@ impl FunctionNode {
     /// func_node.set_disassembly("MOV RAX, RBX\nCALL 0x1020".to_string());
     /// assert!(func_node.disassembly.is_some());
     /// ```
-    ///
     pub fn set_disassembly(&mut self, disassembly: String) {
         self.disassembly = Some(disassembly);
     }
-
     /// Sets the system call information for the function.
     ///
     /// # Arguments
@@ -333,7 +319,6 @@ impl FunctionNode {
     /// func_node.set_syscall_info(syscall_info);
     /// assert!(func_node.syscall_info.is_some());
     /// ```
-    ///
     pub fn set_syscall_info(&mut self, syscall_info: SyscallInfo) {
         self.syscall_info = Some(syscall_info);
     }
@@ -368,7 +353,6 @@ impl FunctionNode {
 /// };
 /// println!("Syscall {} - {}: {}", syscall.id, syscall.name, syscall.manpage);
 /// ```
-///
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SyscallInfo {
     pub id: u64,
