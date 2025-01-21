@@ -19,30 +19,6 @@ Designed for certifiers, developers, and researchers, the tool facilitates under
 - **Modular Design**: Leverages the `manifest-producer-backend` and `manifest-producer-frontend` crates.
 - **Reverse Engineering Support**: Helps reverse engineers to decode binary logic by analyzing dependencies, function calls, and symbol demangling.
 
-## Project Structure
-
-The tool is implemented in the following structure:
-
-```
-behaviours_assessment/ 
-├── Cargo.toml
-├── README.md
-└── src/ 
-    ├── analysis.rs # Core binary analysis logic. 
-    ├── cli.rs # Command-line interface and argument parsing. 
-    ├── dirs.rs # Manages output directories and file storage. 
-    ├── error.rs # Error handling and reporting. 
-    └── main.rs # Entry point of the application.
-```
-
-### Component Details
-
-- **analysis.rs**: Implements the primary logic for analyzing ELF binaries. Invokes the `manifest-producer-backend` library to disassemble code, detect function calls, and extract metadata.
-- **cli.rs**: Handles command-line arguments for specifying the binary path and customizing analysis options.
-- **dirs.rs**: Manages file paths for the output directory, ensuring organized storage of reports and JSON files.
-- **error.rs**: Provides robust error handling to manage issues like unsupported binaries or missing dependencies.
-- **main.rs**: Orchestrates the execution flow by coordinating CLI input, analysis, and report generation.
-
 ## Requirements
 
 Ensure you have the following installed:
@@ -61,7 +37,7 @@ Follow these steps to analyze an ELF binary:
    ```
 2. **Run the Tool:** Use the following command to analyze your ELF binary:
    ```bash
-   cargo run -- <path_to_ELF_binary> [-o <path_to_results_folder>]
+   cargo run <path_to_ELF_binary>
    ```
 3. **Outputs:** 
     - **HTML Report:** An interactive report, showcasing function call graphs, disassembly, and more.
@@ -69,7 +45,7 @@ Follow these steps to analyze an ELF binary:
 
 ## Reverse Engineering Use Case
 
-The `behaviours_assessment tool` is particularly valuable for **static reverse engineering** workflows:
+The `behaviours_assessment` is particularly valuable for **static reverse engineering** workflows:
 
 - **Understand Functionality:** Explore the relationships between functions and their dependencies.
 - **Disassembly Analysis:** Review low-level assembly code to infer logic.

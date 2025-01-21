@@ -5,7 +5,6 @@
 ## Index
 
 - [Description](#description)
-- [Crate structure](#crate-structure)
 - [integration tests](#tests)
 - [Dependencies](#dependencies)
 
@@ -13,47 +12,6 @@
 ## Description
 
 The `frontend` crate serves as the visual and structural layer for rendering analysis results. It combines HTML templates, CSS styles, JavaScript functionality, and Rust-powered generation logic to produce a coherent and interactive user interface. The crate is modular, with dedicated modules for creating call trees, subtrees, and dynamically generated HTML content based on analyzed data.
-
-## Crate Structure
-
-Here is a summary of the crate structure:
-```
-frontend/
-    ├── Cargo.toml 
-    ├── README.md 
-    ├── tests/
-    │    ├── integration_test.rs     
-    │    └── snapshot/ 
-    └── src/
-        ├── templates/ 
-        │   ├── index.html
-        │   ├── functions_list.html
-        │   ├── disassembly_view.html
-        │   ├── root_functions.html
-        │   ├── call_graph.html
-        │   ├── css/
-        │   │   └── style.css
-        │   └── js/
-        │       └── script.js
-        ├── lib.rs 
-        ├── html_generator.rs 
-        ├── subtrees_generator.rs 
-        └── tree_generator.rs 
-```
-
-### Component details:
-
-  - **frontend/**: 
-  - **Cargo.toml**: Configuration and dependencies for frontend modules.
-  - **templates/**: Contains HTML templates and static assets used to display analysis results. Each template serves a specific purpose:
-      - **index.html**: Main overview page showing basic binary information.
-      - **functions_list.html**: Lists all detected functions, along with metadata.
-      - **disassembly_view.html**: Displays disassembled code for deeper inspection.
-      - **css/style.css**: Stylesheets for a consistent and professional design.
-      - **js/script.js**: Adds interactive features for navigating trees and results.
-  - **html_generator.rs**: Module that takes care of the generation of the HTML content, assembling the analysed information into a readable format.
-  - **tree_generator.rs**: Responsible for creating the call tree, visually representing the relationships between the analysed functions.
-  - **subtrees_generator.rs**: Responsible for the creation of subtrees, aimed at simplifying the process of creating the tree itself.
 
 ## Integration tests
 
