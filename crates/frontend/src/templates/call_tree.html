@@ -3,121 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Graph for {{ root_name }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../crates/frontend/src/templates/css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-    <title>Call Graph for {{ root_name }}</title>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #3273dc, #209cee);
+        }
+        .jstree-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .details-card {
+            transition: all 0.3s ease;
+        }
+        .details-card:hover {
+            box-shadow: 0 8px 16px rgba(10,10,10,0.1);
+        }
+        .footer {
+            margin-top: 3rem;
+            padding: 3rem 1.5rem;
+        }
+    </style>
 </head>
+
 <body>
-    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="../index.html">
-                <h1 class="title is-4 has-text-white">Static Binary Analysis Report</h1>
-            </a>
-        </div>
-    </nav>
-
-    <div class="buttons is-centered">
-        <a href="../root_functions.html" class="button is-link is-light">
-            <span class="icon is-small"><i class="fas fa-table"></i></span>
-            <span>Back to Root functions List</span>
-        </a>
-        <a href="../index.html" class="button is-link is-light">
-            <span class="icon is-small"><i class="fas fa-home"></i></span>
-            <span>Back to Homepage</span>
-        </a>
-    </div>
-
-    <div class="columns is-gapless">
-        <!-- Left column with jstree -->
-        <div class="column is-three-quarters">
-            <div id="jstree"></div>
-        </div>
-
-        <!-- Right column for details of selected node -->
-        <div class="column is-one-quarter">
-            <div id="node-details" class="box">
-                <h2 class="title is-5">Dettagli del Nodo</h2>
-                <p id="node-text">Seleziona un nodo per visualizzare i dettagli.</p>
+    <!-- Hero Section -->
+    <section class="hero is-small hero-gradient">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-3 has-text-white">Detailed Call Graph for Function: {{ root_name }}</h1>
+                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="../index.html" class="has-text-white">Home</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Call Graph</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="section">
+        <div class="container">
+
+            <!-- Two-column Layout for Tree and Details -->
+            <div class="columns is-gapless">
+                <!-- Left column with jstree -->
+                <div class="column is-three-quarters">
+                    <div id="jstree" class="jstree-container"></div>
+                </div>
+
+                <!-- Right column for Node Details -->
+                <div class="column is-one-quarter">
+                    <div class="box details-card">
+                        <h2 class="title is-5">Node Details</h2>
+                        <p id="node-text">Select a node to view details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Hidden tree data div -->
     <div id="tree-data" data-tree="{{ js_tree }}" style="display:none;"></div>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Footer Section -->
+    <footer class="footer has-background-white-ter">
         <div class="content has-text-centered">
             <p>
-                <strong>Static Binary Analysis Report</strong> by Giuseppe Marco Bianco. The source code is licensed under 
-                <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE/MIT.txt">MIT</a>.
+                <strong>Static Binary Analysis Report</strong>.
+                <br>
+                Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT">MIT</a>.
             </p>
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     <script>
         $(document).ready(function() {
-    const treeDataElement = document.getElementById("tree-data");
-    const tree = treeDataElement.getAttribute("data-tree");
-    const rootNodeData = JSON.parse(tree);
+            const treeDataElement = document.getElementById("tree-data");
+            const tree = treeDataElement.getAttribute("data-tree");
+            const rootNodeData = JSON.parse(tree);
 
-    $('#jstree').jstree({
-        'core': {
-            'data': function (node, callback) {
-                if (node.id === "#") {
-                    callback(rootNodeData);
-                } else {
-                    $.ajax({
-                        url: `/get_children?id=${node.id}`,
-                        dataType: "json",
-                        success: function (data) {
-                            callback(data);
-                        },
-                        error: function () {
-                            console.error("Errore nel caricamento dei figli per il nodo:", node.id);
-                            callback([]);
+            // Initialize jsTree with custom data handling
+            $('#jstree').jstree({
+                'core': {
+                    'data': function (node, callback) {
+                        if (node.id === "#") {
+                            callback(rootNodeData);
+                        } else {
+                            $.ajax({
+                                url: `/get_children?id=${node.id}`,
+                                dataType: "json",
+                                success: function (data) {
+                                    callback(data);
+                                },
+                                error: function () {
+                                    console.error("Error loading children for node:", node.id);
+                                    callback([]);
+                                }
+                            });
                         }
-                    });
-                }
-            },
-            'check_callback': true 
-        },
-        "types": {
-            "default": {
-                "icon": "fas fa-folder"
-            },
-            "root": {
-                "icon": "fas fa-tree"
-            },
-            "leaf": {
-                "icon": "fas fa-leaf"
-            }
-        },
-        "plugins": ["types"]
-    })
-    .on("loaded.jstree", function (e, data) {
-        var rootNode = data.instance.get_node(data.instance.get_node("#").children[0]);
-        data.instance.set_type(rootNode, "root");
-    })
-    .on("open_node.jstree", function (e, data) {
-        data.node.children.forEach(function (childId) {
-            var childNode = data.instance.get_node(childId);
-            if (data.instance.is_leaf(childNode)) {
-                data.instance.set_type(childNode, "leaf");
-            }
+                    },
+                    'check_callback': true
+                },
+                "types": {
+                    "default": {
+                        "icon": "fas fa-folder"
+                    },
+                    "root": {
+                        "icon": "fas fa-tree"
+                    },
+                    "leaf": {
+                        "icon": "fas fa-leaf"
+                    }
+                },
+                "plugins": ["types"]
+            })
+            .on("loaded.jstree", function (e, data) {
+                var rootNode = data.instance.get_node(data.instance.get_node("#").children[0]);
+                data.instance.set_type(rootNode, "root");
+            })
+            .on("open_node.jstree", function (e, data) {
+                data.node.children.forEach(function (childId) {
+                    var childNode = data.instance.get_node(childId);
+                    if (data.instance.is_leaf(childNode)) {
+                        data.instance.set_type(childNode, "leaf");
+                    }
+                });
+            });
+
+            // Display selected node details
+            $('#jstree').on("select_node.jstree", function(e, data) {
+                $('#node-text').text("You selected: " + data.node.text);
+            });
         });
-    });
-
-    $('#jstree').on("select_node.jstree", function(e, data) {
-        $('#node-text').text("Hai selezionato: " + data.node.text);
-    });
-});
-
     </script>
 </body>
-
 </html>

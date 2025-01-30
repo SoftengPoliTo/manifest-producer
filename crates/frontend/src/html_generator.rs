@@ -18,7 +18,6 @@ use serde_json;
 ///
 /// - An index page with general information.
 /// - A page listing detected functions.
-/// - A disassembly page for in-depth function analysis.
 /// - A root page displaying entry points (root nodes).
 ///
 /// Additionally, it identifies subtrees, cleans redundant nodes, and constructs trees
@@ -84,7 +83,6 @@ pub fn html_generator(
         output_path,
     )?;
     render_functions_page(detected_functions, output_path)?;
-    render_disassembly_page(detected_functions, output_path)?;
     render_root_page(root_nodes, output_path)?;
 
     for root in root_nodes {
@@ -155,28 +153,6 @@ pub(crate) fn render_functions_page(
     let mut file = File::create(format!("{output_path}/functions_list.html"))?;
     file.write_all(rendered.as_bytes())?;
 
-    Ok(())
-}
-
-pub(crate) fn render_disassembly_page(
-    detected_functions: &HashMap<String, FunctionNode>,
-    output_path: &str,
-) -> Result<()> {
-    let mut env = Environment::new();
-    env.add_template(
-        "disassembly_view.html",
-        include_str!("templates/disassembly_view.html"),
-    )?;
-
-    let disassembly: Vec<FunctionNode> = detected_functions.values().cloned().collect();
-
-    let template = env.get_template("disassembly_view.html")?;
-    let rendered = template.render(context! {
-        disassembly => disassembly,
-    })?;
-
-    let mut file = File::create(format!("{output_path}/disassembly_view.html"))?;
-    file.write_all(rendered.as_bytes())?;
     Ok(())
 }
 
