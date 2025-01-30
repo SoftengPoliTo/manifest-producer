@@ -1,80 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Call Trees - Root Functions</title>
+    <title>Root Functions Detected</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../crates/frontend/src/templates/css/style.css">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #3273dc, #209cee);
+        }
+        .root-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .root-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10,10,10,0.1);
+        }
+        .concept-icon {
+            font-size: 2rem;
+            color: #3273dc;
+        }
+        .search-box {
+            max-width: 400px;
+            margin: 0 auto 2rem auto;
+        }
+    </style>
 </head>
 
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">
-                <h1 class="title is-4 has-text-white">Static Binary Analysis Report</h1>
-            </a>
-        </div>
-    </nav>
-
-    <section class="section">
-        <div class="container">
-
-            <!-- Introduction section -->
-            <div class="box has-text-centered">
-                <h2 class="title is-4">
-                    <span class="icon has-text-info"><i class="fas fa-tree"></i></span> Root Functions and Their Call Trees
-                </h2>
-                <p class="content">
-                    A <strong>Root Function</strong> is the entry point to a series of function calls in a binary. These roots serve as the head of their respective <em>call graphs</em>, which show the chain of function invocations starting from that point.
-                </p>
-                <p class="content">
-                    A <strong>Call Graph</strong> is a graphical representation of the relationships between functions in a binary. Understanding these graphs helps you analyze control flow, detect vulnerabilities, and optimize performance.
-                </p>
-                <div class="buttons is-centered">
-                    <a href="index.html" class="button is-link is-light">
-                        <span class="icon is-small"><i class="fas fa-home"></i></span>
-                        <span>Back to Homepage</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- List of Root Functions -->
-            <div class="box has-background-light-blue">
-                <h3 class="title is-5">
-                    <span class="icon has-text-info"><i class="fas fa-list"></i></span> List of Potential Root Functions
-                </h3>
-                <div class="content">
-                    <p class="notification">
-                        Explore the call trees by clicking on a root function below:
-                    </p>
+    <!-- Hero Section -->
+    <section class="hero is-medium hero-gradient">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-2 has-text-white">Root Functions Detected</h1>
+                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
                     <ul>
-                        {% for root in roots %}
-                        <li>
-                            <a href="./call_trees/{{ root }}.html">
-                                <span class="icon"><i class="fas fa-arrow-circle-right"></i></span>{{ root }}
-                            </a>
-                        </li>
-                        {% endfor %}
+                        <li><a href="index.html" class="has-text-white">Home</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Root Functions</a></li>
                     </ul>
-                </div>
+                </nav>
             </div>
         </div>
     </section>
 
+    <section class="section">
+        <div class="container">
+            <!-- Concepts Explanation -->
+            <div class="columns is-multiline mb-6">
+                <div class="column is-half">
+                    <div class="box">
+                        <div class="has-text-centered mb-4">
+                            <span class="icon concept-icon">
+                                <i class="fas fa-project-diagram"></i>
+                            </span>
+                            <h3 class="title is-4 mt-2">Root Functions</h3>
+                        </div>
+                        <p class="has-text-centered">
+                            Root functions are entry points that initiate call sequences in the binary.
+                            They serve as starting points for analyzing possible program flow and behaviours.
+                        </p>
+                    </div>
+                </div>
+                <div class="column is-half">
+                    <div class="box">
+                        <div class="has-text-centered mb-4">
+                            <span class="icon concept-icon">
+                                <i class="fas fa-sitemap"></i>
+                            </span>
+                            <h3 class="title is-4 mt-2">Call Trees</h3>
+                        </div>
+                        <p class="has-text-centered">
+                            Call trees visualize function Interactions and dependencies,
+                            helping identify control flow patterns and potential vulnerabilities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" id="searchInput" placeholder="Search root functions..."
+                            onkeyup="filterRoots()">
+                        <span class="icon is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Root Functions Grid -->
+            <div class="columns is-multiline" id="rootsGrid">
+                {% for root in roots %}
+                <div class="column is-4">
+                    <a href="./call_trees/{{ root }}.html" class="box root-card">
+                        <div class="is-flex is-align-items-center">
+                            <span class="icon has-text-info mr-3">
+                                <i class="fas fa-code-branch"></i>
+                            </span>
+                            <div>
+                                <h4 class="title is-5 mb-2">{{ root }}</h4>
+                                <p class="is-size-7 has-text-grey">
+                                    View call tree
+                                </p>
+                            </div>
+                            <span class="icon has-text-grey-light ml-auto">
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function filterRoots() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rootCards = document.querySelectorAll('.root-card');
+
+            rootCards.forEach(card => {
+                const rootName = card.querySelector('.title').textContent.toLowerCase();
+                const column = card.closest('.column');
+                column.style.display = rootName.includes(searchTerm) ? '' : 'none';
+            });
+        }
+    </script>
+
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer has-background-white-ter">
         <div class="content has-text-centered">
             <p>
-                <strong>Static Binary Analysis Report</strong> by Giuseppe Marco Bianco. The source code is licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE/MIT.txt">MIT</a>.
+                <strong>Static Binary Analysis Results</strong>.
+                <br>
+                Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT">MIT</a>
             </p>
         </div>
     </footer>
-
 </body>
-
 </html>

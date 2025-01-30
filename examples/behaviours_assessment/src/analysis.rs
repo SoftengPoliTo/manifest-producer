@@ -43,7 +43,7 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
     let elf = parse_elf(&buffer)?;
 
     let info = inspect_binary(&elf, elf_path, output_path)?;
-    let mut detected_functions = function_detection(&elf, &info.language)?;
+    let mut detected_functions = function_detection(&elf, &info.language, output_path)?;
     analyse_functions(
         &elf,
         &buffer,

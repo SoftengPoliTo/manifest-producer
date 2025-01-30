@@ -31,6 +31,7 @@ use rustc_demangle::demangle;
 pub fn function_detection<'a>(
     elf: &'a Elf<'a>,
     language: &str,
+    output_path: &'a str,
 ) -> Result<HashMap<String, FunctionNode>> {
     let mut func_found = HashMap::new();
 
@@ -67,7 +68,7 @@ pub fn function_detection<'a>(
 
     #[cfg(feature = "progress_bar")]
     pb.finish_with_message(format!(
-        "Detection completed! Found {} functions",
+        "Detection completed! Found {} functions and saved in functions_list.json in {output_path}/json",
         func_found.len()
     ));
 
