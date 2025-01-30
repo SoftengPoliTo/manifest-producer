@@ -18,7 +18,6 @@ use serde_json;
 ///
 /// - An index page with general information.
 /// - A page listing detected functions.
-/// - A disassembly page for in-depth function analysis.
 /// - A root page displaying entry points (root nodes).
 ///
 /// Additionally, it identifies subtrees, cleans redundant nodes, and constructs trees
@@ -73,6 +72,18 @@ pub fn html_generator(
     root_nodes: &Vec<String>,
     output_path: &str,
 ) -> Result<()> {
+
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = indicatif::ProgressBar::new((root_nodes.len()*2) as u64);
+        pb.set_message("Building call graphs:".to_string());
+        pb.set_style(
+            indicatif::ProgressStyle::default_bar()
+                .template("{msg}\n{wide_bar} {pos}/{len} [{elapsed_precise}]")?,
+        );
+        pb
+    };
+
     let mut node_roots: HashMap<String, FunctionNode> = HashMap::new();
     let mut sub_trees: HashMap<String, TreeNode> = HashMap::new();
     let mut id_counter = 0;
@@ -84,10 +95,12 @@ pub fn html_generator(
         output_path,
     )?;
     render_functions_page(detected_functions, output_path)?;
-    render_disassembly_page(detected_functions, output_path)?;
     render_root_page(root_nodes, output_path)?;
 
     for root in root_nodes {
+        #[cfg(feature = "progress_bar")]
+        pb.inc(1);
+
         // Step 1: Identification of subtrees
         identify_subtrees(root, detected_functions, &mut node_roots);
 
@@ -111,7 +124,12 @@ pub fn html_generator(
         // Empty the structures for the next cycle
         node_roots.clear();
         sub_trees.clear();
+
+        #[cfg(feature = "progress_bar")]
+        pb.inc(1);
     }
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message("Call graphs built!");
     Ok(())
 }
 
@@ -155,28 +173,6 @@ pub(crate) fn render_functions_page(
     let mut file = File::create(format!("{output_path}/functions_list.html"))?;
     file.write_all(rendered.as_bytes())?;
 
-    Ok(())
-}
-
-pub(crate) fn render_disassembly_page(
-    detected_functions: &HashMap<String, FunctionNode>,
-    output_path: &str,
-) -> Result<()> {
-    let mut env = Environment::new();
-    env.add_template(
-        "disassembly_view.html",
-        include_str!("templates/disassembly_view.html"),
-    )?;
-
-    let disassembly: Vec<FunctionNode> = detected_functions.values().cloned().collect();
-
-    let template = env.get_template("disassembly_view.html")?;
-    let rendered = template.render(context! {
-        disassembly => disassembly,
-    })?;
-
-    let mut file = File::create(format!("{output_path}/disassembly_view.html"))?;
-    file.write_all(rendered.as_bytes())?;
     Ok(())
 }
 

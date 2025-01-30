@@ -143,7 +143,7 @@ fn analyse_code_slice(
                 ));
             } else {
                 disassembly_output.push_str(&format!(
-                    "0x{:x}:\t{}\t{}\t\t(Register Offset-GOT)\n",
+                    "0x{:x}:\t{}\t{}\t(Register Offset-GOT)\n",
                     insn.address(),
                     insn_name,
                     op_str
@@ -168,6 +168,7 @@ fn analyse_code_slice(
 
     Ok((nodes, disassembly_output, flag))
 }
+
 
 fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
     op_str

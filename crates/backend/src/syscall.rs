@@ -32,7 +32,7 @@ pub fn detect_syscalls<S: ::std::hash::BuildHasher>(
     #[cfg(feature = "progress_bar")]
     let pb = {
         let pb = indicatif::ProgressBar::new(functions.len() as u64);
-        pb.set_message("Detection of the system calls:".to_string());
+        pb.set_message("System Call detection:".to_string());
         pb.set_style(
             indicatif::ProgressStyle::default_bar()
                 .template("{msg}\n{wide_bar} {pos}/{len} [{elapsed_precise}]")?,

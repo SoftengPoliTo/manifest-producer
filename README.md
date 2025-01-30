@@ -4,38 +4,47 @@
 [![CodeCov][codecov badge]][codecov]
 [![LICENSE][license badge]][license]
 
-## Index
-- [Description](#description)
-- [Use](#use)
-- [License](#license)
-
 ## Description
+**manifest-producer** is a Rust library designed for analysing ELF binaries. It provides functionality to extract detailed information from ELF files, including disassembly of individual function code, function call trees for structural insights. 
 
-**manifest-producer** is a project that provides a backend and frontend library for the analysis of ELF binaries. The main goal is to gather as much information as possible on ELF binaries and create call trees for functions that the tool considers to be potential entry points for possible executables. 
+## Supported Architectures
+| Architecture | Support Level | Notes           |
+| ------------ | ------------- | --------------- |
+| x86_64       | ✅            | Supported       |
+| ARM          | ❌            | Not supported   |
+| RISC-V       | ❌            | Not supported   |
 
-All collected data is presented in a user-friendly manner, generating a series of HTML templates displaying the information obtained from the analysis. This tool aims to provide an in-depth analysis of the behaviour of ELF binaries and to compare the results of the analysis with the manufacturer's statements.
+## Supported Languages
+
+| Language | Support Level | Notes   |
+| -------- | ------------- |-------- |
+| C        | ✅            | Supported |
+| C++      | ✅            | Supported |
+| Rust     | ✅            | Supported |
+
+## Project Structure
+
+- **backend crate**: Contains the analysis logic for ELF binaries.
+- **frontend crate**: Generates user-friendly HTML/JSON reports from the analysis data.
+- **examples/behaviours_assessment**: A practical example tool that demonstrates how to use both the backend and frontend crates to analyze ELF binaries.
+
+Inside the `examples/behaviours_assessment` folder, you'll find:
+- A **demo video** showcasing the tool's functionality.
+- The **HTML and JSON results** generated from analyzing an ELF binary.
 
 ## Use
 
-**manifest-producer** is designed primarily as a library for the static reverse engineering of ELF binaries, but also includes a practical example of use.
-
 ### Requirements
+Make sure you have [Rust](https://www.rust-lang.org/tools/install) (version 1.50 or higher) and `cargo` installed.
 
-Make sure you have [Rust](https://www.rust-lang.org/tools/install) (version 1.50 or higher) and `cargo`, Rust's package manager, installed.
-
-### Execution of the example 
-
+### Execute the Example
 ```bash
-cargo run -p manifest-producer <path_for_your_ELF_binary>
+cargo run <path_to_your_ELF_binary>
 ```
-
-This command analyses the specified ELF binary and generates the corresponding output, which will be automatically opened in the system's default browser for display. In addition, the structures used to create the trees will be saved in json format. The overall results will be available in the `public/` folder.
+This command analyzes the ELF binary and generates HTML reports along with JSON data for function interactions.
 
 ## License
-
-The **manifest-producer** project is distributed under the MIT licence. This means that you may use, copy, modify, merge, publish, distribute, sublicence and/or sell copies of the software, provided that you include the following copyright notice and permission notice in your work.
-
-For further details on the licence, see the [LICENSE](LICENSE-MIT) file in the repository.
+Distributed under the MIT licence. See the [LICENSE](LICENSE-MIT) file for details.
 
 <!-- Links -->
 [actions]: https://github.com/SoftengPoliTo/manifest-producer/actions

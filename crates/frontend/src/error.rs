@@ -12,6 +12,8 @@ pub enum Error {
     Io(std::io::Error),
     Json(serde_json::Error),
     MiniJinjaError(minijinja::Error),
+    #[cfg(feature = "progress_bar")]
+    ProgressStyleError(indicatif::style::TemplateError),
 }
 
 impl fmt::Display for Error {
@@ -20,6 +22,8 @@ impl fmt::Display for Error {
             Error::Io(e) => write!(f, "I/O error -> {e}"),
             Error::Json(e) => write!(f, "JSON serialization error -> {e}"),
             Error::MiniJinjaError(e) => write!(f, "MiniJinja error -> {e}"),
+            #[cfg(feature = "progress_bar")]
+            Error::ProgressStyleError(e) => write!(f, "Progress style error -> {e}"),
         }
     }
 }
@@ -30,6 +34,8 @@ impl StdError for Error {
             Error::Io(e) => Some(e),
             Error::Json(e) => Some(e),
             Error::MiniJinjaError(e) => Some(e),
+            #[cfg(feature = "progress_bar")]
+            Error::ProgressStyleError(e) => Some(e),
         }
     }
 }
@@ -49,6 +55,13 @@ impl From<serde_json::Error> for Error {
 impl From<minijinja::Error> for Error {
     fn from(err: minijinja::Error) -> Self {
         Error::MiniJinjaError(err)
+    }
+}
+
+#[cfg(feature = "progress_bar")]
+impl From<indicatif::style::TemplateError> for Error {
+    fn from(err: indicatif::style::TemplateError) -> Self {
+        Error::ProgressStyleError(err)
     }
 }
 

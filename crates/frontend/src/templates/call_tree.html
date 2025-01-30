@@ -3,121 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+    <title>Call Tree</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../crates/frontend/src/templates/css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-    <title>Call Graph for {{ root_name }}</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #3273dc, #209cee);
+        }
+        :root {
+            --primary-color: #3273dc;
+            --secondary-color: #209cee;
+            --background-color: #f9f9f9;
+            --border-color: #ddd;
+            --text-color: #363636;
+            --node-hover-color: #485fc7;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node circle:hover {
+            fill: var(--node-hover-color) !important;
+        }
+
+        .node text {
+            font-size: 12px;
+            font-weight: 500;
+            fill: var(--text-color);
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2px;
+        }
+
+        .node-label-background {
+            fill: white;
+            opacity: 0.8;
+        }
+
+        .link {
+            stroke: #999;
+            stroke-width: 1px;
+            stroke-opacity: 0.4;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .zoom-button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .zoom-button:hover {
+            background: var(--node-hover-color);
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar has-background-link" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="../index.html">
-                <h1 class="title is-4 has-text-white">Static Binary Analysis Report</h1>
-            </a>
-        </div>
-    </nav>
-
-    <div class="buttons is-centered">
-        <a href="../root_functions.html" class="button is-link is-light">
-            <span class="icon is-small"><i class="fas fa-table"></i></span>
-            <span>Back to Root functions List</span>
-        </a>
-        <a href="../index.html" class="button is-link is-light">
-            <span class="icon is-small"><i class="fas fa-home"></i></span>
-            <span>Back to Homepage</span>
-        </a>
-    </div>
-
-    <div class="columns is-gapless">
-        <!-- Left column with jstree -->
-        <div class="column is-three-quarters">
-            <div id="jstree"></div>
-        </div>
-
-        <!-- Right column for details of selected node -->
-        <div class="column is-one-quarter">
-            <div id="node-details" class="box">
-                <h2 class="title is-5">Dettagli del Nodo</h2>
-                <p id="node-text">Seleziona un nodo per visualizzare i dettagli.</p>
+    <!-- Hero Section -->
+    <section class="hero is-small hero-gradient">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-3 has-text-white">Call tree for function: {{ root_name }}</h1>
+                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="../root_functions.html" class="has-text-white">Root functions</a></li>
+                        <li><a href="../index.html" class="has-text-white">Home</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Call graph</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Hidden tree data div -->
-    <div id="tree-data" data-tree="{{ js_tree }}" style="display:none;"></div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="content has-text-centered">
-            <p>
-                <strong>Static Binary Analysis Report</strong> by Giuseppe Marco Bianco. The source code is licensed under 
-                <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE/MIT.txt">MIT</a>.
-            </p>
+    <section class="section">
+        <div class="container">
+            <div class="graph-container" id="graph">
+                <div class="controls">
+                    <div class="zoom-controls">
+                        <button class="zoom-button" id="zoomIn">+</button>
+                        <button class="zoom-button" id="zoomReset">Reset</button>
+                        <button class="zoom-button" id="zoomOut">−</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
+    </section>
+
+    <div id="tree-data" data-tree='{{ js_tree }}' style="display:none;"></div>
 
     <script>
-        $(document).ready(function() {
-    const treeDataElement = document.getElementById("tree-data");
-    const tree = treeDataElement.getAttribute("data-tree");
-    const rootNodeData = JSON.parse(tree);
+        document.addEventListener("DOMContentLoaded", function () {
+            const treeDataElement = document.getElementById("tree-data");
+            const treeData = JSON.parse(treeDataElement.getAttribute("data-tree"));
+            const container = document.getElementById("graph");
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            
+            const tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip");
 
-    $('#jstree').jstree({
-        'core': {
-            'data': function (node, callback) {
-                if (node.id === "#") {
-                    callback(rootNodeData);
-                } else {
-                    $.ajax({
-                        url: `/get_children?id=${node.id}`,
-                        dataType: "json",
-                        success: function (data) {
-                            callback(data);
-                        },
-                        error: function () {
-                            console.error("Errore nel caricamento dei figli per il nodo:", node.id);
-                            callback([]);
-                        }
-                    });
+            const zoom = d3.zoom()
+                .scaleExtent([0.3, 3])
+                .on("zoom", zoomed);
+
+            const svg = d3.select("#graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .call(zoom);
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${width / 2},50)`);
+
+            // Increased horizontal space between nodes
+            const treeLayout = d3.tree()
+                .size([height - 100, width - 300])
+                .separation((a, b) => {
+                    // Increase separation based on depth
+                    return (a.parent === b.parent ? 1 : 2) * (1 + a.depth * 0.1);
+                });
+
+            const root = d3.hierarchy(treeData);
+            root.x0 = 0;
+            root.y0 = 0;
+            root.children.forEach(collapse);
+
+            function collapse(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                    d._children.forEach(collapse);
                 }
-            },
-            'check_callback': true 
-        },
-        "types": {
-            "default": {
-                "icon": "fas fa-folder"
-            },
-            "root": {
-                "icon": "fas fa-tree"
-            },
-            "leaf": {
-                "icon": "fas fa-leaf"
             }
-        },
-        "plugins": ["types"]
-    })
-    .on("loaded.jstree", function (e, data) {
-        var rootNode = data.instance.get_node(data.instance.get_node("#").children[0]);
-        data.instance.set_type(rootNode, "root");
-    })
-    .on("open_node.jstree", function (e, data) {
-        data.node.children.forEach(function (childId) {
-            var childNode = data.instance.get_node(childId);
-            if (data.instance.is_leaf(childNode)) {
-                data.instance.set_type(childNode, "leaf");
+
+            function update(source) {
+                const duration = 750;
+                const treeData = treeLayout(root);
+                const nodes = treeData.descendants();
+                const links = treeData.links();
+
+                // Increases the vertical space between levels according to depth
+                nodes.forEach(d => {
+                    d.y = d.depth * 150; // Increased from 120 to 150
+                });
+
+                // Updating nodes
+                const node = g.selectAll(".node")
+                    .data(nodes, d => d.id || (d.id = Math.random()));
+
+                const nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${source.x0},${source.y0})`);
+
+                // Add white background for text
+                nodeEnter.append("rect")
+                    .attr("class", "node-label-background")
+                    .attr("y", -20)
+                    .attr("x", -30)
+                    .attr("width", 60)
+                    .attr("height", 20)
+                    .attr("rx", 3)
+                    .style("opacity", 0);
+
+                nodeEnter.append("circle")
+                    .attr("r", 0)
+                    .attr("fill", d => d._children ? "#3273dc" : "#aaa");
+
+                nodeEnter.append("text")
+                    .attr("dy", "-8")
+                    .attr("text-anchor", "middle")
+                    .text(d => d.data.text)
+                    .style("fill-opacity", 0);
+
+                // Event Management
+                nodeEnter
+                    .on("click", (event, d) => {
+                        if (d.children) {
+                            d._children = d.children;
+                            d.children = null;
+                        } else if (d._children) {
+                            d.children = d._children;
+                            d._children = null;
+                        }
+                        update(d);
+                    })
+                    .on("mouseover", function(event, d) {
+                        tooltip.style("opacity", 1)
+                            .html(`
+                                <strong>${d.data.text}</strong>
+                                ${d.children || d._children ? 
+                                    `<br>Click to ${d.children ? 'collapse' : 'expand'}` : 
+                                    '<br>Leaf node'}
+                            `)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        
+                        // EHighlighting Connected Links
+                        g.selectAll(".link")
+                            .style("stroke-opacity", l => 
+                                l.source === d || l.target === d ? 0.8 : 0.2);
+                    })
+                    .on("mouseout", () => {
+                        tooltip.style("opacity", 0);
+                        g.selectAll(".link")
+                            .style("stroke-opacity", 0.4);
+                    });
+
+                const nodeUpdate = nodeEnter.merge(node);
+
+                nodeUpdate.transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+                nodeUpdate.select("circle")
+                    .transition()
+                    .duration(duration)
+                    .attr("r", 6);
+
+                nodeUpdate.select("text")
+                    .transition()
+                    .duration(duration)
+                    .style("fill-opacity", 1);
+
+                nodeUpdate.select("rect")
+                    .transition()
+                    .duration(duration)
+                    .style("opacity", 0.8);
+
+                const nodeExit = node.exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${source.x},${source.y})`)
+                    .remove();
+
+                nodeExit.select("circle").attr("r", 0);
+                nodeExit.select("text").style("fill-opacity", 0);
+                nodeExit.select("rect").style("opacity", 0);
+
+                const link = g.selectAll(".link")
+                    .data(links, d => d.target.id);
+
+                const linkEnter = link.enter()
+                    .append("line")
+                    .attr("class", "link")
+                    .attr("x1", source.x0)
+                    .attr("y1", source.y0)
+                    .attr("x2", source.x0)
+                    .attr("y2", source.y0);
+
+                link.merge(linkEnter)
+                    .transition()
+                    .duration(duration)
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                link.exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("x1", source.x)
+                    .attr("y1", source.y)
+                    .attr("x2", source.x)
+                    .attr("y2", source.y)
+                    .remove();
+
+                nodes.forEach(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
             }
+
+            function zoomed(event) {
+                g.attr("transform", event.transform);
+            }
+
+            document.getElementById("zoomIn").onclick = () => {
+                svg.transition().duration(750).call(zoom.scaleBy, 1.2);
+            };
+
+            document.getElementById("zoomOut").onclick = () => {
+                svg.transition().duration(750).call(zoom.scaleBy, 0.8);
+            };
+
+            document.getElementById("zoomReset").onclick = () => {
+                svg.transition().duration(750)
+                   .call(zoom.transform, d3.zoomIdentity.translate(width / 2, 50));
+            };
+
+            update(root);
         });
-    });
-
-    $('#jstree').on("select_node.jstree", function(e, data) {
-        $('#node-text').text("Hai selezionato: " + data.node.text);
-    });
-});
-
     </script>
 </body>
-
 </html>
