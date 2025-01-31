@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Tree</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #3273dc, #209cee);
+        }
+        :root {
+            --primary-color: #3273dc;
+            --secondary-color: #209cee;
+            --background-color: #f9f9f9;
+            --border-color: #ddd;
+            --text-color: #363636;
+            --node-hover-color: #485fc7;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node circle:hover {
+            fill: var(--node-hover-color) !important;
+        }
+
+        .node text {
+            font-size: 12px;
+            font-weight: 500;
+            fill: var(--text-color);
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2px;
+        }
+
+        .node-label-background {
+            fill: white;
+            opacity: 0.8;
+        }
+
+        .link {
+            stroke: #999;
+            stroke-width: 1px;
+            stroke-opacity: 0.4;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .zoom-button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .zoom-button:hover {
+            background: var(--node-hover-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero is-small hero-gradient">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-3 has-text-white">Call tree for function: main</h1>
+                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="../root_functions.html" class="has-text-white">Root functions</a></li>
+                        <li><a href="../index.html" class="has-text-white">Home</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Call graph</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="graph-container" id="graph">
+                <div class="controls">
+                    <div class="zoom-controls">
+                        <button class="zoom-button" id="zoomIn">+</button>
+                        <button class="zoom-button" id="zoomReset">Reset</button>
+                        <button class="zoom-button" id="zoomOut">−</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="tree-data" data-tree='{&quot;id&quot;:206,&quot;text&quot;:&quot;main&quot;,&quot;children&quot;:[{&quot;id&quot;:207,&quot;text&quot;:&quot;__printf&quot;,&quot;children&quot;:[{&quot;id&quot;:117,&quot;text&quot;:&quot;__vfprintf_internal&quot;,&quot;children&quot;:[{&quot;id&quot;:45,&quot;text&quot;:&quot;printf_positional&quot;,&quot;children&quot;:[{&quot;id&quot;:46,&quot;text&quot;:&quot;__parse_one_specwc&quot;,&quot;children&quot;:null},{&quot;id&quot;:47,&quot;text&quot;:&quot;__libc_scratch_buffer_grow_preserve&quot;,&quot;children&quot;:null},{&quot;id&quot;:48,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:49,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:50,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:51,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:52,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null},{&quot;id&quot;:53,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:54,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:null},{&quot;id&quot;:55,&quot;text&quot;:&quot;__btowc&quot;,&quot;children&quot;:null},{&quot;id&quot;:56,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:57,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:null},{&quot;id&quot;:58,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:59,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:null},{&quot;id&quot;:60,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:61,&quot;text&quot;:&quot;outstring_func.part.0&quot;,&quot;children&quot;:null},{&quot;id&quot;:62,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:63,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:null},{&quot;id&quot;:64,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:null},{&quot;id&quot;:65,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:19,&quot;text&quot;:&quot;__lll_lock_wake_private&quot;,&quot;children&quot;:null},{&quot;id&quot;:0,&quot;text&quot;:&quot;__libc_cleanup_push_defer&quot;,&quot;children&quot;:null},{&quot;id&quot;:66,&quot;text&quot;:&quot;__libc_cleanup_pop_restore&quot;,&quot;children&quot;:null},{&quot;id&quot;:118,&quot;text&quot;:&quot;__wcrtomb&quot;,&quot;children&quot;:[{&quot;id&quot;:119,&quot;text&quot;:&quot;_dl_mcount_wrapper_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:120,&quot;text&quot;:&quot;__wcsmbs_load_conv&quot;,&quot;children&quot;:null},{&quot;id&quot;:121,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:122,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:123,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:[{&quot;id&quot;:124,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:125,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:77,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:126,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:84,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:85,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:[{&quot;id&quot;:86,&quot;text&quot;:&quot;__wctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:87,&quot;text&quot;:&quot;towctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:88,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:89,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:90,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:127,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:[{&quot;id&quot;:128,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:91,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:[{&quot;id&quot;:92,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:93,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:[{&quot;id&quot;:94,&quot;text&quot;:&quot;__unordtf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:95,&quot;text&quot;:&quot;__letf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:96,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:97,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:null},{&quot;id&quot;:98,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:99,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:100,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:101,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:102,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:103,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:104,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:[{&quot;id&quot;:105,&quot;text&quot;:&quot;__get_errlist&quot;,&quot;children&quot;:null},{&quot;id&quot;:106,&quot;text&quot;:&quot;__dcgettext&quot;,&quot;children&quot;:null},{&quot;id&quot;:107,&quot;text&quot;:&quot;snprintf&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:78,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:[{&quot;id&quot;:79,&quot;text&quot;:&quot;mbsrtowcs&quot;,&quot;children&quot;:null},{&quot;id&quot;:80,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:81,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:82,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:83,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:15,&quot;text&quot;:&quot;__lll_lock_wait_private&quot;,&quot;children&quot;:[{&quot;id&quot;:16,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:108,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:[{&quot;id&quot;:109,&quot;text&quot;:&quot;_IO_fopen64&quot;,&quot;children&quot;:null},{&quot;id&quot;:110,&quot;text&quot;:&quot;__getdelim&quot;,&quot;children&quot;:null},{&quot;id&quot;:111,&quot;text&quot;:&quot;strtoumax&quot;,&quot;children&quot;:null},{&quot;id&quot;:112,&quot;text&quot;:&quot;_IO_fclose&quot;,&quot;children&quot;:null},{&quot;id&quot;:113,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:114,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:115,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:[{&quot;id&quot;:116,&quot;text&quot;:&quot;__libc_message.constprop.0&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]},{&quot;id&quot;:208,&quot;text&quot;:&quot;read_sensor_data&quot;,&quot;children&quot;:[{&quot;id&quot;:209,&quot;text&quot;:&quot;rand&quot;,&quot;children&quot;:[{&quot;id&quot;:169,&quot;text&quot;:&quot;random&quot;,&quot;children&quot;:[{&quot;id&quot;:170,&quot;text&quot;:&quot;random_r&quot;,&quot;children&quot;:null},{&quot;id&quot;:15,&quot;text&quot;:&quot;__lll_lock_wait_private&quot;,&quot;children&quot;:[{&quot;id&quot;:16,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:19,&quot;text&quot;:&quot;__lll_lock_wake_private&quot;,&quot;children&quot;:null},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]}]}]},{&quot;id&quot;:210,&quot;text&quot;:&quot;transmit_data&quot;,&quot;children&quot;:[{&quot;id&quot;:207,&quot;text&quot;:&quot;__printf&quot;,&quot;children&quot;:[{&quot;id&quot;:117,&quot;text&quot;:&quot;__vfprintf_internal&quot;,&quot;children&quot;:[{&quot;id&quot;:45,&quot;text&quot;:&quot;printf_positional&quot;,&quot;children&quot;:[{&quot;id&quot;:46,&quot;text&quot;:&quot;__parse_one_specwc&quot;,&quot;children&quot;:null},{&quot;id&quot;:47,&quot;text&quot;:&quot;__libc_scratch_buffer_grow_preserve&quot;,&quot;children&quot;:null},{&quot;id&quot;:48,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:49,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:50,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:51,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:52,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null},{&quot;id&quot;:53,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:54,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:null},{&quot;id&quot;:55,&quot;text&quot;:&quot;__btowc&quot;,&quot;children&quot;:null},{&quot;id&quot;:56,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:57,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:null},{&quot;id&quot;:58,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:59,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:null},{&quot;id&quot;:60,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:61,&quot;text&quot;:&quot;outstring_func.part.0&quot;,&quot;children&quot;:null},{&quot;id&quot;:62,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:63,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:null},{&quot;id&quot;:64,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:null},{&quot;id&quot;:65,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:19,&quot;text&quot;:&quot;__lll_lock_wake_private&quot;,&quot;children&quot;:null},{&quot;id&quot;:0,&quot;text&quot;:&quot;__libc_cleanup_push_defer&quot;,&quot;children&quot;:null},{&quot;id&quot;:66,&quot;text&quot;:&quot;__libc_cleanup_pop_restore&quot;,&quot;children&quot;:null},{&quot;id&quot;:118,&quot;text&quot;:&quot;__wcrtomb&quot;,&quot;children&quot;:[{&quot;id&quot;:119,&quot;text&quot;:&quot;_dl_mcount_wrapper_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:120,&quot;text&quot;:&quot;__wcsmbs_load_conv&quot;,&quot;children&quot;:null},{&quot;id&quot;:121,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:122,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:123,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:[{&quot;id&quot;:124,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:125,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:77,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:126,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:84,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:85,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:[{&quot;id&quot;:86,&quot;text&quot;:&quot;__wctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:87,&quot;text&quot;:&quot;towctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:88,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:89,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:90,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:127,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:[{&quot;id&quot;:128,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:91,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:[{&quot;id&quot;:92,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:93,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:[{&quot;id&quot;:94,&quot;text&quot;:&quot;__unordtf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:95,&quot;text&quot;:&quot;__letf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:96,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:97,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:null},{&quot;id&quot;:98,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:99,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:100,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:101,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:102,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:103,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:104,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:[{&quot;id&quot;:105,&quot;text&quot;:&quot;__get_errlist&quot;,&quot;children&quot;:null},{&quot;id&quot;:106,&quot;text&quot;:&quot;__dcgettext&quot;,&quot;children&quot;:null},{&quot;id&quot;:107,&quot;text&quot;:&quot;snprintf&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:78,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:[{&quot;id&quot;:79,&quot;text&quot;:&quot;mbsrtowcs&quot;,&quot;children&quot;:null},{&quot;id&quot;:80,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:81,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:82,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:83,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:15,&quot;text&quot;:&quot;__lll_lock_wait_private&quot;,&quot;children&quot;:[{&quot;id&quot;:16,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:108,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:[{&quot;id&quot;:109,&quot;text&quot;:&quot;_IO_fopen64&quot;,&quot;children&quot;:null},{&quot;id&quot;:110,&quot;text&quot;:&quot;__getdelim&quot;,&quot;children&quot;:null},{&quot;id&quot;:111,&quot;text&quot;:&quot;strtoumax&quot;,&quot;children&quot;:null},{&quot;id&quot;:112,&quot;text&quot;:&quot;_IO_fclose&quot;,&quot;children&quot;:null},{&quot;id&quot;:113,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:114,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:115,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:[{&quot;id&quot;:116,&quot;text&quot;:&quot;__libc_message.constprop.0&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]},{&quot;id&quot;:211,&quot;text&quot;:&quot;secret_function&quot;,&quot;children&quot;:[{&quot;id&quot;:207,&quot;text&quot;:&quot;__printf&quot;,&quot;children&quot;:[{&quot;id&quot;:117,&quot;text&quot;:&quot;__vfprintf_internal&quot;,&quot;children&quot;:[{&quot;id&quot;:45,&quot;text&quot;:&quot;printf_positional&quot;,&quot;children&quot;:[{&quot;id&quot;:46,&quot;text&quot;:&quot;__parse_one_specwc&quot;,&quot;children&quot;:null},{&quot;id&quot;:47,&quot;text&quot;:&quot;__libc_scratch_buffer_grow_preserve&quot;,&quot;children&quot;:null},{&quot;id&quot;:48,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:49,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:50,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:51,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:52,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null},{&quot;id&quot;:53,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:54,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:null},{&quot;id&quot;:55,&quot;text&quot;:&quot;__btowc&quot;,&quot;children&quot;:null},{&quot;id&quot;:56,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:57,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:null},{&quot;id&quot;:58,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:59,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:null},{&quot;id&quot;:60,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:61,&quot;text&quot;:&quot;outstring_func.part.0&quot;,&quot;children&quot;:null},{&quot;id&quot;:62,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:63,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:null},{&quot;id&quot;:64,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:null},{&quot;id&quot;:65,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:19,&quot;text&quot;:&quot;__lll_lock_wake_private&quot;,&quot;children&quot;:null},{&quot;id&quot;:0,&quot;text&quot;:&quot;__libc_cleanup_push_defer&quot;,&quot;children&quot;:null},{&quot;id&quot;:66,&quot;text&quot;:&quot;__libc_cleanup_pop_restore&quot;,&quot;children&quot;:null},{&quot;id&quot;:118,&quot;text&quot;:&quot;__wcrtomb&quot;,&quot;children&quot;:[{&quot;id&quot;:119,&quot;text&quot;:&quot;_dl_mcount_wrapper_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:120,&quot;text&quot;:&quot;__wcsmbs_load_conv&quot;,&quot;children&quot;:null},{&quot;id&quot;:121,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:122,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:123,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:[{&quot;id&quot;:124,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:125,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:77,&quot;text&quot;:&quot;__get_errname&quot;,&quot;children&quot;:null},{&quot;id&quot;:126,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:84,&quot;text&quot;:&quot;group_number&quot;,&quot;children&quot;:null},{&quot;id&quot;:85,&quot;text&quot;:&quot;_i18n_number_rewrite&quot;,&quot;children&quot;:[{&quot;id&quot;:86,&quot;text&quot;:&quot;__wctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:87,&quot;text&quot;:&quot;towctrans&quot;,&quot;children&quot;:null},{&quot;id&quot;:88,&quot;text&quot;:&quot;__libc_scratch_buffer_set_array_size&quot;,&quot;children&quot;:null},{&quot;id&quot;:89,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:90,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:127,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:[{&quot;id&quot;:128,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:91,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:[{&quot;id&quot;:92,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:93,&quot;text&quot;:&quot;__printf_fphex&quot;,&quot;children&quot;:[{&quot;id&quot;:94,&quot;text&quot;:&quot;__unordtf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:95,&quot;text&quot;:&quot;__letf2&quot;,&quot;children&quot;:null},{&quot;id&quot;:96,&quot;text&quot;:&quot;_itoa_word&quot;,&quot;children&quot;:null},{&quot;id&quot;:97,&quot;text&quot;:&quot;_IO_padn&quot;,&quot;children&quot;:null},{&quot;id&quot;:98,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:99,&quot;text&quot;:&quot;__woverflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:100,&quot;text&quot;:&quot;__overflow&quot;,&quot;children&quot;:null},{&quot;id&quot;:101,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:102,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:103,&quot;text&quot;:&quot;___printf_fp&quot;,&quot;children&quot;:null},{&quot;id&quot;:104,&quot;text&quot;:&quot;__strerror_r&quot;,&quot;children&quot;:[{&quot;id&quot;:105,&quot;text&quot;:&quot;__get_errlist&quot;,&quot;children&quot;:null},{&quot;id&quot;:106,&quot;text&quot;:&quot;__dcgettext&quot;,&quot;children&quot;:null},{&quot;id&quot;:107,&quot;text&quot;:&quot;snprintf&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:78,&quot;text&quot;:&quot;outstring_converted_wide_string&quot;,&quot;children&quot;:[{&quot;id&quot;:79,&quot;text&quot;:&quot;mbsrtowcs&quot;,&quot;children&quot;:null},{&quot;id&quot;:80,&quot;text&quot;:&quot;_IO_vtable_check&quot;,&quot;children&quot;:null},{&quot;id&quot;:81,&quot;text&quot;:&quot;_IO_wpadn&quot;,&quot;children&quot;:null},{&quot;id&quot;:82,&quot;text&quot;:&quot;__assert_fail&quot;,&quot;children&quot;:null},{&quot;id&quot;:83,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:15,&quot;text&quot;:&quot;__lll_lock_wait_private&quot;,&quot;children&quot;:[{&quot;id&quot;:16,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:108,&quot;text&quot;:&quot;__readonly_area&quot;,&quot;children&quot;:[{&quot;id&quot;:109,&quot;text&quot;:&quot;_IO_fopen64&quot;,&quot;children&quot;:null},{&quot;id&quot;:110,&quot;text&quot;:&quot;__getdelim&quot;,&quot;children&quot;:null},{&quot;id&quot;:111,&quot;text&quot;:&quot;strtoumax&quot;,&quot;children&quot;:null},{&quot;id&quot;:112,&quot;text&quot;:&quot;_IO_fclose&quot;,&quot;children&quot;:null},{&quot;id&quot;:113,&quot;text&quot;:&quot;__free&quot;,&quot;children&quot;:null},{&quot;id&quot;:114,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:115,&quot;text&quot;:&quot;__libc_fatal&quot;,&quot;children&quot;:[{&quot;id&quot;:116,&quot;text&quot;:&quot;__libc_message.constprop.0&quot;,&quot;children&quot;:null}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]}]}]},{&quot;id&quot;:212,&quot;text&quot;:&quot;sleep&quot;,&quot;children&quot;:[{&quot;id&quot;:213,&quot;text&quot;:&quot;nanosleep&quot;,&quot;children&quot;:[{&quot;id&quot;:214,&quot;text&quot;:&quot;__clock_nanosleep&quot;,&quot;children&quot;:[{&quot;id&quot;:194,&quot;text&quot;:&quot;__pthread_enable_asynccancel&quot;,&quot;children&quot;:null},{&quot;id&quot;:195,&quot;text&quot;:&quot;__pthread_disable_asynccancel&quot;,&quot;children&quot;:null},{&quot;id&quot;:215,&quot;text&quot;:&quot;clock_gettime&quot;,&quot;children&quot;:null},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]}]},{&quot;id&quot;:25,&quot;text&quot;:&quot;__stack_chk_fail_local&quot;,&quot;children&quot;:[{&quot;id&quot;:26,&quot;text&quot;:&quot;__fortify_fail&quot;,&quot;children&quot;:[{&quot;id&quot;:27,&quot;text&quot;:&quot;__libc_message&quot;,&quot;children&quot;:null}]}]}]}]}' style="display:none;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const treeDataElement = document.getElementById("tree-data");
+            const treeData = JSON.parse(treeDataElement.getAttribute("data-tree"));
+            const container = document.getElementById("graph");
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            
+            const tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip");
+
+            const zoom = d3.zoom()
+                .scaleExtent([0.3, 3])
+                .on("zoom", zoomed);
+
+            const svg = d3.select("#graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .call(zoom);
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${width / 2},50)`);
+
+            // Increased horizontal space between nodes
+            const treeLayout = d3.tree()
+                .size([height - 100, width - 300])
+                .separation((a, b) => {
+                    // Increase separation based on depth
+                    return (a.parent === b.parent ? 1 : 2) * (1 + a.depth * 0.1);
+                });
+
+            const root = d3.hierarchy(treeData);
+            root.x0 = 0;
+            root.y0 = 0;
+            root.children.forEach(collapse);
+
+            function collapse(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                    d._children.forEach(collapse);
+                }
+            }
+
+            function update(source) {
+                const duration = 750;
+                const treeData = treeLayout(root);
+                const nodes = treeData.descendants();
+                const links = treeData.links();
+
+                // Increases the vertical space between levels according to depth
+                nodes.forEach(d => {
+                    d.y = d.depth * 150; // Increased from 120 to 150
+                });
+
+                // Updating nodes
+                const node = g.selectAll(".node")
+                    .data(nodes, d => d.id || (d.id = Math.random()));
+
+                const nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${source.x0},${source.y0})`);
+
+                // Add white background for text
+                nodeEnter.append("rect")
+                    .attr("class", "node-label-background")
+                    .attr("y", -20)
+                    .attr("x", -30)
+                    .attr("width", 60)
+                    .attr("height", 20)
+                    .attr("rx", 3)
+                    .style("opacity", 0);
+
+                nodeEnter.append("circle")
+                    .attr("r", 0)
+                    .attr("fill", d => d._children ? "#3273dc" : "#aaa");
+
+                nodeEnter.append("text")
+                    .attr("dy", "-8")
+                    .attr("text-anchor", "middle")
+                    .text(d => d.data.text)
+                    .style("fill-opacity", 0);
+
+                // Event Management
+                nodeEnter
+                    .on("click", (event, d) => {
+                        if (d.children) {
+                            d._children = d.children;
+                            d.children = null;
+                        } else if (d._children) {
+                            d.children = d._children;
+                            d._children = null;
+                        }
+                        update(d);
+                    })
+                    .on("mouseover", function(event, d) {
+                        tooltip.style("opacity", 1)
+                            .html(`
+                                <strong>${d.data.text}</strong>
+                                ${d.children || d._children ? 
+                                    `<br>Click to ${d.children ? 'collapse' : 'expand'}` : 
+                                    '<br>Leaf node'}
+                            `)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        
+                        // EHighlighting Connected Links
+                        g.selectAll(".link")
+                            .style("stroke-opacity", l => 
+                                l.source === d || l.target === d ? 0.8 : 0.2);
+                    })
+                    .on("mouseout", () => {
+                        tooltip.style("opacity", 0);
+                        g.selectAll(".link")
+                            .style("stroke-opacity", 0.4);
+                    });
+
+                const nodeUpdate = nodeEnter.merge(node);
+
+                nodeUpdate.transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+                nodeUpdate.select("circle")
+                    .transition()
+                    .duration(duration)
+                    .attr("r", 6);
+
+                nodeUpdate.select("text")
+                    .transition()
+                    .duration(duration)
+                    .style("fill-opacity", 1);
+
+                nodeUpdate.select("rect")
+                    .transition()
+                    .duration(duration)
+                    .style("opacity", 0.8);
+
+                const nodeExit = node.exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${source.x},${source.y})`)
+                    .remove();
+
+                nodeExit.select("circle").attr("r", 0);
+                nodeExit.select("text").style("fill-opacity", 0);
+                nodeExit.select("rect").style("opacity", 0);
+
+                const link = g.selectAll(".link")
+                    .data(links, d => d.target.id);
+
+                const linkEnter = link.enter()
+                    .append("line")
+                    .attr("class", "link")
+                    .attr("x1", source.x0)
+                    .attr("y1", source.y0)
+                    .attr("x2", source.x0)
+                    .attr("y2", source.y0);
+
+                link.merge(linkEnter)
+                    .transition()
+                    .duration(duration)
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                link.exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("x1", source.x)
+                    .attr("y1", source.y)
+                    .attr("x2", source.x)
+                    .attr("y2", source.y)
+                    .remove();
+
+                nodes.forEach(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            }
+
+            function zoomed(event) {
+                g.attr("transform", event.transform);
+            }
+
+            document.getElementById("zoomIn").onclick = () => {
+                svg.transition().duration(750).call(zoom.scaleBy, 1.2);
+            };
+
+            document.getElementById("zoomOut").onclick = () => {
+                svg.transition().duration(750).call(zoom.scaleBy, 0.8);
+            };
+
+            document.getElementById("zoomReset").onclick = () => {
+                svg.transition().duration(750)
+                   .call(zoom.transform, d3.zoomIdentity.translate(width / 2, 50));
+            };
+
+            update(root);
+        });
+    </script>
+</body>
+</html>

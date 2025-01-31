@@ -72,10 +72,9 @@ pub fn html_generator(
     root_nodes: &Vec<String>,
     output_path: &str,
 ) -> Result<()> {
-
     #[cfg(feature = "progress_bar")]
     let pb = {
-        let pb = indicatif::ProgressBar::new((root_nodes.len()*2) as u64);
+        let pb = indicatif::ProgressBar::new((root_nodes.len() * 2) as u64);
         pb.set_message("Building call graphs:".to_string());
         pb.set_style(
             indicatif::ProgressStyle::default_bar()

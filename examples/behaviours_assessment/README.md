@@ -2,6 +2,10 @@
 
 [![LICENSE][license badge]][license]
 
+![Demo](../../data/demo.gif)
+*Demo of the tool analyzing an ELF binary and generating HTML reports.*
+The results of the demo are visible in the results folder in example.
+
 ## Description
 The `behaviours_assessment` tool demonstrates how to use the `manifest-producer` library to analyze ELF binaries. It generates HTML reports with interactive call trees and structured JSON outputs for function analysis.
 
@@ -16,6 +20,8 @@ The `behaviours_assessment` tool demonstrates how to use the `manifest-producer`
 Ensure you have the following installed:
 
 - **Rust 1.50+** and **cargo** package manager.
+   (If not already installed, please follow the [Rust installation guide](https://www.rust-lang.org/tools/install).)
+
 
 ## Usage
 1. Clone the repository:
@@ -32,7 +38,7 @@ Ensure you have the following installed:
     - **JSON Files:** Containing structured data for function interactions and analysis results.
 
 ### Reverse Engineering Use Case
-This tool is valuable for static reverse engineering, helping to decode binary functionality by analyzing dependencies and symbol names.
+This tool is for static reverse engineering. It helps inspect elf binaries by analyzing dependencies, symbol names, and function interactions, making it easier to understand complex binaries and their inner workings.
 
 <!-- Links -->
 [license]: LICENSE-MIT
