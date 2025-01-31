@@ -72,6 +72,18 @@ pub fn html_generator(
     root_nodes: &Vec<String>,
     output_path: &str,
 ) -> Result<()> {
+
+    #[cfg(feature = "progress_bar")]
+    let pb = {
+        let pb = indicatif::ProgressBar::new((root_nodes.len()*2) as u64);
+        pb.set_message("Building call graphs:".to_string());
+        pb.set_style(
+            indicatif::ProgressStyle::default_bar()
+                .template("{msg}\n{wide_bar} {pos}/{len} [{elapsed_precise}]")?,
+        );
+        pb
+    };
+
     let mut node_roots: HashMap<String, FunctionNode> = HashMap::new();
     let mut sub_trees: HashMap<String, TreeNode> = HashMap::new();
     let mut id_counter = 0;
@@ -86,6 +98,9 @@ pub fn html_generator(
     render_root_page(root_nodes, output_path)?;
 
     for root in root_nodes {
+        #[cfg(feature = "progress_bar")]
+        pb.inc(1);
+
         // Step 1: Identification of subtrees
         identify_subtrees(root, detected_functions, &mut node_roots);
 
@@ -109,7 +124,12 @@ pub fn html_generator(
         // Empty the structures for the next cycle
         node_roots.clear();
         sub_trees.clear();
+
+        #[cfg(feature = "progress_bar")]
+        pb.inc(1);
     }
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message("Call graphs built!");
     Ok(())
 }
 

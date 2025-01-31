@@ -169,6 +169,7 @@ fn analyse_code_slice(
     Ok((nodes, disassembly_output, flag))
 }
 
+
 fn call_insn(elf: &Elf, op_str: &str, language: &str) -> Option<String> {
     op_str
         .strip_prefix("0x")
