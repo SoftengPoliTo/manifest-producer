@@ -75,6 +75,10 @@
                                     <td><strong>Entry Point</strong></td>
                                     <td><code>0x{{ basic_info.entry_point }}</code></td>
                                 </tr>
+                                <tr>
+                                    <td><strong>Language detected</strong></td>
+                                    <td><code>{{ basic_info.language }}</code></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -95,7 +99,7 @@
                             </div>
                             <div class="column is-half">
                                 <div class="notification {{ 'is-success' if not basic_info.stripped else 'is-warning' }}">
-                                    <h4 class="title is-5">Symbols</h4>
+                                    <h4 class="title is-5">Debug Symbols</h4>
                                     <p>{{ 'Stripped' if basic_info.stripped else 'Not Stripped' }}</p>
                                 </div>
                             </div>
@@ -116,7 +120,7 @@
                     <div class="box info-card">
                         <h3 class="title is-4">
                             <span class="icon has-text-info"><i class="fas fa-function"></i></span>
-                            Function Analysis
+                            Functions List
                         </h3>
                         <div class="content">
                             <div class="has-text-centered mb-4">
