@@ -81,15 +81,6 @@
                                         Show only functions with syscalls
                                     </label>
                                 </div>
-                                <div class="control">
-                                    <div class="select">
-                                        <select id="sortSelect">
-                                            <option value="name">Sort by Name</option>
-                                            <option value="addr">Sort by Address</option>
-                                            <option value="calls">Sort by Calls</option>
-                                        </select>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -114,7 +105,7 @@
                                 {% for func in functions %}
                                 <tr>
                                     <td>
-                                        <span class="function-name" onclick="showDetails('{{ func.name }}')">
+                                        <span class="function-name" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage }}')">
                                             {{ func.name }}
                                             {% if func.syscall %}
                                             <span class="syscall-badge">syscall</span>
@@ -132,7 +123,7 @@
                                     </td>
                                     <td>
                                         <div class="buttons are-small">
-                                            <button class="button is-info" onclick="showDetails('{{ func.name }}')">
+                                            <button class="button is-info" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage | safe }}')">
                                                 <span class="icon"><i class="fas fa-info-circle"></i></span>
                                             </button>
                                             {% if func.disassembly %}
@@ -152,12 +143,12 @@
         </div>
     </section>
 
-    <!-- Function Details Modal -->
+    <!-- Details Modal -->
     <div class="modal" id="detailsModal">
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Function Details</p>
+                <p class="modal-card-title">Details</p>
                 <button class="delete" aria-label="close" onclick="closeModal()"></button>
             </header>
             <section class="modal-card-body">
@@ -181,7 +172,6 @@
 
     <script>
 
-        // Funzioni di supporto per filtro e ordinamento
         function filterTable() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             const syscallOnly = document.getElementById('syscallFilter').checked;
@@ -195,17 +185,28 @@
             });
         }
 
-        function showDetails(functionName) {
+        function showDetails(functionName, isSyscall, syscallName, syscallManpage) {
             const modal = document.getElementById('detailsModal');
             const content = document.getElementById('modalContent');
-            
-            // Qui inseriresti il codice per caricare i dettagli della funzione
-            // Per ora mostro un placeholder
-            content.innerHTML = `<h3 class="title is-4">${functionName}</h3>
-                               <div class="content">
-                                   <p>Function details will be loaded here...</p>
-                               </div>`;
-            
+
+            isSyscall = (isSyscall === "true" || isSyscall === "1");
+
+            let detailsHTML = `
+                <h3 class="title is-4">${functionName}</h3>
+                <div class="content">
+                    <p><strong>Type:</strong> ${isSyscall ? 'System Call' : 'Function'}</p>
+            `;
+
+            if (isSyscall) {
+                detailsHTML += `
+                    <p><strong>System Call Name:</strong> ${syscallName || 'N/A'}</p>
+                    <p><strong>Manpage:</strong> ${syscallManpage ? `<a href="${syscallManpage}" target="_blank" rel="noopener noreferrer">${syscallManpage}</a>` : 'N/A'}</p>
+                `;
+            }
+
+            detailsHTML += `</div>`;
+
+            content.innerHTML = detailsHTML;
             modal.classList.add('is-active');
         }
 
@@ -213,41 +214,10 @@
             document.getElementById('detailsModal').classList.remove('is-active');
         }
 
-        function sortTable() {
-            const sortBy = document.getElementById("sortSelect").value;
-            const tbody = document.querySelector("tbody");
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-
-            rows.sort((rowA, rowB) => {
-                let valA, valB;
-                
-                if (sortBy === "name") {
-                    valA = rowA.querySelector(".function-name").textContent.trim().toLowerCase();
-                    valB = rowB.querySelector(".function-name").textContent.trim().toLowerCase();
-                } else if (sortBy === "addr") {
-                    valA = parseInt(rowA.children[1].textContent.replace("0x", ""), 16);
-                    valB = parseInt(rowB.children[1].textContent.replace("0x", ""), 16);
-                } else if (sortBy === "calls") {
-                    valA = parseInt(rowA.children[2].textContent);
-                    valB = parseInt(rowB.children[2].textContent);
-                }
-
-                return valA > valB ? 1 : -1;
-            });
-
-            // Riordinare la tabella
-            rows.forEach(row => tbody.appendChild(row));
-        }
-
-        // Event Listener per il sorting
-        document.getElementById("sortSelect").addEventListener("change", sortTable);
-
-
         function showDisassembly(functionName, disassemblyCode) {
             const modal = document.getElementById("detailsModal");
             const content = document.getElementById("modalContent");
 
-            // Se non è disponibile il disassemblato, mostra un messaggio di default
             const formattedCode = disassemblyCode && disassemblyCode.trim() !== "" 
                 ? `<pre><code>${disassemblyCode}</code></pre>` 
                 : "<p><em>No disassembly available for this function.</em></p>";
@@ -260,12 +230,8 @@
             modal.classList.add("is-active");
         }
 
-
-        // Event Listeners
         document.getElementById('searchInput').addEventListener('keyup', filterTable);
         document.getElementById('syscallFilter').addEventListener('change', filterTable);
-        
-        // Close modal when clicking outside
         document.querySelector('.modal-background').addEventListener('click', closeModal);
     </script>
 </body>
