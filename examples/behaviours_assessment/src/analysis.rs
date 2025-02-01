@@ -1,10 +1,10 @@
 use manifest_producer_backend::{
     analyse::analyse_functions,
     detect::function_detection,
-    entry::find_root_nodes,
+    entry::find_main,
     inspect::{inspect_binary, parse_elf, read_elf},
 };
-use manifest_producer_frontend::html_generator::html_generator;
+use manifest_producer_frontend::html_builder::html_builder;
 
 use crate::error::Result;
 
@@ -14,6 +14,7 @@ use crate::error::Result;
 ///
 /// - `elf_path`: A string slice containing the path to the ELF binary.
 /// - `output_path`: A string slice specifying the directory where the analysis results will be saved.
+/// - `max_depth`: An optional depth limit for the function call graph.
 ///
 /// # Workflow
 ///
@@ -22,8 +23,8 @@ use crate::error::Result;
 /// 3. **Inspect Metadata**: Extracts metadata and high-level details about the binary using [`inspect_binary`].
 /// 4. **Detect Functions**: Identifies functions within the binary with [`function_detection`].
 /// 5. **Analyze Functions**: Performs in-depth analysis of the identified functions using [`analyse_functions`].
-/// 6. **Find Root Nodes**: Identifies key entry points in the binary with [`find_root_nodes`].
-/// 7. **Generate HTML Report**: Produces an interactive HTML-based summary using [`html_generator`].
+/// 6. **Find Main**: Identifies entry point in the binary with [`find_main`].
+/// 7. **Generate HTML Report**: Produces an interactive HTML-based summary using [`html_builder`].
 ///
 /// # Returns
 ///
@@ -38,7 +39,7 @@ use crate::error::Result;
 /// - Analysis errors in downstream function calls.
 /// - HTML generation failures.
 #[allow(clippy::module_name_repetitions)]
-pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
+pub fn perform_analysis(elf_path: &str, output_path: &str, max_depth: Option<usize>) -> Result<()> {
     let buffer = read_elf(elf_path)?;
     let elf = parse_elf(&buffer)?;
 
@@ -51,8 +52,15 @@ pub fn perform_analysis(elf_path: &str, output_path: &str) -> Result<()> {
         &info.language,
         output_path,
     )?;
-    let root_nodes = find_root_nodes(elf_path, &info.language, &detected_functions)?;
-    html_generator(&info, &detected_functions, &root_nodes, output_path)?;
+
+    let main_name = find_main(&detected_functions)?;
+    html_builder(
+        &info,
+        &mut detected_functions,
+        &main_name.name,
+        output_path,
+        max_depth,
+    )?;
 
     Ok(())
 }

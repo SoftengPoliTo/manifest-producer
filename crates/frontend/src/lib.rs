@@ -1,7 +1,6 @@
 pub mod error;
-pub mod html_generator;
-pub mod subtrees_generator;
-pub mod tree_generator;
+pub mod graph_builder;
+pub mod html_builder;
 
 /// Represents a tree structure used for visualizing interactions between functions.
 ///

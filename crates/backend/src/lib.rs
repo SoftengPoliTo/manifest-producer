@@ -272,7 +272,6 @@ impl FunctionNode {
             syscall_info: None,
         }
     }
-
     /// Sets the disassembly for the function.
     ///
     /// # Arguments
@@ -295,7 +294,6 @@ impl FunctionNode {
     pub fn set_disassembly(&mut self, disassembly: String) {
         self.disassembly = Some(disassembly);
     }
-
     /// Sets the system call information for the function.
     ///
     /// # Arguments

@@ -3,6 +3,16 @@ source: crates/backend/tests/common/mod.rs
 expression: root_nodes_json
 snapshot_kind: text
 ---
-[
-  "main"
-]
+{
+  "name": "main",
+  "start_addr": 4200288,
+  "end_addr": 4200318,
+  "invocation_entry": 0,
+  "jmp": 0,
+  "children": [
+    "writeOnDrive"
+  ],
+  "disassembly": "0x401760:\tpush\t%rbp\n0x401761:\tmov\t%rsp, %rbp\n0x401764:\tsub\t$0x10, %rsp\n0x401768:\tmov\t$0, -4(%rbp)\n0x40176f:\tmov\t$0, %al\n0x401771:\tcall\t0x401730   <writeOnDrive>\n0x401776:\txor\t%eax, %eax\n0x401778:\tadd\t$0x10, %rsp\n0x40177c:\tpop\t%rbp\n0x40177d:\tret\t\n",
+  "syscall": false,
+  "syscall_info": null
+}

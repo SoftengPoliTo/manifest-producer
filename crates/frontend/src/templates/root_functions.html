@@ -34,11 +34,11 @@
     <section class="hero is-medium hero-gradient">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title is-2 has-text-white">Root Functions Detected</h1>
+                <h1 class="title is-2 has-text-white">Root Function</h1>
                 <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
                     <ul>
                         <li><a href="index.html" class="has-text-white">Home</a></li>
-                        <li class="is-active"><a class="has-text-white" aria-current="page">Root Functions</a></li>
+                        <li class="is-active"><a class="has-text-white" aria-current="page">Root Function</a></li>
                     </ul>
                 </nav>
             </div>
@@ -55,11 +55,11 @@
                             <span class="icon concept-icon">
                                 <i class="fas fa-project-diagram"></i>
                             </span>
-                            <h3 class="title is-4 mt-2">Root Functions</h3>
+                            <h3 class="title is-4 mt-2">Root Function</h3>
                         </div>
                         <p class="has-text-centered">
-                            Root functions are entry points that initiate call sequences in the binary.
-                            They serve as starting points for analyzing possible program flow and behaviours.
+                            Root function is the entry point that initiate call sequences in the binary.
+                            It serves as starting points for analyzing possible program flow and behaviours.
                         </p>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                             <h3 class="title is-4 mt-2">Call Trees</h3>
                         </div>
                         <p class="has-text-centered">
-                            Call trees visualize function Interactions and dependencies,
+                            Call Graph visualize function Interactions and dependencies,
                             helping identify control flow patterns and potential vulnerabilities.
                         </p>
                     </div>
@@ -94,7 +94,6 @@
 
             <!-- Root Functions Grid -->
             <div class="columns is-multiline" id="rootsGrid">
-                {% for root in roots %}
                 <div class="column is-4">
                     <a href="./call_trees/{{ root }}.html" class="box root-card">
                         <div class="is-flex is-align-items-center">
@@ -104,7 +103,7 @@
                             <div>
                                 <h4 class="title is-5 mb-2">{{ root }}</h4>
                                 <p class="is-size-7 has-text-grey">
-                                    View call tree
+                                    View call Graph
                                 </p>
                             </div>
                             <span class="icon has-text-grey-light ml-auto">
@@ -113,7 +112,6 @@
                         </div>
                     </a>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </section>

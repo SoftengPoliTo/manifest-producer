@@ -6,13 +6,13 @@ authors = ["Giuseppe Marco Bianco <giuseppe.bianco1@uniurb.it>"]
 description = "The `frontend` crate serves as the visual and structural layer for rendering analysis results. It combines HTML templates, CSS styles, JavaScript functionality, and Rust-powered generation logic to produce a coherent and interactive user interface. The crate is modular, with dedicated modules for creating call trees, subtrees, and dynamically generated HTML content based on analyzed data."
 license = "MIT"
 readme = "README.md"
-keywords = ["Behavioural assessment", "HTML", "JavaScript", "CallTree"]
+keywords = ["Behavioural assessment", "HTML", "JavaScript", "CallGraph"]
 
 [dependencies]
 serde_json = "1.0.132"
 serde = { version = "1.0.213", features = ["derive"] }
 minijinja = "2.4.0"
-manifest-producer-backend = { path = "../backend", features = ["default"]}
+manifest-producer-backend = { path = "../backend"}
 indicatif = { version = "0.17.8", optional = true, default-features = false }
 
 [features]

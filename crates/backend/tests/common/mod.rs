@@ -2,7 +2,7 @@ use insta::{assert_snapshot, with_settings};
 use manifest_producer_backend::{
     analyse::analyse_functions,
     detect::function_detection,
-    entry::find_root_nodes,
+    entry::find_main,
     inspect::{inspect_binary, parse_elf, read_elf},
 };
 use serde_json::Value;
@@ -29,10 +29,8 @@ pub fn run_analysis_test(binary_path: &str, test_name: &str) {
     let inspect_json = read_and_sort_json(Path::new(&output_path).join("json/basic_info.json"));
     let analyse_json = read_and_sort_json(Path::new(&output_path).join("json/functions_list.json"));
 
-    let root_nodes = find_root_nodes(binary_path, &info.language, &detected_functions).unwrap();
-    let mut sorted_root_nodes = root_nodes.clone();
-    sorted_root_nodes.sort();
-    let root_nodes_json = serde_json::to_string_pretty(&sorted_root_nodes).unwrap();
+    let root_nodes = find_main(&detected_functions).unwrap();
+    let root_nodes_json = serde_json::to_string_pretty(&root_nodes).unwrap();
 
     with_settings!(
         {
