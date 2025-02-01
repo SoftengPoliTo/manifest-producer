@@ -3,22 +3,17 @@ source: crates/backend/tests/common/mod.rs
 expression: root_nodes_json
 snapshot_kind: text
 ---
-[
-  "aligned_alloc",
-  "btowc",
-  "calloc",
-  "fclose",
-  "fgetwc",
-  "fopen",
-  "fputs",
-  "fread",
-  "free",
-  "fwrite",
-  "getc",
-  "getwc",
-  "main",
-  "putc",
-  "ungetc",
-  "vsprintf",
-  "wcsrtombs"
-]
+{
+  "name": "main",
+  "start_addr": 4216368,
+  "end_addr": 4216408,
+  "invocation_entry": 0,
+  "jmp": 0,
+  "children": [
+    "writeOnDrive",
+    "accessWebcam"
+  ],
+  "disassembly": "0x405630:\tpush\t%rbp\n0x405631:\tmov\t%rsp, %rbp\n0x405634:\tsub\t$0x10, %rsp\n0x405638:\tmov\t$0, -4(%rbp)\n0x40563f:\tcall\t0x405330   <writeOnDrive>\n0x405644:\tlea\t0x17ba40(%rip), %rdi\n0x40564b:\tcall\t0x405460   <accessWebcam>\n0x405650:\txor\t%eax, %eax\n0x405652:\tadd\t$0x10, %rsp\n0x405656:\tpop\t%rbp\n0x405657:\tret\t\n",
+  "syscall": false,
+  "syscall_info": null
+}
