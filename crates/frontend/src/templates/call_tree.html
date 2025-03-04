@@ -163,11 +163,9 @@
             const g = svg.append("g")
                 .attr("transform", `translate(${width / 2},50)`);
 
-            // Increased horizontal space between nodes
             const treeLayout = d3.tree()
                 .size([height - 100, width - 300])
                 .separation((a, b) => {
-                    // Increase separation based on depth
                     return (a.parent === b.parent ? 1 : 2) * (1 + a.depth * 0.1);
                 });
 
@@ -190,12 +188,10 @@
                 const nodes = treeData.descendants();
                 const links = treeData.links();
 
-                // Increases the vertical space between levels according to depth
                 nodes.forEach(d => {
-                    d.y = d.depth * 150; // Increased from 120 to 150
+                    d.y = d.depth * 150; 
                 });
 
-                // Updating nodes
                 const node = g.selectAll(".node")
                     .data(nodes, d => d.id || (d.id = Math.random()));
 
@@ -203,7 +199,6 @@
                     .attr("class", "node")
                     .attr("transform", d => `translate(${source.x0},${source.y0})`);
 
-                // Add white background for text
                 nodeEnter.append("rect")
                     .attr("class", "node-label-background")
                     .attr("y", -20)
@@ -223,7 +218,6 @@
                     .text(d => d.data.text)
                     .style("fill-opacity", 0);
 
-                // Event Management
                 nodeEnter
                     .on("click", (event, d) => {
                         if (d.children) {
@@ -246,7 +240,6 @@
                             .style("left", (event.pageX + 10) + "px")
                             .style("top", (event.pageY - 28) + "px");
                         
-                        // EHighlighting Connected Links
                         g.selectAll(".link")
                             .style("stroke-opacity", l => 
                                 l.source === d || l.target === d ? 0.8 : 0.2);
