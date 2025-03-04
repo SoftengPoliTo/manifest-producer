@@ -5,7 +5,7 @@
 [![LICENSE][license badge]][license]
 
 ## Description
-**manifest-producer** is a Rust library designed for analysing ELF binaries. It provides functionality to extract detailed information from ELF files, including disassembly of individual function code, function call trees for structural insights. 
+**manifest-producer** is a Rust library designed for analysing ELF binaries. It provides functionality to extract detailed information from ELF files, including disassembly of individual function code, and function call trees for structural insights. 
 
 ## Supported Architectures
 | Architecture | Support Level | Notes           |

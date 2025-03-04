@@ -16,16 +16,19 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         components: llvm-tools-preview
-
-    - name: Reconstruct heavy file from parts
+    
+    - name: Set working directory and reconstruct heavy file
+      working-directory: ${{ github.workspace }}/crates/backend/tests
       run: |
-        cat ../../crates/backend/tests/binaries/ffmpeg_g.* > ../../crates/backend/tests/binaries/ffmpeg
-        cat ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap.part_a* > ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap
+        cat binaries/ffmpeg_g.* > binaries/ffmpeg
+        cat snapshots/heavy_test_c/functions_list.snap.part_a* > snapshots/heavy_test_c/functions_list.snap
 
     - name: Run Backend Integration Test
+      working-directory: ${{ github.workspace }}/crates/backend/tests
       run: cargo test --test heavy_tests -- --nocapture 
 
     - name: Remove heavy file
+      working-directory: ${{ github.workspace }}/crates/backend/tests
       run: |
-        rm ../../crates/backend/tests/binaries/ffmpeg
-        rm ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap
+        rm binaries/ffmpeg
+        rm snapshots/heavy_test_c/functions_list.snap
