@@ -68,7 +68,7 @@ pub fn function_detection<'a>(
 
     #[cfg(feature = "progress_bar")]
     pb.finish_with_message(format!(
-        "Detection completed! Found {} functions and saved them in functions_list.json in {output_path}/json",
+        "Detection completed! Found {} functions and saved them within {output_path}/json/functions_list.json",
         func_found.len()
     ));
 
