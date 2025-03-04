@@ -52,13 +52,13 @@ pub fn graph_builder<S: ::std::hash::BuildHasher>(
     let mut active_stack = Vec::new();
     let mut id_counter = 0;
     let js_tree = build(
-            root_function,
-            &*detected_functions,
-            &mut id_counter,
-            &mut active_stack,
-            0,
-            max_depth.unwrap_or(15),
-        );
+        root_function,
+        &*detected_functions,
+        &mut id_counter,
+        &mut active_stack,
+        0,
+        max_depth.unwrap_or(15),
+    );
 
     graph_json(&js_tree, root_function, output_path)?;
 

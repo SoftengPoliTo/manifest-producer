@@ -1,0 +1,16 @@
+---
+source: crates/backend/tests/common/mod.rs
+expression: inspect_json
+snapshot_kind: text
+---
+{
+  "arch": "x86_64",
+  "entry_point": 4202384,
+  "file_name": "ffmpeg",
+  "file_size": 74929640,
+  "file_type": "Executable",
+  "language": "C11",
+  "pie": false,
+  "static_linking": "Statically linked",
+  "stripped": false
+}
