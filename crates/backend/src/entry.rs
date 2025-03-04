@@ -74,7 +74,7 @@ pub fn find_main<S: ::std::hash::BuildHasher>(
         } else {
             return Err(Error::FunctionNotFound("_start disassembly".to_string()));
         }
-    } else if let Some(start) = functions.get("__dls2"){
+    } else if let Some(start) = functions.get("__dls2") {
         if let Some(disassembly) = &start.disassembly {
             let main_addr = extract_main(disassembly)?;
             if main_addr != 0 {
@@ -99,7 +99,7 @@ pub fn find_main<S: ::std::hash::BuildHasher>(
 
 fn extract_main(disassembly: &str) -> Result<u64> {
     let re_c = Regex::new(r"mov\s+\$([a-fA-F0-9x]+),\s+%rdi")?;
-    let re_rust = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;//TODO: Add regex for Rust
+    let re_rust = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;
 
     for line in disassembly.lines() {
         if let Some(caps) = re_c.captures(line) {
@@ -113,7 +113,8 @@ fn extract_main(disassembly: &str) -> Result<u64> {
         }
         if let Some(caps) = re_rust.captures(line) {
             let lea_instruction_address_str = caps.get(1).unwrap().as_str();
-            let lea_instruction_address = u64::from_str_radix(lea_instruction_address_str, 16).unwrap(); 
+            let lea_instruction_address =
+                u64::from_str_radix(lea_instruction_address_str, 16).unwrap();
 
             let offset_str = caps.get(2).unwrap().as_str();
             let offset = u64::from_str_radix(offset_str, 16).unwrap();

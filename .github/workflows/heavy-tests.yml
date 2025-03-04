@@ -17,6 +17,15 @@ jobs:
       with:
         components: llvm-tools-preview
 
+    - name: Reconstruct heavy file from parts
+      run: |
+        cat ../../crates/backend/tests/binaries/ffmpeg_g.* > ../../crates/backend/tests/binaries/ffmpeg
+        cat ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap.part_a* > ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap
+
     - name: Run Backend Integration Test
-      run: cargo test --test heavy_test -- --nocapture --test-threads=1
-          
+      run: cargo test --test heavy_tests -- --nocapture 
+
+    - name: Remove heavy file
+      run: |
+        rm ../../crates/backend/tests/binaries/ffmpeg
+        rm ../../crates/backend/tests/snapshots/heavy_test_c/functions_list.snap

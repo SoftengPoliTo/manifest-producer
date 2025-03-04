@@ -1,0 +1,33 @@
+---
+source: crates/backend/tests/common/mod.rs
+expression: root_nodes_json
+snapshot_kind: text
+---
+{
+  "name": "main",
+  "start_addr": 4466919,
+  "end_addr": 4467639,
+  "invocation_entry": 0,
+  "jmp": 0,
+  "children": [
+    "init_dynload",
+    "_IO_setvbuf",
+    "av_log_set_flags",
+    "parse_loglevel",
+    "avdevice_register_all",
+    "avformat_network_init",
+    "show_banner",
+    "sch_alloc",
+    "ffmpeg_parse_options",
+    "show_usage",
+    "av_log",
+    "get_benchmark_time_stamps",
+    "transcode",
+    "ffmpeg_cleanup",
+    "sch_free",
+    "__stack_chk_fail"
+  ],
+  "disassembly": "0x4428e7:\tendbr64\t\n0x4428eb:\tpush\t%rbp\n0x4428ec:\tmov\t%rsp, %rbp\n0x4428ef:\tadd\t$-0x80, %rsp\n0x4428f3:\tmov\t%edi, -0x54(%rbp)\n0x4428f6:\tmov\t%rsi, -0x60(%rbp)\n0x4428fa:\tmov\t%fs:0x28, %rax\n0x442903:\tmov\t%rax, -8(%rbp)\n0x442907:\txor\t%eax, %eax\n0x442909:\tmov\t$0, -0x40(%rbp)\n0x442911:\tcall\t0x4375ea   <init_dynload>\n0x442916:\tmov\t0x1e28aeb(%rip), %rax\n0x44291d:\tmov\t$0, %ecx\n0x442922:\tmov\t$2, %edx\n0x442927:\tmov\t$0, %esi\n0x44292c:\tmov\t%rax, %rdi\n0x44292f:\tcall\t0x1bd3d90   <_IO_setvbuf>\n0x442934:\tmov\t$1, %edi\n0x442939:\tcall\t0x1adcf1d   <av_log_set_flags>\n0x44293e:\tmov\t-0x60(%rbp), %rcx\n0x442942:\tmov\t-0x54(%rbp), %eax\n0x442945:\tmov\t$0x1c99b20, %edx\n0x44294a:\tmov\t%rcx, %rsi\n0x44294d:\tmov\t%eax, %edi\n0x44294f:\tcall\t0x4389d5   <parse_loglevel>\n0x442954:\tcall\t0x442bb7   <avdevice_register_all>\n0x442959:\tcall\t0xa841fa   <avformat_network_init>\n0x44295e:\tmov\t-0x60(%rbp), %rcx\n0x442962:\tmov\t-0x54(%rbp), %eax\n0x442965:\tmov\t$0x1c99b20, %edx\n0x44296a:\tmov\t%rcx, %rsi\n0x44296d:\tmov\t%eax, %edi\n0x44296f:\tcall\t0x43c247   <show_banner>\n0x442974:\tcall\t0x42e444   <sch_alloc>\n0x442979:\tmov\t%rax, -0x40(%rbp)\n0x44297d:\tmov\t-0x40(%rbp), %rax\n0x442981:\ttest\t%rax, %rax\n0x442984:\tjne\t0x442992\n0x442986:\tmov\t$0xfffffff4, -0x44(%rbp)\n0x44298d:\tjmp\t0x442b78\n0x442992:\tmov\t-0x40(%rbp), %rdx\n0x442996:\tmov\t-0x60(%rbp), %rcx\n0x44299a:\tmov\t-0x54(%rbp), %eax\n0x44299d:\tmov\t%rcx, %rsi\n0x4429a0:\tmov\t%eax, %edi\n0x4429a2:\tcall\t0x42d29c   <ffmpeg_parse_options>\n0x4429a7:\tmov\t%eax, -0x44(%rbp)\n0x4429aa:\tcmp\t$0, -0x44(%rbp)\n0x4429ae:\tjs\t0x442b77\n0x4429b4:\tmov\t0x1e29c16(%rip), %eax\n0x4429ba:\ttest\t%eax, %eax\n0x4429bc:\tjg\t0x4429f7\n0x4429be:\tmov\t0x1e29bfc(%rip), %eax\n0x4429c4:\ttest\t%eax, %eax\n0x4429c6:\tjne\t0x4429f7\n0x4429c8:\tcall\t0x42d03f   <show_usage>\n0x4429cd:\tmov\t$0x1c9f0e0, %ecx\n0x4429d2:\tmov\t$0x1c9f880, %edx\n0x4429d7:\tmov\t$0x18, %esi\n0x4429dc:\tmov\t$0, %edi\n0x4429e1:\tmov\t$0, %eax\n0x4429e6:\tcall\t0x1adcc88   <av_log>\n0x4429eb:\tmov\t$1, -0x44(%rbp)\n0x4429f2:\tjmp\t0x442b78\n0x4429f7:\tmov\t0x1e29bd3(%rip), %eax\n0x4429fd:\ttest\t%eax, %eax\n0x4429ff:\tjg\t0x442a26\n0x442a01:\tmov\t$0x1c9f8b8, %edx\n0x442a06:\tmov\t$8, %esi\n0x442a0b:\tmov\t$0, %edi\n0x442a10:\tmov\t$0, %eax\n0x442a15:\tcall\t0x1adcc88   <av_log>\n0x442a1a:\tmov\t$1, -0x44(%rbp)\n0x442a21:\tjmp\t0x442b78\n0x442a26:\tlea\t-0x20(%rbp), %rax\n0x442a2a:\tmov\t%rax, %rdi\n0x442a2d:\tcall\t0x4427bd   <get_benchmark_time_stamps>\n0x442a32:\tmov\t-0x20(%rbp), %rax\n0x442a36:\tmov\t-0x18(%rbp), %rdx\n0x442a3a:\tmov\t%rax, 0x1e29bbf(%rip)\n0x442a41:\tmov\t%rdx, 0x1e29bc0(%rip)\n0x442a48:\tmov\t-0x10(%rbp), %rax\n0x442a4c:\tmov\t%rax, 0x1e29bbd(%rip)\n0x442a53:\tmov\t-0x40(%rbp), %rax\n0x442a57:\tmov\t%rax, %rdi\n0x442a5a:\tcall\t0x442620   <transcode>\n0x442a5f:\tmov\t%eax, -0x44(%rbp)\n0x442a62:\tcmp\t$0, -0x44(%rbp)\n0x442a66:\tjs\t0x442b4e\n0x442a6c:\tmov\t0x1e29ab2(%rip), %eax\n0x442a72:\ttest\t%eax, %eax\n0x442a74:\tje\t0x442b4e\n0x442a7a:\tlea\t-0x80(%rbp), %rax\n0x442a7e:\tmov\t%rax, %rdi\n0x442a81:\tcall\t0x4427bd   <get_benchmark_time_stamps>\n0x442a86:\tmov\t-0x80(%rbp), %rax\n0x442a8a:\tmov\t-0x78(%rbp), %rdx\n0x442a8e:\tmov\t%rax, 0x1e29b6b(%rip)\n0x442a95:\tmov\t%rdx, 0x1e29b6c(%rip)\n0x442a9c:\tmov\t-0x70(%rbp), %rax\n0x442aa0:\tmov\t%rax, 0x1e29b69(%rip)\n0x442aa7:\tmov\t0x1e29b5a(%rip), %rdx\n0x442aae:\tmov\t-0x18(%rbp), %rax\n0x442ab2:\tsub\t%rax, %rdx\n0x442ab5:\tmov\t%rdx, -0x38(%rbp)\n0x442ab9:\tmov\t0x1e29b50(%rip), %rdx\n0x442ac0:\tmov\t-0x10(%rbp), %rax\n0x442ac4:\tsub\t%rax, %rdx\n0x442ac7:\tmov\t%rdx, -0x30(%rbp)\n0x442acb:\tmov\t0x1e29b2e(%rip), %rdx\n0x442ad2:\tmov\t-0x20(%rbp), %rax\n0x442ad6:\tsub\t%rax, %rdx\n0x442ad9:\tmov\t%rdx, -0x28(%rbp)\n0x442add:\tpxor\t%xmm0, %xmm0\n0x442ae1:\tcvtsi2sd\t-0x28(%rbp), %xmm0\n0x442ae7:\tmovsd\t0x185ce29(%rip), %xmm1\n0x442aef:\tmovapd\t%xmm0, %xmm2\n0x442af3:\tdivsd\t%xmm1, %xmm2\n0x442af7:\tpxor\t%xmm0, %xmm0\n0x442afb:\tcvtsi2sd\t-0x30(%rbp), %xmm0\n0x442b01:\tmovsd\t0x185ce0f(%rip), %xmm1\n0x442b09:\tmovapd\t%xmm0, %xmm3\n0x442b0d:\tdivsd\t%xmm1, %xmm3\n0x442b11:\tpxor\t%xmm0, %xmm0\n0x442b15:\tcvtsi2sd\t-0x38(%rbp), %xmm0\n0x442b1b:\tmovsd\t0x185cdf5(%rip), %xmm1\n0x442b23:\tdivsd\t%xmm1, %xmm0\n0x442b27:\tmovq\t%xmm0, %rax\n0x442b2c:\tmovapd\t%xmm3, %xmm1\n0x442b30:\tmovq\t%rax, %xmm0\n0x442b35:\tmov\t$0x1c9f8e8, %edx\n0x442b3a:\tmov\t$0x20, %esi\n0x442b3f:\tmov\t$0, %edi\n0x442b44:\tmov\t$3, %eax\n0x442b49:\tcall\t0x1adcc88   <av_log>\n0x442b4e:\tmov\t0x1e29b10(%rip), %eax\n0x442b54:\ttest\t%eax, %eax\n0x442b56:\tjne\t0x442b6d\n0x442b58:\tcmp\t$0xbbbaadbb, -0x44(%rbp)\n0x442b5f:\tje\t0x442b66\n0x442b61:\tmov\t-0x44(%rbp), %eax\n0x442b64:\tjmp\t0x442b72\n0x442b66:\tmov\t$0x45, %eax\n0x442b6b:\tjmp\t0x442b72\n0x442b6d:\tmov\t$0xff, %eax\n0x442b72:\tmov\t%eax, -0x44(%rbp)\n0x442b75:\tjmp\t0x442b78\n0x442b77:\tnop\t\n0x442b78:\tcmp\t$0xabb6a7bb, -0x44(%rbp)\n0x442b7f:\tjne\t0x442b88\n0x442b81:\tmov\t$0, -0x44(%rbp)\n0x442b88:\tmov\t-0x44(%rbp), %eax\n0x442b8b:\tmov\t%eax, %edi\n0x442b8d:\tcall\t0x44032d   <ffmpeg_cleanup>\n0x442b92:\tlea\t-0x40(%rbp), %rax\n0x442b96:\tmov\t%rax, %rdi\n0x442b99:\tcall\t0x42dedc   <sch_free>\n0x442b9e:\tmov\t-0x44(%rbp), %eax\n0x442ba1:\tmov\t-8(%rbp), %rdx\n0x442ba5:\tsub\t%fs:0x28, %rdx\n0x442bae:\tje\t0x442bb5\n0x442bb0:\tcall\t0x1c1a5e0   <__stack_chk_fail>\n0x442bb5:\tleave\t\n0x442bb6:\tret\t\n",
+  "syscall": false,
+  "syscall_info": null
+}
