@@ -11,6 +11,7 @@ use goblin::elf::{
 
 use crate::{CategoryResult, ValidationReport, ValidationResult};
 
+#[must_use]
 pub fn bad_magic_report(file_path: &Path) -> ValidationReport {
     let mut report = ValidationReport {
         binary_path: file_path.display().to_string(),
@@ -32,6 +33,8 @@ pub fn bad_magic_report(file_path: &Path) -> ValidationReport {
     report
 }
 
+#[must_use]
+#[allow(clippy::useless_format)]
 pub fn malformed_report(file_path: &Path, error: &str) -> ValidationReport {
     let mut report = ValidationReport {
         binary_path: file_path.display().to_string(),
@@ -43,7 +46,7 @@ pub fn malformed_report(file_path: &Path, error: &str) -> ValidationReport {
         checks: vec![ValidationResult {
             name: "Malformed ELF".to_string(),
             status: false,
-            description: format!("{:?}", error),
+            description: format!("{error}"),
             metadata: None,
         }],
     };
@@ -51,6 +54,7 @@ pub fn malformed_report(file_path: &Path, error: &str) -> ValidationReport {
     report
 }
 
+#[must_use]
 pub fn validate_elf_file(elf: &Elf, file_path: &Path, file_size: u64) -> ValidationReport {
     let mut report = ValidationReport {
         binary_path: file_path.display().to_string(),
@@ -78,7 +82,7 @@ fn read_file(file_path: &Path) -> Vec<u8> {
     match fs::read(file_path) {
         Ok(data) => data,
         Err(e) => {
-            eprintln!("Error reading file: {}", e);
+            eprintln!("Error reading file: {e}");
             Vec::new()
         }
     }
@@ -114,6 +118,7 @@ pub fn display_cli_results(report: &ValidationReport) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn json_results(report: &ValidationReport) {
     let json_report = serde_json::to_string_pretty(report).unwrap();
     let json_path = format!("{}.json", report.binary_path);
@@ -192,10 +197,10 @@ fn check_class(elf: &Elf) -> ValidationResult {
     ValidationResult {
         name: "Class".to_string(),
         status: true,
-        description: format!("ELF class is valid: detected {}-bit format. This affects how memory addresses are interpreted and may impact compatibility.", class_str),
+        description: format!("ELF class is valid: detected {class_str}-bit format. This affects how memory addresses are interpreted and may impact compatibility."),
         metadata: Some(serde_json::json!({
             "expected": "ELF32 or ELF64",
-            "found": format!("ELF{}", class_str)
+            "found": format!("ELF{class_str}")
         })),
     }
 }
@@ -210,13 +215,10 @@ fn check_data_encoding(elf: &Elf) -> ValidationResult {
     ValidationResult {
         name: "Data Encoding".to_string(),
         status: encoding != "unknown",
-        description: if encoding != "unknown" {
-            format!(
-                "ELF data encoding is valid: {} endian format detected.",
-                encoding
-            )
-        } else {
+        description: if encoding == "unknown" {
             "Invalid or unrecognized ELF data encoding. This could indicate corruption or unsupported architecture.".to_string()
+        } else {
+            format!("ELF data encoding is valid: {encoding} endian format detected.")
         },
         metadata: Some(serde_json::json!({
             "expected": "little or big endian",
@@ -233,7 +235,7 @@ fn check_version(elf: &Elf) -> ValidationResult {
         description: if version == 1 {
             "ELF version is valid (current standard).".to_string()
         } else {
-            format!("Unsupported ELF version detected: {}.", version)
+            format!("Unsupported ELF version detected: {version}.")
         },
         metadata: Some(serde_json::json!({
             "expected": 1,
@@ -253,13 +255,11 @@ fn check_data_encoding_consistency(elf: &Elf, arch: u16) -> ValidationResult {
         status: consistent,
         description: if consistent {
             format!(
-                "Data encoding is consistent with the detected architecture ({} endian on {}).",
-                encoding_str, arch_str
+                "Data encoding is consistent with the detected architecture ({encoding_str} endian on {arch_str})." 
             )
         } else {
             format!(
-                "Mismatch between data encoding and architecture: {} endian on {} is unusual or unsupported.",
-                encoding_str, arch_str
+                "Mismatch between data encoding and architecture: {encoding_str} endian on {arch_str} is unusual or unsupported."
             )
         },
         metadata: Some(serde_json::json!({
@@ -302,7 +302,7 @@ fn data_encoding_to_string(data_encoding: u8) -> String {
         header::ELFDATA2LSB => "Little Endian".to_string(),
         header::ELFDATA2MSB => "Big Endian".to_string(),
         header::ELFDATANONE => "No data encoding".to_string(),
-        _ => format!("Unknown data encoding ({})", data_encoding),
+        _ => format!("Unknown data encoding ({data_encoding})"),
     }
 }
 
@@ -317,7 +317,7 @@ fn arch_to_string(arch: u16) -> String {
         header::EM_SPARC => "SPARC".to_string(),
         header::EM_SPARCV9 => "SPARC 64-bit (v9)".to_string(),
         header::EM_MIPS => "MIPS".to_string(),
-        _ => format!("Unknown architecture ({})", arch),
+        _ => format!("Unknown architecture ({arch})"),
     }
 }
 
@@ -331,14 +331,10 @@ fn check_class_arch_consistency(elf: &Elf, arch: u16) -> ValidationResult {
         name: "Class and Architecture Consistency".to_string(),
         status: consistent,
         description: if consistent {
-            format!(
-                "ELF class matches the target architecture ({} on {}).",
-                class_str, arch_str
-            )
+            format!("ELF class matches the target architecture ({class_str} on {arch_str}).")
         } else {
             format!(
-                "Mismatch between ELF class and target architecture: {} on {} is likely invalid.",
-                class_str, arch_str
+                "Mismatch between ELF class and target architecture: {class_str} on {arch_str} is likely invalid."
             )
         },
         metadata: Some(serde_json::json!({
@@ -410,22 +406,22 @@ fn check_type_consistency(elf: &Elf) -> ValidationResult {
             }
         }
         header::ET_REL => {
-            if !has_entry_point {
-                (
-                    true,
-                    "Valid relocatable file: no entry point as expected.".to_string(),
-                )
-            } else {
+            if has_entry_point {
                 (
                     false,
                     "Unexpected entry point in relocatable file.".to_string(),
+                )
+            } else {
+                (
+                    true,
+                    "Valid relocatable file: no entry point as expected.".to_string(),
                 )
             }
         }
         header::ET_CORE => (true, "Core dump file.".to_string()),
         _ => (
             false,
-            format!("Unknown or unsupported file type (type ID: {}).", file_type),
+            format!("Unknown or unsupported file type (type ID: {file_type})."),
         ),
     };
 
@@ -452,20 +448,16 @@ fn check_header_size_consistency(elf: &Elf) -> ValidationResult {
         name: "Header Size Consistency".to_string(),
         status: is_valid,
         description: if is_valid {
-            format!(
-                "ELF header size is valid for a {}-bit file ({} bytes).",
-                class_str, header_size
-            )
+            format!("ELF header size is valid for a {class_str}-bit file ({header_size} bytes).")
         } else {
             format!(
-                "Invalid ELF header size ({} bytes) for a {}-bit file; expected {} bytes.",
-                header_size, class_str, expected_ehsize
+                "Invalid ELF header size ({header_size} bytes) for a {class_str}-bit file; expected {expected_ehsize} bytes."
             )
         },
         metadata: Some(serde_json::json!({
             "header_size": header_size,
             "expected_header_size": expected_ehsize,
-            "class": format!("{}-bit", class_str)
+            "class": format!("{class_str}-bit")
         })),
     }
 }
@@ -473,8 +465,8 @@ fn check_header_size_consistency(elf: &Elf) -> ValidationResult {
 fn check_ph_offset(elf: &Elf) -> ValidationResult {
     ValidationResult {
         name: "Program Header Offset".to_string(),
-        status: elf.header.e_phoff >= elf.header.e_ehsize as u64,
-        description: if elf.header.e_phoff >= elf.header.e_ehsize as u64 {
+        status: elf.header.e_phoff >= u64::from(elf.header.e_ehsize),
+        description: if elf.header.e_phoff >= u64::from(elf.header.e_ehsize) {
             format!(
                 "Program header offset ({}) is valid: it is correctly positioned after the ELF header (>= {}).",
                 elf.header.e_phoff, elf.header.e_ehsize
@@ -495,8 +487,8 @@ fn check_ph_offset(elf: &Elf) -> ValidationResult {
 fn check_sh_offset(elf: &Elf) -> ValidationResult {
     ValidationResult {
         name: "Section Header Offset".to_string(),
-        status: elf.header.e_shoff >= elf.header.e_ehsize as u64,
-        description: if elf.header.e_shoff >= elf.header.e_ehsize as u64 {
+        status: elf.header.e_shoff >= u64::from(elf.header.e_ehsize),
+        description: if elf.header.e_shoff >= u64::from(elf.header.e_ehsize) {
             format!(
                 "Section header offset ({}) is valid: it is correctly positioned after the ELF header (>= {}).",
                 elf.header.e_shoff, elf.header.e_ehsize
@@ -516,7 +508,7 @@ fn check_sh_offset(elf: &Elf) -> ValidationResult {
 
 fn check_ph_bound(elf: &Elf, file_size: u64) -> ValidationResult {
     let ph_offset = elf.header.e_phoff;
-    let ph_table_size = elf.header.e_phnum as u64 * elf.header.e_phentsize as u64;
+    let ph_table_size = u64::from(elf.header.e_phnum) * u64::from(elf.header.e_phentsize);
     let ph_table_end = if ph_offset > 0 {
         ph_offset + ph_table_size
     } else {
@@ -528,13 +520,11 @@ fn check_ph_bound(elf: &Elf, file_size: u64) -> ValidationResult {
         status: ph_offset == 0 || ph_table_end <= file_size,
         description: if ph_offset == 0 || ph_table_end <= file_size {
             format!(
-                "Program header table is within file bounds: it ends at offset {} which is <= the file size ({}).",
-                ph_table_end, file_size
+                "Program header table is within file bounds: it ends at offset {ph_table_end} which is <= the file size ({file_size})."
             )
         } else {
             format!(
-                "Program header table exceeds file bounds: it ends at offset {} which is > the file size ({}).",
-                ph_table_end, file_size
+                "Program header table exceeds file bounds: it ends at offset {ph_table_end} which is > the file size ({file_size})."
             )
         },
         metadata: Some(serde_json::json!({
@@ -548,7 +538,7 @@ fn check_ph_bound(elf: &Elf, file_size: u64) -> ValidationResult {
 
 fn check_sh_bound(elf: &Elf, file_size: u64) -> ValidationResult {
     let sh_offset = elf.header.e_shoff;
-    let sh_table_size = elf.header.e_shnum as u64 * elf.header.e_shentsize as u64;
+    let sh_table_size = u64::from(elf.header.e_shnum) * u64::from(elf.header.e_shentsize);
     let sh_table_end = if sh_offset > 0 {
         sh_offset + sh_table_size
     } else {
@@ -560,13 +550,11 @@ fn check_sh_bound(elf: &Elf, file_size: u64) -> ValidationResult {
         status: sh_offset == 0 || sh_table_end <= file_size,
         description: if sh_offset == 0 || sh_table_end <= file_size {
             format!(
-                "Section header table is within file bounds: it ends at offset {} which is <= the file size ({}).",
-                sh_table_end, file_size
+                "Section header table is within file bounds: it ends at offset {sh_table_end} which is <= the file size ({file_size})."
             )
         } else {
             format!(
-                "Section header table exceeds file bounds: it ends at offset {} which is > the file size ({}).",
-                sh_table_end, file_size
+                "Section header table exceeds file bounds: it ends at offset {sh_table_end} which is > the file size ({file_size})."
             )
         },
         metadata: Some(serde_json::json!({
@@ -901,7 +889,7 @@ fn check_isolated_executable_sections(elf: &Elf) -> ValidationResult {
 
     for section in &elf.section_headers {
         if let Some(name) = elf.shdr_strtab.get_at(section.sh_name) {
-            if (section.sh_flags & SHF_EXECINSTR as u64) != 0
+            if (section.sh_flags & u64::from(SHF_EXECINSTR)) != 0
                 && !is_in_loadable_segment(section.sh_addr, section.sh_size)
             {
                 isolated_sections.push(name.to_string());
@@ -995,7 +983,7 @@ fn check_entry_point(elf: &Elf) -> ValidationResult {
     let mut in_writable = false;
 
     // Check if the entry point is in a loadable segment
-    for ph in elf.program_headers.iter() {
+    for ph in &elf.program_headers {
         if ph.p_type == PT_LOAD {
             let vaddr_end = ph.p_vaddr + ph.p_memsz;
             if entry >= ph.p_vaddr && entry < vaddr_end {
@@ -1086,7 +1074,7 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
 
     for sh in &elf.section_headers {
         // Skip non-allocated or zero address sections
-        if (sh.sh_flags & SHF_ALLOC as u64) == 0 || sh.sh_addr == 0 {
+        if (sh.sh_flags & u64::from(SHF_ALLOC)) == 0 || sh.sh_addr == 0 {
             continue;
         }
 
@@ -1098,8 +1086,8 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
 
         let section_start = sh.sh_addr;
         let section_end = sh.sh_addr + sh.sh_size;
-        let is_executable = (sh.sh_flags & SHF_EXECINSTR as u64) != 0;
-        let is_writable = (sh.sh_flags & SHF_WRITE as u64) != 0;
+        let is_executable = (sh.sh_flags & u64::from(SHF_EXECINSTR)) != 0;
+        let is_writable = (sh.sh_flags & u64::from(SHF_WRITE)) != 0;
 
         let mut fully_contained = false;
         let mut partially_contained = false;
@@ -1143,8 +1131,7 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
                     name: "Segment Alignment".to_string(),
                     status: false,
                     description: format!(
-                        "Section '{}' is fully contained in segment {} (vaddr: {}, size: {}) with permissions mismatch.",
-                        section_name, seg_idx, seg_start, seg_size
+                        "Section '{section_name}' is fully contained in segment {seg_idx} (vaddr: {seg_start}, size: {seg_size}) with permissions mismatch."
                     ),
                     metadata: Some(serde_json::json!({
                         "section_name": section_name,
@@ -1166,8 +1153,7 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
                     name: "Segment Alignment".to_string(),
                     status: false,
                     description: format!(
-                        "Section '{}' is partially contained in segment {} (vaddr: {}, size: {}).",
-                        section_name, seg_idx, seg_start, seg_size
+                        "Section '{section_name}' is partially contained in segment {seg_idx} (vaddr: {seg_start}, size: {seg_size})."
                     ),
                     metadata: Some(serde_json::json!({
                         "section_name": section_name,
@@ -1185,8 +1171,7 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
                 name: "Segment Alignment".to_string(),
                 status: false,
                 description: format!(
-                    "Section '{}' is not contained in any loadable segment. This could indicate misalignment or an issue with memory mapping.",
-                    section_name
+                    "Section '{section_name}' is not contained in any loadable segment. This could indicate misalignment or an issue with memory mapping.",
                 ),
                 metadata: Some(serde_json::json!({
                     "section_name": section_name,
@@ -1201,11 +1186,11 @@ fn check_segment_alignment(elf: &Elf) -> Vec<ValidationResult> {
 
 fn check_section_count_anomaly(elf: &Elf) -> ValidationResult {
     let section_count_actual = elf.section_headers.len();
-    let mut section_count_reported = elf.header.e_shnum as usize;
+    let mut section_count_reported = usize::from(elf.header.e_shnum);
 
     // ELF spec: if e_shnum == 0, the real section count is in section[0].sh_size
     if section_count_reported == 0 && !elf.section_headers.is_empty() {
-        section_count_reported = elf.section_headers[0].sh_size as usize;
+        section_count_reported = usize::try_from(elf.section_headers[0].sh_size).unwrap();
     }
 
     // Case: No sections in ELF file
@@ -1223,14 +1208,10 @@ fn check_section_count_anomaly(elf: &Elf) -> ValidationResult {
 
     // Case: Reported section count mismatch
     let description = if section_count_actual == section_count_reported {
-        format!(
-            "The ELF file has the expected number of sections ({}).",
-            section_count_reported
-        )
+        format!("The ELF file has the expected number of sections ({section_count_reported}).",)
     } else {
         format!(
-            "The ELF file has an unexpected number of sections ({}), expected {}.",
-            section_count_actual, section_count_reported
+            "The ELF file has an unexpected number of sections ({section_count_actual}), expected {section_count_reported}."
         )
     };
 
@@ -1269,14 +1250,10 @@ fn check_segment_count_anomaly(elf: &Elf) -> ValidationResult {
 
     // Case: Reported program header count mismatch
     let description = if ph_count_actual == ph_count_reported {
-        format!(
-            "The ELF file has the expected number of program headers ({}).",
-            ph_count_reported
-        )
+        format!("The ELF file has the expected number of program headers ({ph_count_reported}).",)
     } else {
         format!(
-            "The ELF file has an unexpected number of program headers ({}), expected {}.",
-            ph_count_actual, ph_count_reported
+            "The ELF file has an unexpected number of program headers ({ph_count_actual}), expected {ph_count_reported}." 
         )
     };
 
@@ -1406,8 +1383,8 @@ fn check_suspicious_section_names(elf: &Elf) -> ValidationResult {
         for common in &common_section_names {
             if name.starts_with(common)
                 || name.ends_with(common)
-                || name.contains(&format!("{}_", common))
-                || name.contains(&format!("_{}", common))
+                || name.contains(&format!("{common}_"))
+                || name.contains(&format!("_{common}"))
             {
                 return true;
             }
@@ -1491,7 +1468,7 @@ fn check_empty_segments(elf: &Elf) -> ValidationResult {
             name: "Empty Segments".to_string(),
             status: false,
             description: format!(
-                "{} empty segment(s) found. These segments have a non-zero memory size (p_memsz) but no associated file size (p_filesz).",
+                "{} empty segment(s) found. These segments have a non-zero memory size but no associated file size.",
                 empty_segments.len()
             ),
             metadata: Some(serde_json::json!({
@@ -1537,18 +1514,18 @@ fn check_overlapping_segments(elf: &Elf) -> ValidationResult {
                 overlapping_segments.push(serde_json::json!({
                     "segment1_index": idx1,
                     "segment2_index": idx2,
-                    "overlap_range": format!("{:#x} - {:#x}", overlap_start, overlap_end),
+                    "overlap_range": format!("{overlap_start:#x} - {overlap_end:#x}"),
                     "overlap_size": overlap_size,
                     "segment1": {
                         "vaddr_start": start1,
                         "vaddr_end": end1,
-                        "flags": format!("{:#x}", flags1),
+                        "flags": format!("{flags1:#x}"),
                         "offset": offset1
                     },
                     "segment2": {
                         "vaddr_start": start2,
                         "vaddr_end": end2,
-                        "flags": format!("{:#x}", flags2),
+                        "flags": format!("{flags2:#x}"),
                         "offset": offset2
                     }
                 }));
@@ -1620,8 +1597,8 @@ fn check_interpreter(elf: &Elf, data: &[u8]) -> ValidationResult {
 
     let interpreter = elf.program_headers.iter().find_map(|ph| {
         if ph.p_type == PT_INTERP {
-            let start = ph.p_offset as usize;
-            let end = (ph.p_offset + ph.p_filesz) as usize;
+            let start = usize::try_from(ph.p_offset).unwrap();
+            let end = usize::try_from(ph.p_offset + ph.p_filesz).unwrap();
             data.get(start..end)
                 .and_then(|bytes| std::str::from_utf8(bytes).ok())
                 .map(|s| s.trim_end_matches('\0').to_string())
@@ -1703,12 +1680,18 @@ fn check_rpath_runpath(elf: &Elf) -> ValidationResult {
         for dyn_entry in &dynamic.dyns {
             match dyn_entry.d_tag {
                 DT_RPATH => {
-                    if let Some(path) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
+                    if let Some(path) = elf
+                        .dynstrtab
+                        .get_at(usize::try_from(dyn_entry.d_val).unwrap())
+                    {
                         entries.push(("RPATH", path.to_string()));
                     }
                 }
                 DT_RUNPATH => {
-                    if let Some(path) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
+                    if let Some(path) = elf
+                        .dynstrtab
+                        .get_at(usize::try_from(dyn_entry.d_val).unwrap())
+                    {
                         entries.push(("RUNPATH", path.to_string()));
                     }
                 }
@@ -1730,7 +1713,7 @@ fn check_rpath_runpath(elf: &Elf) -> ValidationResult {
     let mut risky = false;
 
     for (kind, path) in &entries {
-        let mut details = format!("{}: {}", kind, path);
+        let mut details = format!("{kind}: {path}");
         if path.contains("./") || path.contains("../") || path.contains("$ORIGIN") {
             details.push_str(" (⚠️ Contains relative path or environment variable)");
             risky = true;
@@ -1772,7 +1755,7 @@ fn check_stripped(elf: &Elf) -> ValidationResult {
 
     let stripped_level = match (has_symtab, has_strtab, debug_sections.is_empty()) {
         (true, _, _) => "Not stripped",
-        (false, true, false) => "Partially stripped",
+        // (false, true, false) => "Partially stripped",
         (false, _, true) => "Stripped",
         _ => "Partially stripped",
     };
@@ -1794,9 +1777,9 @@ fn check_stripped(elf: &Elf) -> ValidationResult {
     };
 
     let mut metadata = Vec::new();
-    metadata.push(format!("Level: {}", stripped_level));
-    metadata.push(format!(".symtab present: {}", has_symtab));
-    metadata.push(format!(".strtab present: {}", has_strtab));
+    metadata.push(format!("Level: {stripped_level}"));
+    metadata.push(format!(".symtab present: {has_symtab}"));
+    metadata.push(format!(".strtab present: {has_strtab}"));
     if !debug_sections.is_empty() {
         metadata.push(format!("debug_sections: {}", debug_sections.join(", ")));
     }
@@ -1815,7 +1798,10 @@ fn check_dependency_count(elf: &Elf) -> ValidationResult {
     if let Some(dynamic) = &elf.dynamic {
         for dyn_entry in &dynamic.dyns {
             if dyn_entry.d_tag == DT_NEEDED {
-                if let Some(name) = elf.dynstrtab.get_at(dyn_entry.d_val as usize) {
+                if let Some(name) = elf
+                    .dynstrtab
+                    .get_at(usize::try_from(dyn_entry.d_val).unwrap())
+                {
                     needed_libs.push(name.to_string());
                 }
             }
@@ -1833,16 +1819,13 @@ fn check_dependency_count(elf: &Elf) -> ValidationResult {
     };
 
     let description = format!(
-        "The binary declares {} dynamic dependencies. Classification: {}.",
-        needed_libs_count, classification
-    );
+        "The binary declares {needed_libs_count} dynamic dependencies. Classification: {classification}."    );
 
     let is_suspicious = needed_libs_count > 20;
 
     let enriched_description = if is_suspicious {
         format!(
-            "{} This high number of dependencies may indicate unusual complexity, modularity, or inclusion of third-party or bundled components, which can be a red flag in security-sensitive contexts.",
-            description
+            "{description} This high number of dependencies may indicate unusual complexity, modularity, or inclusion of third-party or bundled components, which can be a red flag in security-sensitive contexts."            
         )
     } else {
         description
