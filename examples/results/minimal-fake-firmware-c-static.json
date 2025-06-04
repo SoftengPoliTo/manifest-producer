@@ -1,0 +1,316 @@
+{
+  "binary_path": "./examples/results/minimal-fake-firmware-c-static",
+  "categories": [
+    {
+      "name": "Basic Structural Validation",
+      "description": "Validates the basic structure of the ELF file.",
+      "checks": [
+        {
+          "name": "Magic Number",
+          "status": true,
+          "description": "Valid ELF signature found (magic number OK). File is recognized as ELF format.",
+          "metadata": {
+            "expected": "[127, 69, 76, 70]",
+            "found": "[127, 69, 76, 70]"
+          }
+        },
+        {
+          "name": "Class",
+          "status": true,
+          "description": "ELF class is valid: detected 64-bit format. This affects how memory addresses are interpreted and may impact compatibility.",
+          "metadata": {
+            "expected": "ELF32 or ELF64",
+            "found": "ELF64"
+          }
+        },
+        {
+          "name": "Data Encoding",
+          "status": true,
+          "description": "ELF data encoding is valid: little endian format detected.",
+          "metadata": {
+            "expected": "little or big endian",
+            "found": "little"
+          }
+        },
+        {
+          "name": "Version",
+          "status": true,
+          "description": "ELF version is valid (current standard).",
+          "metadata": {
+            "expected": 1,
+            "found": 1
+          }
+        },
+        {
+          "name": "Data Encoding Consistency",
+          "status": true,
+          "description": "Data encoding is consistent with the detected architecture (Little Endian endian on AMD x86-64).",
+          "metadata": {
+            "architecture": "AMD x86-64",
+            "data_encoding": "Little Endian"
+          }
+        },
+        {
+          "name": "Class and Architecture Consistency",
+          "status": true,
+          "description": "ELF class matches the target architecture (64-bit on AMD x86-64).",
+          "metadata": {
+            "architecture": "AMD x86-64",
+            "class": "64-bit"
+          }
+        },
+        {
+          "name": "File Type Consistency",
+          "status": true,
+          "description": "Valid executable: has entry point and loadable segments.",
+          "metadata": {
+            "file_type": 2,
+            "has_entry_point": true,
+            "has_loadable_segments": true
+          }
+        },
+        {
+          "name": "Header Size Consistency",
+          "status": true,
+          "description": "ELF header size is valid for a 64-bit file (64 bytes).",
+          "metadata": {
+            "class": "64-bit",
+            "expected_header_size": 64,
+            "header_size": 64
+          }
+        },
+        {
+          "name": "Program Header Offset",
+          "status": true,
+          "description": "Program header offset (64) is valid: it is correctly positioned after the ELF header (>= 64).",
+          "metadata": {
+            "expected_minimum_offset": 64,
+            "program_header_offset": 64
+          }
+        },
+        {
+          "name": "Section Header Offset",
+          "status": true,
+          "description": "Section header offset (917528) is valid: it is correctly positioned after the ELF header (>= 64).",
+          "metadata": {
+            "expected_minimum_offset": 64,
+            "section_header_offset": 917528
+          }
+        },
+        {
+          "name": "Program Header Table Bound",
+          "status": true,
+          "description": "Program header table is within file bounds: it ends at offset 680 which is <= the file size (920088).",
+          "metadata": {
+            "file_size": 920088,
+            "program_header_offset": 64,
+            "program_header_table_end": 680,
+            "program_header_table_size": 616
+          }
+        },
+        {
+          "name": "Section Header Table Bound",
+          "status": true,
+          "description": "Section header table is within file bounds: it ends at offset 920088 which is <= the file size (920088).",
+          "metadata": {
+            "file_size": 920088,
+            "section_header_offset": 917528,
+            "section_header_table_end": 920088,
+            "section_header_table_size": 2560
+          }
+        },
+        {
+          "name": "String section index",
+          "status": true,
+          "description": "The string section index is valid: it points to an existing section or is set to 0 (indicating no string table).",
+          "metadata": {
+            "section_count": 40,
+            "shstrndx": 39
+          }
+        }
+      ]
+    },
+    {
+      "name": "Memory Mapping and Segments",
+      "description": "Validates the memory mapping and segments of the ELF file.",
+      "checks": [
+        {
+          "name": "Entry Point",
+          "status": true,
+          "description": "The entry point is valid and located in an executable segment.",
+          "metadata": {
+            "entry_point": 4199936,
+            "in_executable": true,
+            "in_loadable": true,
+            "in_writable": false,
+            "section_type": ".text"
+          }
+        },
+        {
+          "name": "Segment Alignment",
+          "status": true,
+          "description": "All segments are properly aligned.",
+          "metadata": null
+        },
+        {
+          "name": "Section Count Anomaly",
+          "status": true,
+          "description": "The ELF file has the expected number of sections (40).",
+          "metadata": {
+            "section_count_actual": 40,
+            "section_count_reported": 40
+          }
+        },
+        {
+          "name": "Program Header Count Anomaly",
+          "status": true,
+          "description": "The ELF file has the expected number of program headers (11).",
+          "metadata": {
+            "program_header_count_actual": 11,
+            "program_header_count_reported": 11
+          }
+        },
+        {
+          "name": "UPX Signature",
+          "status": false,
+          "description": "No UPX indicators found.",
+          "metadata": null
+        },
+        {
+          "name": "Suspicious Section Names",
+          "status": true,
+          "description": "No suspicious section names found.",
+          "metadata": null
+        },
+        {
+          "name": "Empty Segments",
+          "status": true,
+          "description": "No empty segments found.",
+          "metadata": null
+        },
+        {
+          "name": "Overlapping Segments",
+          "status": true,
+          "description": "No overlapping segments found.",
+          "metadata": null
+        }
+      ]
+    },
+    {
+      "name": "Protection Mechanisms and Hardening",
+      "description": "Evaluates the implementation of countermeasures and protections designed to mitigate the most common attack vectors.",
+      "checks": [
+        {
+          "name": "NX Protection",
+          "status": true,
+          "description": "The ELF file has non-executable segments, ensuring NX protection is in place and enhancing security.",
+          "metadata": null
+        },
+        {
+          "name": "RERLO Protection",
+          "status": false,
+          "description": "The ELF file has RERLO protection but lacks BIND_NOW. Without BIND_NOW, dynamic symbols may be resolved lazily during execution, which could reduce security.",
+          "metadata": {
+            "has_bind_now": false,
+            "has_rerlo": true
+          }
+        },
+        {
+          "name": "Stack Canary",
+          "status": true,
+          "description": "The ELF file uses stack canary protection, which helps prevent buffer overflow attacks by checking for stack corruption.",
+          "metadata": {
+            "symbol": "__stack_chk_fail"
+          }
+        },
+        {
+          "name": "PIE Protection",
+          "status": false,
+          "description": "The ELF file is not a Position Independent Executable (PIE). A PIE is a type of executable that can be loaded at any address in memory, which enhances security by preventing attackers from predicting memory addresses.",
+          "metadata": {
+            "position_independent": false
+          }
+        },
+        {
+          "name": "WX Segments",
+          "status": true,
+          "description": "The ELF file does not contain writable and executable segments, which is a positive security measure. This prevents the risk of executing malicious code through writable areas of memory.",
+          "metadata": null
+        },
+        {
+          "name": "Suspicious Entry Point",
+          "status": true,
+          "description": "The ELF file has a valid entry point located in an executable segment. This is expected for normal execution.",
+          "metadata": {
+            "entry_point": 4199936
+          }
+        },
+        {
+          "name": "Isolated Executable Sections",
+          "status": true,
+          "description": "No isolated executable sections found. All executable sections are within loadable segments.",
+          "metadata": null
+        }
+      ]
+    },
+    {
+      "name": "Dependencies and Interaction with Environment",
+      "description": "Validates dependencies and environment interactions of the ELF file.",
+      "checks": [
+        {
+          "name": "Dynamic Interpreter",
+          "status": true,
+          "description": "The binary is statically compiled or does not require an interpreter. This means it is fully self-contained.",
+          "metadata": {
+            "interpreter": null
+          }
+        },
+        {
+          "name": "Debugging Indications",
+          "status": false,
+          "description": "The binary contains 9 section(s) indicating the presence of symbols or debugging data. Presence of debug symbols can indicate that the binary was compiled with debugging information, potentially revealing sensitive data or implementation details.",
+          "metadata": {
+            "debug_sections": [
+              ".debug_info",
+              ".debug_abbrev",
+              ".debug_line",
+              ".debug_str",
+              ".debug_addr",
+              ".debug_line_str",
+              ".debug_str_offsets",
+              ".symtab",
+              ".strtab"
+            ]
+          }
+        },
+        {
+          "name": "RPATH / RUNPATH",
+          "status": true,
+          "description": "The binary does not use RPATH or RUNPATH.",
+          "metadata": null
+        },
+        {
+          "name": "Binary Stripping",
+          "status": false,
+          "description": "The binary contains a full symbol table and has not been stripped. This may expose internal details useful for reverse engineering.",
+          "metadata": [
+            "Level: Not stripped",
+            ".symtab present: true",
+            ".strtab present: true",
+            "debug_sections: .debug_info, .debug_abbrev, .debug_line, .debug_str, .debug_addr, .debug_line_str, .debug_str_offsets"
+          ]
+        },
+        {
+          "name": "Number of Dependencies",
+          "status": true,
+          "description": "The binary declares 0 dynamic dependencies. Classification: No dependencies (statically linked or minimal).",
+          "metadata": {
+            "classification": "No dependencies (statically linked or minimal)",
+            "dependency_count": 0,
+            "needed_libraries": []
+          }
+        }
+      ]
+    }
+  ]
+}

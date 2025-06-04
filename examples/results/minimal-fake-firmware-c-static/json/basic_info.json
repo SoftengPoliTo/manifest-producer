@@ -1,0 +1,11 @@
+{
+  "file_name": "minimal-fake-firmware-c-static",
+  "file_type": "Executable",
+  "file_size": 920088,
+  "arch": "x86_64",
+  "pie": false,
+  "stripped": false,
+  "static_linking": "Statically linked",
+  "language": "C99",
+  "entry_point": 4199936
+}
