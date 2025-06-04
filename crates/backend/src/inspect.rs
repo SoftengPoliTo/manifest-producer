@@ -1,25 +1,17 @@
-use std::{
-    borrow::{self},
-    collections::HashMap,
-    fs::{self, File},
-    io::Read,
-    path::Path,
-};
+use std::{fs::File, io::Read, path::Path};
 
 use crate::{
     error::{Error, Result},
     BasicInfo,
 };
 
-use gimli::{self, DwarfSections, EndianSlice, RunTimeEndian};
 use goblin::{
     self,
     elf::{Elf, SectionHeader},
 };
 #[cfg(feature = "progress_bar")]
 use indicatif::{ProgressBar, ProgressStyle};
-use memmap2::{self};
-use object::{self, elf::SHT_PROGBITS, Object, ObjectSection};
+use object::{self, elf::SHT_PROGBITS};
 #[cfg(feature = "progress_bar")]
 use std::time::Duration;
 
@@ -83,7 +75,8 @@ pub fn inspect_binary<'a>(
     };
     let arch = get_architecture(elf)?;
     let pie = is_pie(elf);
-    let language = get_language(elf_path)?;
+    // let language = get_language(elf_path)?;
+    let language = "Rust".to_string(); // Hardcoded to "Rust" cause ascot is written in Rust and we don't have to support other languages.
     let file_size = get_file_size(elf_path)?;
     let entry_point = get_entry_point(elf);
 
@@ -246,73 +239,73 @@ fn is_pie(elf: &Elf) -> bool {
     }
 }
 
-fn get_language(elf_path: &str) -> Result<String> {
-    let file = fs::File::open(elf_path)?;
-    let mmap = unsafe { memmap2::Mmap::map(&file)? };
-    let object = object::File::parse(&*mmap)?;
-    let endian = if object.is_little_endian() {
-        gimli::RunTimeEndian::Little
-    } else {
-        gimli::RunTimeEndian::Big
-    };
+// fn get_language(elf_path: &str) -> Result<String> {
+//     let file = fs::File::open(elf_path)?;
+//     let mmap = unsafe { memmap2::Mmap::map(&file)? };
+//     let object = object::File::parse(&*mmap)?;
+//     let endian = if object.is_little_endian() {
+//         gimli::RunTimeEndian::Little
+//     } else {
+//         gimli::RunTimeEndian::Big
+//     };
 
-    let language = code_language(&object, endian)?;
-    Ok(language)
-}
+//     let language = code_language(&object, endian)?;
+//     Ok(language)
+// }
 
-fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian) -> Result<String> {
-    let load_section = |id: gimli::SectionId| -> Result<borrow::Cow<[u8]>> {
-        match object.section_by_name(id.name()) {
-            Some(ref section) => Ok(section
-                .uncompressed_data()
-                .unwrap_or(borrow::Cow::Borrowed(&[][..]))),
-            None => Ok(borrow::Cow::Borrowed(&[][..])),
-        }
-    };
-    let dwarf_sections = DwarfSections::load(&load_section)?;
-    let borrow_section: &dyn for<'a> Fn(&'a borrow::Cow<[u8]>) -> EndianSlice<'a, RunTimeEndian> =
-        &|section| EndianSlice::new(section, endian);
-    let dwarf = dwarf_sections.borrow(&borrow_section);
-    let mut iter = dwarf.units();
-    let mut language_counts = HashMap::new();
+// fn code_language<'b>(object: &'b object::File<'b>, endian: gimli::RunTimeEndian) -> Result<String> {
+//     let load_section = |id: gimli::SectionId| -> Result<borrow::Cow<[u8]>> {
+//         match object.section_by_name(id.name()) {
+//             Some(ref section) => Ok(section
+//                 .uncompressed_data()
+//                 .unwrap_or(borrow::Cow::Borrowed(&[][..]))),
+//             None => Ok(borrow::Cow::Borrowed(&[][..])),
+//         }
+//     };
+//     let dwarf_sections = DwarfSections::load(&load_section)?;
+//     let borrow_section: &dyn for<'a> Fn(&'a borrow::Cow<[u8]>) -> EndianSlice<'a, RunTimeEndian> =
+//         &|section| EndianSlice::new(section, endian);
+//     let dwarf = dwarf_sections.borrow(&borrow_section);
+//     let mut iter = dwarf.units();
+//     let mut language_counts = HashMap::new();
 
-    while let Some(header) = iter.next()? {
-        let unit = dwarf.unit(header)?;
-        let mut entries = unit.entries();
+//     while let Some(header) = iter.next()? {
+//         let unit = dwarf.unit(header)?;
+//         let mut entries = unit.entries();
 
-        while let Some((_, entry)) = entries.next_dfs()? {
-            if let Some(language_attr) = entry.attr_value(gimli::DW_AT_language)? {
-                let gimli::AttributeValue::Language(language) = language_attr else {
-                    continue;
-                };
-                increment_language_count(&mut language_counts, &language.to_string());
-            }
-        }
-    }
-    let mut max_count = 0;
-    let mut max_language = String::new();
+//         while let Some((_, entry)) = entries.next_dfs()? {
+//             if let Some(language_attr) = entry.attr_value(gimli::DW_AT_language)? {
+//                 let gimli::AttributeValue::Language(language) = language_attr else {
+//                     continue;
+//                 };
+//                 increment_language_count(&mut language_counts, &language.to_string());
+//             }
+//         }
+//     }
+//     let mut max_count = 0;
+//     let mut max_language = String::new();
 
-    // The presence of C99 in the Rust program is due to the musl library, used to statically compile the binary
-    if language_counts.contains_key("DW_LANG_C99") && language_counts.contains_key("DW_LANG_Rust") {
-        language_counts.remove_entry("DW_LANG_C99");
-    }
-    for (language, count) in language_counts {
-        if count > max_count {
-            max_count = count;
-            max_language.clone_from(&language);
-        }
-    }
-    let lang = match max_language.strip_prefix("DW_LANG_") {
-        Some(stripped_lang) => stripped_lang.to_owned(),
-        None => return Err(Error::LangNotFound),
-    };
-    Ok(lang)
-}
+//     // The presence of C99 in the Rust program is due to the musl library, used to statically compile the binary
+//     if language_counts.contains_key("DW_LANG_C99") && language_counts.contains_key("DW_LANG_Rust") {
+//         language_counts.remove_entry("DW_LANG_C99");
+//     }
+//     for (language, count) in language_counts {
+//         if count > max_count {
+//             max_count = count;
+//             max_language.clone_from(&language);
+//         }
+//     }
+//     let lang = match max_language.strip_prefix("DW_LANG_") {
+//         Some(stripped_lang) => stripped_lang.to_owned(),
+//         None => return Err(Error::LangNotFound),
+//     };
+//     Ok(lang)
+// }
 
-fn increment_language_count(map: &mut HashMap<String, u32>, language: &str) {
-    let count = map.entry(language.to_string()).or_insert(0);
-    *count += 1;
-}
+// fn increment_language_count(map: &mut HashMap<String, u32>, language: &str) {
+//     let count = map.entry(language.to_string()).or_insert(0);
+//     *count += 1;
+// }
 
 fn has_sections(elf: &Elf, section_type: u32) -> bool {
     elf.section_headers
