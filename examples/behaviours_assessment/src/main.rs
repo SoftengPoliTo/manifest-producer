@@ -34,7 +34,7 @@ fn run() -> Result<()> {
     dirs::setup_output_dir(&output_path)?;
     checker::perform_checks(&elf_path, &output_path)?;
     analysis::perform_analysis(&elf_path, &output_path, max_depth)?;
-    open::that(format!("{output_path}/index.html"))?;
+    // open::that(format!("{output_path}/index.html"))?;
 
     Ok(())
 }
