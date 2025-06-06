@@ -13,8 +13,8 @@ use capstone::{
 };
 use goblin::elf::Elf;
 
-use std::{collections::HashMap, fs::File};
 use std::fmt::Write;
+use std::{collections::HashMap, fs::File};
 
 /// Disassembles and analyses functions in an ELF binary.
 ///
