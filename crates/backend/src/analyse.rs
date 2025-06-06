@@ -14,6 +14,7 @@ use capstone::{
 use goblin::elf::Elf;
 
 use std::{collections::HashMap, fs::File};
+use std::fmt::Write;
 
 /// Disassembles and analyses functions in an ELF binary.
 ///
@@ -134,35 +135,39 @@ fn analyse_code_slice(
                 if functions.contains_key(&func_name) && !nodes.contains(&func_name) {
                     nodes.push(func_name.clone());
                 }
-                disassembly_output.push_str(&format!(
-                    "0x{:x}:\t{}\t{}   <{}>\n",
+                writeln!(
+                    disassembly_output,
+                    "0x{:x}:\t{}\t{}\t<{}>\n",
                     insn.address(),
                     insn_name,
                     op_str,
                     func_name
-                ));
+                )?;
             } else {
-                disassembly_output.push_str(&format!(
+                writeln!(
+                    disassembly_output,
                     "0x{:x}:\t{}\t{}\t(Register Offset-GOT)\n",
                     insn.address(),
                     insn_name,
                     op_str
-                ));
+                )?;
             }
         } else if insn_name == "syscall" {
             flag = true;
-            disassembly_output.push_str(&format!(
+            writeln!(
+                disassembly_output,
                 "0x{:x}:\t{}\t\t(System Call Invoked)\n",
                 insn.address(),
                 insn_name
-            ));
+            )?;
         } else {
-            disassembly_output.push_str(&format!(
+            writeln!(
+                disassembly_output,
                 "0x{:x}:\t{}\t{}\n",
                 insn.address(),
                 insn_name,
                 op_str
-            ));
+            )?;
         }
     }
 
