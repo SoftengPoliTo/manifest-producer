@@ -121,7 +121,7 @@ pub fn display_cli_results(report: &ValidationReport) {
 #[allow(clippy::missing_panics_doc)]
 pub fn json_results(report: &ValidationReport) {
     let json_report = serde_json::to_string_pretty(report).unwrap();
-    let json_path = format!("{}.json", report.binary_path);
+    let json_path = format!("{}_checker.json", report.binary_path);
     fs::write(&json_path, &json_report).unwrap();
     println!("\nJSON report saved to: {}", json_path.cyan());
 }
