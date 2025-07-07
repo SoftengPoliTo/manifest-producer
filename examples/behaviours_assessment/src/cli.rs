@@ -31,10 +31,15 @@ pub fn parse_arguments() -> (String, String, Option<usize>) {
         .get_matches();
 
     let elf_path = matches.get_one::<String>("elf_path").unwrap().to_string();
-    let name = elf_path.split('/').last().unwrap();
-    let output_path = format!("./examples/results/{name}");
+    let name = elf_path.split('/').next_back().unwrap();
+    // let output_path = format!("./examples/results/{name}");
+    let exe_path = std::env::current_exe().unwrap();
+    let exe_dir = exe_path.parent().unwrap();
+    let mut output_path = exe_dir.to_path_buf();
+    output_path.push("results");
+    output_path.push(name);
 
     let depth = matches.get_one::<usize>("depth").copied();
 
-    (elf_path, output_path, depth)
+    (elf_path, output_path.to_string_lossy().into_owned(), depth)
 }

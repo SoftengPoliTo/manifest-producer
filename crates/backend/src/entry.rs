@@ -54,41 +54,60 @@ pub fn find_main<S: ::std::hash::BuildHasher>(
         let pb = ProgressBar::new_spinner();
         pb.set_style(ProgressStyle::default_spinner().template("{spinner:.green} {msg}\n")?);
         pb.enable_steady_tick(Duration::from_millis(100));
-        pb.set_message("Extracting main function: _start -> main...".to_string());
+        pb.set_message("Extracting main function: main wrapper -> user main...".to_string());
         pb
     };
 
-    if let Some(start) = functions.get("_start") {
-        if let Some(disassembly) = &start.disassembly {
-            let main_addr = extract_main(disassembly)?;
-            if main_addr != 0 {
-                for func in functions {
-                    if func.1.start_addr == main_addr {
+    if let Some(main_wrapper) = functions.get("main") {
+        if let Some(disassembly) = &main_wrapper.disassembly {
+            #[cfg(feature = "progress_bar")]
+            pb.set_message("Found main wrapper, extracting user main address...".to_string());
+
+            let user_main_addr = extract_main(disassembly)?;
+            if user_main_addr != 0 {
+                for (func_name, func_node) in functions {
+                    if func_node.start_addr == user_main_addr {
                         #[cfg(feature = "progress_bar")]
-                        pb.finish_with_message("Main function found!");
-                        return Ok(func.1.clone());
+                        pb.finish_with_message(format!("User main function found: {func_name}"));
+                        return Ok(func_node.clone());
                     }
                 }
-                return Err(Error::FunctionNotFound("main".to_string()));
+
+                #[cfg(feature = "progress_bar")]
+                pb.finish_with_message(format!("User main found at address: 0x{user_main_addr:x}"));
+
+                return Err(Error::FunctionNotFound(format!(
+                    "Function at main address 0x{user_main_addr:x} not found in function map"
+                )));
             }
         } else {
-            return Err(Error::FunctionNotFound("_start disassembly".to_string()));
+            return Err(Error::FunctionNotFound(
+                "main wrapper disassembly".to_string(),
+            ));
         }
-    } else if let Some(start) = functions.get("__dls2") {
-        if let Some(disassembly) = &start.disassembly {
-            let main_addr = extract_main(disassembly)?;
-            if main_addr != 0 {
-                for func in functions {
-                    if func.1.start_addr == main_addr {
-                        #[cfg(feature = "progress_bar")]
-                        pb.finish_with_message("Main function found!");
-                        return Ok(func.1.clone());
+    }
+
+    let entry_points = ["_start", "__start", "start", "__dls2"];
+
+    for entry_name in &entry_points {
+        if let Some(start_func) = functions.get(*entry_name) {
+            if let Some(disassembly) = &start_func.disassembly {
+                #[cfg(feature = "progress_bar")]
+                pb.set_message(format!("Trying entry point: {entry_name}"));
+
+                let main_addr = extract_main(disassembly)?;
+                if main_addr != 0 {
+                    for (func_name, func_node) in functions {
+                        if func_node.start_addr == main_addr {
+                            #[cfg(feature = "progress_bar")]
+                            pb.finish_with_message(format!(
+                                "Main function found via {entry_name}: {func_name}"
+                            ));
+                            return Ok(func_node.clone());
+                        }
                     }
                 }
-                return Err(Error::FunctionNotFound("main".to_string()));
             }
-        } else {
-            return Err(Error::FunctionNotFound("_start disassembly".to_string()));
         }
     }
 
@@ -98,20 +117,39 @@ pub fn find_main<S: ::std::hash::BuildHasher>(
 }
 
 fn extract_main(disassembly: &str) -> Result<u64> {
-    let re_c = Regex::new(r"mov\s+\$([a-fA-F0-9x]+),\s+%rdi")?;
-    let re_rust = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;
+    let re_direct_mov = Regex::new(r"mov[ablqw]*\s+\$0x([a-fA-F0-9]+),\s+%rdi")?;
+    let re_rust_lea_pos = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;
+    let re_rust_lea_neg = Regex::new(r"([0-9a-fA-F]+):\s+lea\s+-0x([0-9a-fA-F]+)\(%rip\),\s+%rdi")?;
+    let re_flexible_mov = Regex::new(r"mov[a-z]*\s+\$([0-9a-fA-F]+|0x[0-9a-fA-F]+),\s+%rdi")?;
 
     for line in disassembly.lines() {
-        if let Some(caps) = re_c.captures(line) {
+        if let Some(caps) = re_direct_mov.captures(line) {
             let addr_str = caps.get(1).unwrap().as_str();
-            let addr = if let Some(addr_str) = addr_str.strip_prefix("0x") {
-                u64::from_str_radix(addr_str, 16).unwrap()
-            } else {
-                return Ok(0);
-            };
+            let addr = u64::from_str_radix(addr_str, 16).unwrap();
             return Ok(addr);
         }
-        if let Some(caps) = re_rust.captures(line) {
+
+        if let Some(caps) = re_flexible_mov.captures(line) {
+            let addr_str = caps.get(1).unwrap().as_str();
+            let addr_str = addr_str.strip_prefix("0x").unwrap_or(addr_str);
+            let addr = u64::from_str_radix(addr_str, 16).unwrap();
+            return Ok(addr);
+        }
+
+        if let Some(caps) = re_rust_lea_pos.captures(line) {
+            let lea_instruction_address_str = caps.get(1).unwrap().as_str();
+            let lea_instruction_address =
+                u64::from_str_radix(lea_instruction_address_str, 16).unwrap();
+
+            let offset_str = caps.get(2).unwrap().as_str();
+            let offset = u64::from_str_radix(offset_str, 16).unwrap();
+            let rip_value = lea_instruction_address + 7;
+            let main_address = rip_value + offset;
+
+            return Ok(main_address);
+        }
+
+        if let Some(caps) = re_rust_lea_neg.captures(line) {
             let lea_instruction_address_str = caps.get(1).unwrap().as_str();
             let lea_instruction_address =
                 u64::from_str_radix(lea_instruction_address_str, 16).unwrap();
@@ -120,11 +158,12 @@ fn extract_main(disassembly: &str) -> Result<u64> {
             let offset = u64::from_str_radix(offset_str, 16).unwrap();
 
             let rip_value = lea_instruction_address + 7;
-            let main_address = rip_value + offset;
+            let main_address = rip_value - offset;
 
             return Ok(main_address);
         }
     }
+
     Ok(0)
 }
 

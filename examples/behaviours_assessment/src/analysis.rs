@@ -40,11 +40,19 @@ use crate::error::Result;
 /// - HTML generation failures.
 #[allow(clippy::module_name_repetitions)]
 pub fn perform_analysis(elf_path: &str, output_path: &str, max_depth: Option<usize>) -> Result<()> {
+    println!("\n[STEP 1] Reading ELF binary from '{elf_path}'");
     let buffer = read_elf(elf_path)?;
+
+    println!("[STEP 2] Parsing ELF structure...");
     let elf = parse_elf(&buffer)?;
 
+    println!("[STEP 3] Inspecting binary metadata...");
     let info = inspect_binary(&elf, elf_path, output_path)?;
-    let mut detected_functions = function_detection(&elf, &info.language, output_path)?;
+
+    println!("[STEP 4] Detecting function symbols...");
+    let mut detected_functions = function_detection(&elf, &info.language)?;
+
+    println!("[STEP 5] Analysing function control flow...");
     analyse_functions(
         &elf,
         &buffer,
@@ -53,7 +61,10 @@ pub fn perform_analysis(elf_path: &str, output_path: &str, max_depth: Option<usi
         output_path,
     )?;
 
+    println!("[STEP 6] Searching for main function...");
     let main_name = find_main(&detected_functions)?;
+
+    println!("[STEP 7] Generating HTML report...");
     html_builder(
         &info,
         &mut detected_functions,
@@ -61,6 +72,8 @@ pub fn perform_analysis(elf_path: &str, output_path: &str, max_depth: Option<usi
         output_path,
         max_depth,
     )?;
+
+    println!("[DONE] Analysis complete. Output saved to '{output_path}'");
 
     Ok(())
 }

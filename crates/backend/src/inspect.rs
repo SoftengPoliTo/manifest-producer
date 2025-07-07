@@ -5,13 +5,14 @@ use crate::{
     BasicInfo,
 };
 
+// use gimli::{DwarfSections, EndianSlice, RunTimeEndian};
 use goblin::{
     self,
     elf::{Elf, SectionHeader},
 };
 #[cfg(feature = "progress_bar")]
 use indicatif::{ProgressBar, ProgressStyle};
-use object::{self, elf::SHT_PROGBITS};
+use object::{self, elf::SHT_PROGBITS /*, Object, ObjectSection*/};
 #[cfg(feature = "progress_bar")]
 use std::time::Duration;
 
@@ -92,9 +93,7 @@ pub fn inspect_binary<'a>(
     serde_json::to_writer_pretty(file, &info)?;
 
     #[cfg(feature = "progress_bar")]
-    pb.finish_with_message(format!(
-        "Inspection completed! basic_info.json saved in {output_path}/json"
-    ));
+    pb.finish_with_message("Inspection completed!");
 
     Ok(info)
 }

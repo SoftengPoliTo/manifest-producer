@@ -31,10 +31,12 @@ pub fn main() {
 
 fn run() -> Result<()> {
     let (elf_path, output_path, max_depth) = cli::parse_arguments();
+    println!("Results folder creation: {output_path:?}");
     dirs::setup_output_dir(&output_path)?;
+    println!("Performing checks...");
     checker::perform_checks(&elf_path, &output_path)?;
+    println!("Performing analysis...");
     analysis::perform_analysis(&elf_path, &output_path, max_depth)?;
-    // open::that(format!("{output_path}/index.html"))?;
 
     Ok(())
 }

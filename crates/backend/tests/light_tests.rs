@@ -1,32 +1,10 @@
 mod common;
-use common::run_analysis_test;
+// use common::run_analysis_test;
 
+// In view of the changes made to the code and the real light-firmware firmware, recreate the environment for testing
 #[test]
-fn test_c() {
-    run_analysis_test(
-        "./tests/binaries/minimal-fake-firmware-c-static",
-        "light_test_c",
+fn test_light_firmware() {
+    todo!(
+        "This test is currently a placeholder. It needs to be implemented to run the analysis on the light-firmware."
     );
-}
-
-#[test]
-#[cfg(feature = "progress_bar")]
-fn test_c_bar() {
-    run_analysis_test(
-        "./tests/binaries/minimal-fake-firmware-c-static",
-        "light_test_c_bar",
-    );
-}
-
-#[test]
-fn test_cpp() {
-    run_analysis_test(
-        "./tests/binaries/minimal-fake-firmware-cpp-static",
-        "light_test_cpp",
-    );
-}
-
-#[test]
-fn test_rust() {
-    run_analysis_test("./tests/binaries/fridge", "light_test_rust");
 }

@@ -4,7 +4,7 @@ use std::{
     io::Write,
 };
 
-use crate::{error::Result, TreeNode};
+use crate::{error::Result, html_builder::sanitize_name, TreeNode};
 use manifest_producer_backend::FunctionNode;
 use serde_json::to_string_pretty;
 
@@ -134,7 +134,8 @@ fn build<S: ::std::hash::BuildHasher>(
 
 fn graph_json(tree: &TreeNode, root_name: &str, output_path: &str) -> Result<()> {
     let json_data = to_string_pretty(tree)?;
-    let output_path = format!("{output_path}/json/{root_name}.json");
+    let safe_name = sanitize_name(root_name);
+    let output_path = format!("{output_path}/json/{safe_name}.json");
     let mut file = File::create(&output_path)?;
     file.write_all(json_data.as_bytes())?;
 

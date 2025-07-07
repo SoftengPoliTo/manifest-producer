@@ -62,7 +62,8 @@ pub fn detect_syscalls<S: ::std::hash::BuildHasher>(
 }
 
 fn load_syscall_table() -> Result<HashMap<u64, SyscallInfo>> {
-    let data = fs::read_to_string("./data/syscall_tab.json")?;
+    // let data = fs::read_to_string("./data/syscall_tab.json")?;
+    let data = fs::read_to_string("syscall_tab.json")?;
 
     let syscalls: Vec<SyscallInfo> = serde_json::from_str(&data)?;
     Ok(syscalls.into_iter().map(|info| (info.id, info)).collect())

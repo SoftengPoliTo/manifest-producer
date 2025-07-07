@@ -16,7 +16,7 @@ pub fn run_analysis_test(binary_path: &str, test_name: &str) {
 
     let info = inspect_binary(&elf, binary_path, &output_path).unwrap();
 
-    let mut detected_functions = function_detection(&elf, &info.language, &output_path).unwrap();
+    let mut detected_functions = function_detection(&elf, &info.language).unwrap();
     analyse_functions(
         &elf,
         &elf_buffer,

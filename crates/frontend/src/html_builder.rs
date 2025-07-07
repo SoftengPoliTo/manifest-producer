@@ -49,11 +49,12 @@ pub fn html_builder<S: ::std::hash::BuildHasher>(
     output_path: &str,
     max_depth: Option<usize>,
 ) -> Result<()> {
+    let safe_root_name = sanitize_name(root_nodes);
     render_index_page(basic_info, detected_functions.len(), output_path)?;
     render_functions_page(detected_functions, output_path)?;
-    render_root_page(root_nodes, output_path)?;
+    render_root_page(&safe_root_name, output_path)?;
 
-    let js_tree = graph_builder(detected_functions, root_nodes, output_path, max_depth)?;
+    let js_tree = graph_builder(detected_functions, &safe_root_name, output_path, max_depth)?;
     render_tree_page(root_nodes, &js_tree, output_path)?;
     Ok(())
 }
@@ -129,4 +130,13 @@ fn render_tree_page(root_name: &str, js_tree: &TreeNode, output_path: &str) -> R
     file.write_all(rendered.as_bytes())?;
 
     Ok(())
+}
+
+pub(crate) fn sanitize_name(name: &str) -> String {
+    name.chars()
+        .map(|c| match c {
+            ':' | '<' | '>' | '"' | '|' | '*' | '?' | '\r' | '\n' => '_',
+            _ => c,
+        })
+        .collect()
 }

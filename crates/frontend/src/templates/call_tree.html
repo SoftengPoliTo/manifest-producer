@@ -8,70 +8,86 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         .hero-gradient {
-            background: linear-gradient(135deg, #3273dc, #209cee);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        
         :root {
-            --primary-color: #3273dc;
-            --secondary-color: #209cee;
-            --background-color: #f9f9f9;
-            --border-color: #ddd;
-            --text-color: #363636;
-            --node-hover-color: #485fc7;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --background-color: #fafbfc;
+            --border-color: #e1e8ed;
+            --text-color: #2c3e50;
+            --node-hover-color: #5a67d8;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
         }
 
         .graph-container {
             width: 100%;
             height: 80vh;
-            border: 1px solid var(--border-color);
-            background-color: var(--background-color);
+            border: 2px solid var(--border-color);
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
             position: relative;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
 
         .node circle {
             stroke: #fff;
-            stroke-width: 2px;
+            stroke-width: 3px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         .node circle:hover {
-            fill: var(--node-hover-color) !important;
+            stroke-width: 4px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            transform: scale(1.1);
         }
 
         .node text {
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             fill: var(--text-color);
             pointer-events: none;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 2px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
         }
 
         .node-label-background {
-            fill: white;
-            opacity: 0.8;
+            fill: rgba(255, 255, 255, 0.95);
+            stroke: var(--border-color);
+            stroke-width: 1px;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
         }
 
         .link {
-            stroke: #999;
-            stroke-width: 1px;
-            stroke-opacity: 0.4;
+            stroke: #94a3b8;
+            stroke-width: 2px;
+            stroke-opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            stroke-width: 3px;
+            stroke-opacity: 0.8;
         }
 
         .tooltip {
             position: absolute;
-            padding: 10px 15px;
-            background: white;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             font-size: 13px;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
+            max-width: 200px;
         }
 
         .controls {
@@ -83,34 +99,76 @@
 
         .zoom-controls {
             display: flex;
-            gap: 8px;
-            background: white;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 8px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
         }
 
         .zoom-button {
-            padding: 6px 12px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             background: var(--primary-color);
             color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            min-width: 40px;
         }
 
         .zoom-button:hover {
             background: var(--node-hover-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .stats-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline !important;
+        }
+
+        .hero-body {
+            padding: 2rem 1.5rem !important;
+        }
+
+        @keyframes nodeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .node-enter {
+            animation: nodeAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
     <section class="hero is-small hero-gradient">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title is-3 has-text-white">Call tree for function: {{ root_name }}</h1>
+                <h1 class="title is-3 has-text-white">📊 Call Tree: <span id="root-function-name">{{ root_name }}</span></h1>
                 <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
                     <ul>
                         <li><a href="../root_functions.html" class="has-text-white">Root functions</a></li>
@@ -127,10 +185,14 @@
             <div class="graph-container" id="graph">
                 <div class="controls">
                     <div class="zoom-controls">
-                        <button class="zoom-button" id="zoomIn">+</button>
-                        <button class="zoom-button" id="zoomReset">Reset</button>
-                        <button class="zoom-button" id="zoomOut">−</button>
+                        <button class="zoom-button" id="zoomIn" title="Zoom In">+</button>
+                        <button class="zoom-button" id="zoomReset" title="Reset View">⌂</button>
+                        <button class="zoom-button" id="zoomOut" title="Zoom Out">−</button>
                     </div>
+                </div>
+                <div class="stats-panel" id="stats">
+                    <div><strong>Nodes:</strong> <span id="node-count">0</span></div>
+                    <div><strong>Depth:</strong> <span id="max-depth">0</span></div>
                 </div>
             </div>
         </div>
@@ -150,8 +212,12 @@
                 .append("div")
                 .attr("class", "tooltip");
 
+            const colorScale = d3.scaleOrdinal()
+                .domain([0, 1, 2, 3, 4])
+                .range(["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"]);
+
             const zoom = d3.zoom()
-                .scaleExtent([0.3, 3])
+                .scaleExtent([0.2, 4])
                 .on("zoom", zoomed);
 
             const svg = d3.select("#graph")
@@ -161,18 +227,29 @@
                 .call(zoom);
 
             const g = svg.append("g")
-                .attr("transform", `translate(${width / 2},50)`);
+                .attr("transform", `translate(${width / 2},60)`);
 
             const treeLayout = d3.tree()
-                .size([height - 100, width - 300])
-                .separation((a, b) => {
-                    return (a.parent === b.parent ? 1 : 2) * (1 + a.depth * 0.1);
-                });
+                .size([height - 120, width - 300])
+                .separation((a, b) => (a.parent === b.parent ? 1 : 1.5) * (1 + Math.min(a.depth, 3) * 0.2));
 
             const root = d3.hierarchy(treeData);
             root.x0 = 0;
             root.y0 = 0;
-            root.children.forEach(collapse);
+            
+            let nodeCount = 0;
+            let maxDepth = 0;
+            
+            function countNodes(node) {
+                nodeCount++;
+                maxDepth = Math.max(maxDepth, node.depth);
+                if (node.children) node.children.forEach(countNodes);
+            }
+            
+            countNodes(root);
+            updateStats();
+            
+            root.children?.forEach(collapse);
 
             function collapse(d) {
                 if (d.children) {
@@ -182,40 +259,45 @@
                 }
             }
 
+            function updateStats() {
+                document.getElementById("node-count").textContent = nodeCount;
+                document.getElementById("max-depth").textContent = maxDepth;
+            }
+
             function update(source) {
-                const duration = 750;
+                const duration = 600;
                 const treeData = treeLayout(root);
                 const nodes = treeData.descendants();
                 const links = treeData.links();
 
                 nodes.forEach(d => {
-                    d.y = d.depth * 150; 
+                    d.y = d.depth * 160; 
                 });
 
                 const node = g.selectAll(".node")
-                    .data(nodes, d => d.id || (d.id = Math.random()));
+                    .data(nodes, d => d.id || (d.id = ++nodeCount));
 
                 const nodeEnter = node.enter().append("g")
-                    .attr("class", "node")
-                    .attr("transform", d => `translate(${source.x0},${source.y0})`);
+                    .attr("class", "node node-enter")
+                    .attr("transform", d => `translate(${source.x0 || 0},${source.y0 || 0})`);
 
                 nodeEnter.append("rect")
                     .attr("class", "node-label-background")
-                    .attr("y", -20)
-                    .attr("x", -30)
-                    .attr("width", 60)
-                    .attr("height", 20)
-                    .attr("rx", 3)
-                    .style("opacity", 0);
+                    .attr("y", -22)
+                    .attr("x", d => -d.data.text.length * 3.5)
+                    .attr("width", d => d.data.text.length * 7)
+                    .attr("height", 18)
+                    .attr("rx", 6);
 
                 nodeEnter.append("circle")
                     .attr("r", 0)
-                    .attr("fill", d => d._children ? "#3273dc" : "#aaa");
+                    .attr("fill", d => colorScale(d.depth % 5))
+                    .attr("stroke", d => d3.color(colorScale(d.depth % 5)).darker(0.5));
 
                 nodeEnter.append("text")
-                    .attr("dy", "-8")
+                    .attr("dy", "-6")
                     .attr("text-anchor", "middle")
-                    .text(d => d.data.text)
+                    .text(d => d.data.text.length > 15 ? d.data.text.substring(0, 12) + "..." : d.data.text)
                     .style("fill-opacity", 0);
 
                 nodeEnter
@@ -232,22 +314,24 @@
                     .on("mouseover", function(event, d) {
                         tooltip.style("opacity", 1)
                             .html(`
-                                <strong>${d.data.text}</strong>
+                                <strong>${d.data.text}</strong><br>
+                                <small>Depth: ${d.depth}</small><br>
                                 ${d.children || d._children ? 
-                                    `<br>Click to ${d.children ? 'collapse' : 'expand'}` : 
-                                    '<br>Leaf node'}
+                                    `<em>Click to ${d.children ? 'collapse' : 'expand'}</em>` : 
+                                    '<em>Leaf node</em>'}
                             `)
-                            .style("left", (event.pageX + 10) + "px")
-                            .style("top", (event.pageY - 28) + "px");
+                            .style("left", (event.pageX + 12) + "px")
+                            .style("top", (event.pageY - 35) + "px");
                         
-                        g.selectAll(".link")
-                            .style("stroke-opacity", l => 
-                                l.source === d || l.target === d ? 0.8 : 0.2);
+                        d3.select(this).select("circle")
+                            .transition().duration(200)
+                            .attr("r", 9);
                     })
-                    .on("mouseout", () => {
+                    .on("mouseout", function() {
                         tooltip.style("opacity", 0);
-                        g.selectAll(".link")
-                            .style("stroke-opacity", 0.4);
+                        d3.select(this).select("circle")
+                            .transition().duration(200)
+                            .attr("r", 7);
                     });
 
                 const nodeUpdate = nodeEnter.merge(node);
@@ -259,17 +343,12 @@
                 nodeUpdate.select("circle")
                     .transition()
                     .duration(duration)
-                    .attr("r", 6);
+                    .attr("r", 7);
 
                 nodeUpdate.select("text")
                     .transition()
                     .duration(duration)
                     .style("fill-opacity", 1);
-
-                nodeUpdate.select("rect")
-                    .transition()
-                    .duration(duration)
-                    .style("opacity", 0.8);
 
                 const nodeExit = node.exit()
                     .transition()
@@ -279,34 +358,30 @@
 
                 nodeExit.select("circle").attr("r", 0);
                 nodeExit.select("text").style("fill-opacity", 0);
-                nodeExit.select("rect").style("opacity", 0);
 
                 const link = g.selectAll(".link")
                     .data(links, d => d.target.id);
 
                 const linkEnter = link.enter()
-                    .append("line")
+                    .append("path")
                     .attr("class", "link")
-                    .attr("x1", source.x0)
-                    .attr("y1", source.y0)
-                    .attr("x2", source.x0)
-                    .attr("y2", source.y0);
+                    .attr("d", d => {
+                        const o = {x: source.x0 || 0, y: source.y0 || 0};
+                        return diagonal(o, o);
+                    });
 
                 link.merge(linkEnter)
                     .transition()
                     .duration(duration)
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
+                    .attr("d", d => diagonal(d.source, d.target));
 
                 link.exit()
                     .transition()
                     .duration(duration)
-                    .attr("x1", source.x)
-                    .attr("y1", source.y)
-                    .attr("x2", source.x)
-                    .attr("y2", source.y)
+                    .attr("d", d => {
+                        const o = {x: source.x, y: source.y};
+                        return diagonal(o, o);
+                    })
                     .remove();
 
                 nodes.forEach(d => {
@@ -315,21 +390,28 @@
                 });
             }
 
+            function diagonal(s, d) {
+                return `M ${s.x} ${s.y}
+                        C ${s.x} ${(s.y + d.y) / 2},
+                          ${d.x} ${(s.y + d.y) / 2},
+                          ${d.x} ${d.y}`;
+            }
+
             function zoomed(event) {
                 g.attr("transform", event.transform);
             }
 
             document.getElementById("zoomIn").onclick = () => {
-                svg.transition().duration(750).call(zoom.scaleBy, 1.2);
+                svg.transition().duration(500).call(zoom.scaleBy, 1.3);
             };
 
             document.getElementById("zoomOut").onclick = () => {
-                svg.transition().duration(750).call(zoom.scaleBy, 0.8);
+                svg.transition().duration(500).call(zoom.scaleBy, 0.7);
             };
 
             document.getElementById("zoomReset").onclick = () => {
-                svg.transition().duration(750)
-                   .call(zoom.transform, d3.zoomIdentity.translate(width / 2, 50));
+                svg.transition().duration(500)
+                   .call(zoom.transform, d3.zoomIdentity.translate(width / 2, 60));
             };
 
             update(root);

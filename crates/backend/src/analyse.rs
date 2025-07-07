@@ -80,15 +80,14 @@ pub fn analyse_functions(
         pb.inc(1);
     }
 
-    #[cfg(feature = "progress_bar")]
-    pb.finish_with_message("Disassembly completed!");
-
     calculate_invocation_count(functions);
     detect_syscalls(functions)?;
 
     let file = File::create(format!("{output_path}/json/functions_list.json"))?;
     serde_json::to_writer_pretty(file, &functions)?;
 
+    #[cfg(feature = "progress_bar")]
+    pb.finish_with_message("Disassembly completed!");
     Ok(())
 }
 

@@ -17,5 +17,4 @@ manifest-producer-backend = { path = "../../crates/backend" , features = ["progr
 manifest-producer-frontend = { path = "../../crates/frontend" }
 manifest-producer-checker = { path = "../../crates/checker" }
 clap = { version = "^4.4", features = ["derive"] }
-open = "5.3.2"
 goblin = "0.9.3"
