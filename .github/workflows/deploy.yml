@@ -1,0 +1,147 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-windows-binary:
+
+    env: 
+        BINARY: manifest-producer
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Build manifest-producer
+      run: |
+        cargo build --release
+
+    - name: Build package
+      id: package
+      shell: bash
+      run: |
+        ARCHIVE_TARGET="x86_64-pc-windows-msvc"
+        ARCHIVE_NAME="$BINARY-$ARCHIVE_TARGET"
+        ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
+        if [ -f "./target/release/$BINARY.exe" ]; then
+          7z a ${ARCHIVE_FILE} ./target/release/$BINARY.exe
+          echo "file=${ARCHIVE_FILE}" >> $GITHUB_OUTPUT
+          echo "name=${ARCHIVE_NAME}.zip" >> $GITHUB_OUTPUT
+        else
+          echo "Error: Binary not found at ./target/release/$BINARY.exe"
+          exit 1
+        fi
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.package.outputs.name }}
+        path: ${{ steps.package.outputs.file }}
+
+  create-unix-binary:
+
+    env:
+      BINARY: manifest-producer
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install musl
+      if: contains(matrix.target, 'linux-musl')
+      run: |
+        sudo apt-get update
+        sudo apt-get install musl-tools
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ matrix.target }}
+
+    - name: Build manifest-producer
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+
+    - name: Build package
+      id: package
+      run: |
+        TAR_FILE=$BINARY-${{ matrix.target }}
+        cd target/${{ matrix.target }}/release
+        if [ -f "$BINARY" ]; then
+          tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz $BINARY
+          echo "file=${TAR_FILE}.tar.gz" >> $GITHUB_OUTPUT
+          echo "name=${TAR_FILE}" >> $GITHUB_OUTPUT
+        else
+          echo "Error: Binary not found at target/${{ matrix.target }}/release/$BINARY"
+          exit 1
+        fi
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.package.outputs.name }}
+        path: ${{ steps.package.outputs.file }}     
+
+  deploy:
+
+    needs: [create-windows-binary, create-unix-binary]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create Cargo.lock
+        run: |
+          cargo update
+
+      - name: Get version
+        id: tagName
+        run: |
+          VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./binaries
+
+      - name: Create a release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.tagName.outputs.tag }}
+          name: v${{ steps.tagName.outputs.tag }}
+          body: |
+            Automated release v${{ steps.tagName.outputs.tag }}
+            
+            ## Binaries included:
+            - `manifest-producer-x86_64-pc-windows-msvc.zip` - Windows 64-bit
+            - `manifest-producer-x86_64-unknown-linux-musl.tar.gz` - Linux (musl, static)
+            - `manifest-producer-x86_64-apple-darwin.tar.gz` - macOS Intel
+            - `manifest-producer-aarch64-apple-darwin.tar.gz` - macOS Apple Silicon
+          files: |
+            ./binaries/**/*.zip
+            ./binaries/**/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -3,51 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Functions List</title>
+    <title>Functions List - High Performance</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, #3273dc, #209cee);
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-color: rgba(31, 38, 135, 0.37);
+            --row-height: 60px;
         }
-        .filters-card {
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Hero Section */
+        .hero-gradient {
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.1"><circle cx="36" cy="24" r="4"/><circle cx="6" cy="44" r="2"/><circle cx="36" cy="6" r="2"/></g></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Glass morphism */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 var(--shadow-color);
+        }
+
+        /* Sticky filters */
+        .filters-sticky {
             position: sticky;
-            top: 1rem;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* Enhanced search input */
+        .search-enhanced {
+            position: relative;
+        }
+
+        .search-enhanced input {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 16px 12px 48px;
+            transition: all 0.3s ease;
+        }
+
+        .search-enhanced input:focus {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: #4facfe;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .search-enhanced .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4facfe;
+            z-index: 2;
+        }
+
+        /* Virtual table container */
+        .virtual-table-container {
+            height: 70vh;
+            overflow: hidden;
+            border-radius: 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .virtual-table-header {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1fr;
+            gap: 16px;
+            align-items: center;
+            position: sticky;
+            top: 0;
             z-index: 10;
         }
-        .table-container {
-            max-height: 70vh;
+
+        .virtual-table-body {
+            height: calc(70vh - 60px);
             overflow-y: auto;
+            overflow-x: hidden;
         }
-        .syscall-badge {
-            background-color: #ff3860;
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-        .function-name {
+
+        .virtual-row {
+            display: grid;
+            grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1fr;
+            gap: 16px;
+            align-items: center;
+            padding: 16px;
+            height: var(--row-height);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
             cursor: pointer;
         }
-        .function-name:hover {
-            color: #3273dc;
+
+        .virtual-row:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(8px);
         }
-        .modal-card-body {
+
+        .virtual-row:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .virtual-row:nth-child(even):hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Function name styling */
+        .function-name {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-weight: 600;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .function-name:hover {
+            color: #4facfe;
+        }
+
+        /* Enhanced badges */
+        .syscall-badge {
+            background: var(--danger-gradient);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .type-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+        }
+
+        .type-syscall {
+            background: var(--danger-gradient);
+            color: white;
+        }
+
+        .type-function {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .action-btn.info {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .action-btn.code {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Loading states */
+        .loading-row {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Modal enhancements */
+        .enhanced-modal .modal-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .enhanced-modal .modal-card-head {
+            background: var(--primary-gradient);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .enhanced-modal .modal-card-body {
             max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Code highlighting */
+        .code-container {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .code-container code {
+            color: #d4d4d4;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Filters */
+        .filter-chip {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip.active {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .filter-chip:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .virtual-table-header,
+            .virtual-row {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 8px;
+                padding: 12px;
+            }
+            
+            .virtual-table-header :nth-child(3),
+            .virtual-table-header :nth-child(4),
+            .virtual-row :nth-child(3),
+            .virtual-row :nth-child(4) {
+                display: none;
+            }
+        }
+
+        /* Performance optimizations */
+        .virtual-table-body {
+            contain: layout style paint;
+            will-change: scroll-position;
+        }
+
+        .virtual-row {
+            contain: layout style paint;
+        }
+
+        /* Breadcrumb enhancement */
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 16px;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white !important;
         }
     </style>
 </head>
 
 <body>
-    <!-- Hero Section -->
+    <!-- Enhanced Hero Section -->
     <section class="hero is-small hero-gradient">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title is-3 has-text-white">List of Detected Functions</h1>
-                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
+                <h1 class="title is-3 has-text-white">
+                    <i class="fas fa-list-ul mr-3"></i>
+                    Functions Detection Results
+                </h1>
+                <nav class="breadcrumb" aria-label="breadcrumbs">
                     <ul>
-                        <li><a href="index.html" class="has-text-white">Home</a></li>
-                        <li class="is-active"><a class="has-text-white" aria-current="page">Functions</a></li>
+                        <li><a href="index.html">
+                            <i class="fas fa-home mr-1"></i>Home
+                        </a></li>
+                        <li class="is-active"><a aria-current="page">
+                            <i class="fas fa-function mr-1"></i>Functions
+                        </a></li>
                     </ul>
                 </nav>
             </div>
@@ -57,29 +399,58 @@
     <!-- Main content -->
     <section class="section">
         <div class="container">
-            <!-- Filters Card -->
-            <div class="card filters-card mb-4">
-                <div class="card-content">
-                    <div class="columns is-multiline">
-                        <!-- Search -->
-                        <div class="column is-4">
-                            <div class="field">
-                                <div class="control has-icons-left">
-                                    <input class="input" type="text" id="searchInput" placeholder="Search functions...">
-                                    <span class="icon is-left">
-                                        <i class="fas fa-search"></i>
-                                    </span>
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalFunctions">0</div>
+                    <div class="stat-label">Total Functions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="visibleFunctions">0</div>
+                    <div class="stat-label">Visible</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="syscallCount">0</div>
+                    <div class="stat-label">System Calls</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="loadingStatus">Ready</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            </div>
+
+            <!-- Enhanced Filters -->
+            <div class="glass-card filters-sticky p-4 mb-4">
+                <div class="columns is-multiline is-mobile">
+                    <!-- Enhanced Search -->
+                    <div class="column is-half-tablet is-full-mobile">
+                        <div class="search-enhanced">
+                            <i class="fas fa-search search-icon"></i>
+                            <input class="input" type="text" id="searchInput" 
+                                   placeholder="Search functions... (supports regex)" 
+                                   autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Chips -->
+                    <div class="column is-half-tablet is-full-mobile">
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control">
+                                <div class="filter-chip" id="syscallFilter" onclick="toggleFilter('syscall')">
+                                    <i class="fas fa-shield-alt mr-2"></i>
+                                    Syscalls Only
                                 </div>
                             </div>
-                        </div>
-                        <!-- Filters -->
-                        <div class="column is-8">
-                            <div class="field is-grouped">
-                                <div class="control">
-                                    <label class="checkbox">
-                                        <input type="checkbox" id="syscallFilter">
-                                        Show only functions with syscalls
-                                    </label>
+                            <div class="control">
+                                <div class="filter-chip" id="regexFilter" onclick="toggleFilter('regex')">
+                                    <i class="fas fa-code mr-2"></i>
+                                    Regex Mode
+                                </div>
+                            </div>
+                            <div class="control">
+                                <div class="filter-chip" onclick="clearFilters()">
+                                    <i class="fas fa-times mr-2"></i>
+                                    Clear All
                                 </div>
                             </div>
                         </div>
@@ -87,68 +458,31 @@
                 </div>
             </div>
 
-            <!-- Functions Table -->
-            <div class="card">
-                <div class="card-content">
-                    <div class="table-container">
-                        <table class="table is-fullwidth is-striped is-hoverable">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Call frequency</th>
-                                    <th>Type</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for func in functions %}
-                                <tr>
-                                    <td>
-                                        <span class="function-name" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage }}')">
-                                            {{ func.name }}
-                                            {% if func.syscall %}
-                                            <span class="syscall-badge">syscall</span>
-                                            {% endif %}
-                                        </span>
-                                    </td>
-                                    <td><code>0x{{ func.start_addr }}</code></td>
-                                    <td>{{ func.invocation_entry }}</td>
-                                    <td>
-                                        {% if func.syscall %}
-                                        <span class="tag is-danger">System Call</span>
-                                        {% else %}
-                                        <span class="tag is-info">Function</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="buttons are-small">
-                                            <button class="button is-info" onclick="showDetails('{{ func.name }}', '{{ func.syscall }}', '{{ func.syscall_info.name }}', '{{ func.syscall_info.manpage | safe }}')">
-                                                <span class="icon"><i class="fas fa-info-circle"></i></span>
-                                            </button>
-                                            {% if func.disassembly %}
-                                            <button class="button is-primary" onclick="showDisassembly('{{ func.name }}', `{{ func.disassembly | safe }}`)">
-                                                <span class="icon"><i class="fas fa-code"></i></span>
-                                            </button>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+            <!-- Virtual Table -->
+            <div class="virtual-table-container">
+                <div class="virtual-table-header">
+                    <div><i class="fas fa-function mr-2"></i>Function Name</div>
+                    <div><i class="fas fa-map-marker-alt mr-2"></i>Address</div>
+                    <div><i class="fas fa-chart-bar mr-2"></i>Frequency</div>
+                    <div><i class="fas fa-tag mr-2"></i>Type</div>
+                    <div><i class="fas fa-cogs mr-2"></i>Actions</div>
+                </div>
+                <div class="virtual-table-body" id="tableBody">
+                    <!-- Virtual rows will be inserted here -->
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Details Modal -->
-    <div class="modal" id="detailsModal">
-        <div class="modal-background"></div>
+    <!-- Enhanced Modal -->
+    <div class="modal enhanced-modal" id="detailsModal">
+        <div class="modal-background" onclick="closeModal()"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Details</p>
+                <p class="modal-card-title has-text-white">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Function Details
+                </p>
                 <button class="delete" aria-label="close" onclick="closeModal()"></button>
             </header>
             <section class="modal-card-body">
@@ -159,59 +493,284 @@
         </div>
     </div>
 
-    <!-- Footer Section -->
-    <footer class="footer has-background-white-ter">
+    <!-- Footer -->
+    <footer class="footer" style="background: var(--glass-bg); backdrop-filter: blur(16px); border-top: 1px solid var(--glass-border);">
         <div class="content has-text-centered">
-            <p>
-                <strong>Static Binary Analysis Report</strong>.
+            <p class="has-text-dark">
+                <strong>High-Performance Function Analysis</strong> - Optimized for Large Datasets
                 <br>
-                Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT">MIT</a>.
+                <small class="has-text-grey">Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT" class="has-text-info">MIT License</a></small>
             </p>
         </div>
     </footer>
 
     <script>
+        // High-performance virtual scrolling implementation
+        class VirtualTable {
+            constructor(container, data) {
+                this.container = container;
+                this.allData = data;
+                this.filteredData = [...data];
+                this.rowHeight = 60;
+                this.visibleRows = Math.ceil(container.clientHeight / this.rowHeight) + 5;
+                this.startIndex = 0;
+                this.searchTerm = '';
+                this.filters = {
+                    syscall: false,
+                    regex: false
+                };
+                
+                this.init();
+            }
 
-        function filterTable() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const syscallOnly = document.getElementById('syscallFilter').checked;
-            const rows = document.querySelectorAll('tbody tr');
+            init() {
+                this.container.addEventListener('scroll', this.throttle(this.onScroll.bind(this), 16));
+                this.render();
+                this.updateStats();
+            }
 
-            rows.forEach(row => {
-                const name = row.querySelector('.function-name').textContent.toLowerCase();
-                const isSyscall = row.querySelector('.syscall-badge') !== null;
-                const show = name.includes(input) && (!syscallOnly || isSyscall);
-                row.style.display = show ? '' : 'none';
-            });
+            throttle(func, delay) {
+                let timeoutId;
+                let lastExecTime = 0;
+                return function (...args) {
+                    const currentTime = Date.now();
+                    
+                    if (currentTime - lastExecTime > delay) {
+                        func.apply(this, args);
+                        lastExecTime = currentTime;
+                    } else {
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(() => {
+                            func.apply(this, args);
+                            lastExecTime = Date.now();
+                        }, delay - (currentTime - lastExecTime));
+                    }
+                };
+            }
+
+            onScroll() {
+                const scrollTop = this.container.scrollTop;
+                const newStartIndex = Math.floor(scrollTop / this.rowHeight);
+                
+                if (newStartIndex !== this.startIndex) {
+                    this.startIndex = newStartIndex;
+                    this.render();
+                }
+            }
+
+            filter() {
+                let filtered = [...this.allData];
+
+                // Search filter
+                if (this.searchTerm) {
+                    if (this.filters.regex) {
+                        try {
+                            const regex = new RegExp(this.searchTerm, 'i');
+                            filtered = filtered.filter(func => regex.test(func.name));
+                        } catch (e) {
+                            // Invalid regex, fall back to simple search
+                            filtered = filtered.filter(func => 
+                                func.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                            );
+                        }
+                    } else {
+                        filtered = filtered.filter(func => 
+                            func.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                        );
+                    }
+                }
+
+                // Syscall filter
+                if (this.filters.syscall) {
+                    filtered = filtered.filter(func => func.syscall);
+                }
+
+                this.filteredData = filtered;
+                this.startIndex = 0;
+                this.container.scrollTop = 0;
+                this.render();
+                this.updateStats();
+            }
+
+            render() {
+                const endIndex = Math.min(
+                    this.startIndex + this.visibleRows,
+                    this.filteredData.length
+                );
+
+                const totalHeight = this.filteredData.length * this.rowHeight;
+                const offsetY = this.startIndex * this.rowHeight;
+
+                let html = `<div style="height: ${offsetY}px;"></div>`;
+
+                for (let i = this.startIndex; i < endIndex; i++) {
+                    const func = this.filteredData[i];
+                    if (func) {
+                        html += this.renderRow(func);
+                    }
+                }
+
+                html += `<div style="height: ${totalHeight - (endIndex * this.rowHeight)}px;"></div>`;
+
+                this.container.innerHTML = html;
+            }
+
+            renderRow(func) {
+                const syscallBadge = func.syscall ? 
+                    `<span class="syscall-badge">syscall</span>` : '';
+                
+                const typeBadge = func.syscall ? 
+                    `<span class="type-badge type-syscall">System Call</span>` :
+                    `<span class="type-badge type-function">Function</span>`;
+
+                const disassemblyBtn = func.disassembly ? 
+                    `<button class="action-btn code" onclick="showDisassembly('${func.name}', \`${func.disassembly}\`)" title="View Disassembly">
+                        <i class="fas fa-code"></i>
+                    </button>` : '';
+
+                return `
+                    <div class="virtual-row" data-function="${func.name}">
+                        <div class="function-name" onclick="showDetails('${func.name}', '${func.syscall}', '${func.syscall_info?.name || ''}', '${func.syscall_info?.manpage || ''}')">
+                            ${func.name}${syscallBadge}
+                        </div>
+                        <div><code>0x${func.start_addr}</code></div>
+                        <div><strong>${func.invocation_entry || 0}</strong></div>
+                        <div>${typeBadge}</div>
+                        <div class="action-buttons">
+                            <button class="action-btn info" onclick="showDetails('${func.name}', '${func.syscall}', '${func.syscall_info?.name || ''}', '${func.syscall_info?.manpage || ''}')" title="View Details">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            ${disassemblyBtn}
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateStats() {
+                document.getElementById('totalFunctions').textContent = this.allData.length.toLocaleString();
+                document.getElementById('visibleFunctions').textContent = this.filteredData.length.toLocaleString();
+                document.getElementById('syscallCount').textContent = this.allData.filter(f => f.syscall).length.toLocaleString();
+            }
+
+            search(term) {
+                this.searchTerm = term;
+                this.filter();
+            }
+
+            toggleFilter(filterName) {
+                this.filters[filterName] = !this.filters[filterName];
+                this.filter();
+            }
+
+            clearFilters() {
+                this.searchTerm = '';
+                this.filters.syscall = false;
+                this.filters.regex = false;
+                document.getElementById('searchInput').value = '';
+                document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+                this.filter();
+            }
         }
 
+// Mock data for demonstration - replace with actual Jinja data
+// Data from MiniJinja template
+        const functionsData = [
+            {% for func in functions %}
+            {
+                name: "{{ func.name }}",
+                start_addr: "{{ func.start_addr }}",
+                invocation_entry: {{ func.invocation_entry or 0 }},
+                syscall: {{ func.syscall | lower }},
+                syscall_info: {
+                    name: "{{ func.syscall_info.name if func.syscall_info else '' }}",
+                    manpage: "{{ func.syscall_info.manpage if func.syscall_info else '' }}"
+                },
+                disassembly: `{{ func.disassembly if func.disassembly else '' }}`
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Initialize virtual table
+        let virtualTable;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableBody = document.getElementById('tableBody');
+            virtualTable = new VirtualTable(tableBody, functionsData);
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    virtualTable.search(this.value);
+                }, 300);
+            });
+            
+            // Loading status
+            document.getElementById('loadingStatus').textContent = 'Loaded';
+        });
+
+        // Filter functions
+        function toggleFilter(filterName) {
+            const chip = document.getElementById(filterName + 'Filter');
+            chip.classList.toggle('active');
+            virtualTable.toggleFilter(filterName);
+        }
+
+        function clearFilters() {
+            virtualTable.clearFilters();
+        }
+
+        // Modal functions
         function showDetails(functionName, isSyscall, syscallName, syscallManpage) {
             const modal = document.getElementById('detailsModal');
             const content = document.getElementById('modalContent');
 
-            isSyscall = (isSyscall === "true" || isSyscall === "1");
+            isSyscall = (isSyscall === "true" || isSyscall === true);
 
             let detailsHTML = `
-                <h3 class="title is-4">${functionName}</h3>
-                <div class="content">
-                    <p><strong>Type:</strong> ${isSyscall ? 'System Call' : 'Function'}</p>
+                <div class="glass-card p-5">
+                    <h3 class="title is-4">
+                        <i class="fas fa-function mr-3"></i>
+                        ${functionName}
+                    </h3>
+                    <div class="content">
+                        <div class="columns">
+                            <div class="column">
+                                <p><strong><i class="fas fa-tag mr-2"></i>Type:</strong> 
+                                    <span class="type-badge ${isSyscall ? 'type-syscall' : 'type-function'}">
+                                        ${isSyscall ? 'System Call' : 'Function'}
+                                    </span>
+                                </p>
             `;
 
             if (isSyscall) {
                 detailsHTML += `
-                    <p><strong>System Call Name:</strong> ${syscallName || 'N/A'}</p>
-                    <p><strong>Manpage:</strong> ${syscallManpage ? `<a href="${syscallManpage}" target="_blank" rel="noopener noreferrer">${syscallManpage}</a>` : 'N/A'}</p>
+                                <p><strong><i class="fas fa-terminal mr-2"></i>System Call Name:</strong> 
+                                    <code>${syscallName || 'N/A'}</code>
+                                </p>
+                                <p><strong><i class="fas fa-book mr-2"></i>Manual Page:</strong> 
+                                    ${syscallManpage ? 
+                                        `<a href="${syscallManpage}" target="_blank" rel="noopener noreferrer" class="has-text-info">
+                                            ${syscallManpage} <i class="fas fa-external-link-alt ml-1"></i>
+                                        </a>` : 
+                                        '<em>N/A</em>'
+                                    }
+                                </p>
                 `;
             }
 
-            detailsHTML += `</div>`;
+            detailsHTML += `
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             content.innerHTML = detailsHTML;
             modal.classList.add('is-active');
-        }
-
-        function closeModal() {
-            document.getElementById('detailsModal').classList.remove('is-active');
         }
 
         function showDisassembly(functionName, disassemblyCode) {
@@ -219,20 +778,40 @@
             const content = document.getElementById("modalContent");
 
             const formattedCode = disassemblyCode && disassemblyCode.trim() !== "" 
-                ? `<pre><code>${disassemblyCode}</code></pre>` 
-                : "<p><em>No disassembly available for this function.</em></p>";
+                ? `<div class="code-container"><code>${disassemblyCode}</code></div>` 
+                : "<div class='glass-card p-4'><p><em><i class='fas fa-exclamation-triangle mr-2'></i>No disassembly available for this function.</em></p></div>";
 
             content.innerHTML = `
-                <h3 class="title is-4">${functionName} - Disassembly</h3>
-                ${formattedCode}
+                <div class="glass-card p-5">
+                    <h3 class="title is-4">
+                        <i class="fas fa-code mr-3"></i>
+                        ${functionName} - Disassembly
+                    </h3>
+                    ${formattedCode}
+                </div>
             `;
 
             modal.classList.add("is-active");
         }
 
-        document.getElementById('searchInput').addEventListener('keyup', filterTable);
-        document.getElementById('syscallFilter').addEventListener('change', filterTable);
-        document.querySelector('.modal-background').addEventListener('click', closeModal);
+        function closeModal() {
+            document.getElementById('detailsModal').classList.remove('is-active');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            } else if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // Performance monitoring
+        if (typeof performance !== 'undefined' && performance.mark) {
+            performance.mark('functions-list-loaded');
+        }
     </script>
 </body>
 </html>

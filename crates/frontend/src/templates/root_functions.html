@@ -7,24 +7,87 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --card-hover-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
         .hero-gradient {
-            background: linear-gradient(135deg, #3273dc, #209cee);
+            background: var(--primary-gradient);
         }
+        
         .root-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f0f0f0;
         }
+        
         .root-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(10,10,10,0.1);
+            transform: translateY(-4px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: #667eea;
         }
+        
+        .concept-card {
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid #667eea;
+        }
+        
         .concept-icon {
-            font-size: 2rem;
-            color: #3273dc;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .search-box {
-            max-width: 400px;
-            margin: 0 auto 2rem auto;
+        
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 3rem auto;
+        }
+        
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e8e8e8;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.9);
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb a:hover {
+            color: white;
+        }
+        
+        .stats-badge {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+        
+        .footer {
+            margin-top: 4rem;
         }
     </style>
 </head>
@@ -34,13 +97,33 @@
     <section class="hero is-medium hero-gradient">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title is-2 has-text-white">Root Function</h1>
-                <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
-                    <ul>
-                        <li><a href="index.html" class="has-text-white">Home</a></li>
-                        <li class="is-active"><a class="has-text-white" aria-current="page">Root Function</a></li>
-                    </ul>
-                </nav>
+                <div class="columns is-vcentered">
+                    <div class="column">
+                        <h1 class="title is-2 has-text-white">
+                            <span class="icon mr-3">
+                                <i class="fas fa-project-diagram"></i>
+                            </span>
+                            Root Functions
+                        </h1>
+                        <p class="subtitle is-5 has-text-white-bis">
+                            Entry points and call flow analysis
+                        </p>
+                        <nav class="breadcrumb" aria-label="breadcrumbs">
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li class="is-active"><a aria-current="page">Root Functions</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="column is-narrow">
+                        <div class="stats-badge">
+                            <span class="icon">
+                                <i class="fas fa-code-branch"></i>
+                            </span>
+                            <span id="functionCount">0 functions</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -49,42 +132,42 @@
         <div class="container">
             <!-- Concepts Explanation -->
             <div class="columns is-multiline mb-6">
-                <div class="column is-half">
-                    <div class="box">
+                <div class="column is-6">
+                    <div class="box concept-card">
                         <div class="has-text-centered mb-4">
                             <span class="icon concept-icon">
-                                <i class="fas fa-project-diagram"></i>
+                                <i class="fas fa-play-circle"></i>
                             </span>
-                            <h3 class="title is-4 mt-2">Root Function</h3>
+                            <h3 class="title is-4 mt-3">Root Functions</h3>
                         </div>
-                        <p class="has-text-centered">
-                            Root function is the entry point that initiate call sequences in the binary.
-                            It serves as starting points for analyzing possible program flow and behaviours.
+                        <p class="has-text-grey-dark">
+                            Entry points that initiate call sequences in the binary. 
+                            These serve as starting points for analyzing program flow and behavior patterns.
                         </p>
                     </div>
                 </div>
-                <div class="column is-half">
-                    <div class="box">
+                <div class="column is-6">
+                    <div class="box concept-card">
                         <div class="has-text-centered mb-4">
                             <span class="icon concept-icon">
                                 <i class="fas fa-sitemap"></i>
                             </span>
-                            <h3 class="title is-4 mt-2">Call Trees</h3>
+                            <h3 class="title is-4 mt-3">Call Analysis</h3>
                         </div>
-                        <p class="has-text-centered">
-                            Call Graph visualize function Interactions and dependencies,
-                            helping identify control flow patterns and potential vulnerabilities.
+                        <p class="has-text-grey-dark">
+                            Visualize function interactions and dependencies to identify 
+                            control flow patterns and potential security vulnerabilities.
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Search Box -->
-            <div class="search-box">
+            <div class="search-container">
                 <div class="field">
                     <div class="control has-icons-left">
-                        <input class="input" type="text" id="searchInput" placeholder="Search root functions..."
-                            onkeyup="filterRoots()">
+                        <input class="input search-input" type="text" id="searchInput" 
+                               placeholder="Search root functions..." onkeyup="filterRoots()">
                         <span class="icon is-left">
                             <i class="fas fa-search"></i>
                         </span>
@@ -94,48 +177,73 @@
 
             <!-- Root Functions Grid -->
             <div class="columns is-multiline" id="rootsGrid">
-                <div class="column is-4">
+                <!-- Sample root function card -->
+                <div class="column is-4 root-item">
                     <a href="./call_trees/{{ root }}.html" class="box root-card">
                         <div class="is-flex is-align-items-center">
-                            <span class="icon has-text-info mr-3">
+                            <span class="icon has-text-info mr-4">
                                 <i class="fas fa-code-branch"></i>
                             </span>
-                            <div>
-                                <h4 class="title is-5 mb-2">{{ root }}</h4>
+                            <div class="is-flex-grow-1">
+                                <h4 class="title is-5 mb-1">{{ root }}</h4>
                                 <p class="is-size-7 has-text-grey">
-                                    View call Graph
+                                    View call graph
                                 </p>
                             </div>
-                            <span class="icon has-text-grey-light ml-auto">
-                                <i class="fas fa-chevron-right"></i>
+                            <span class="icon has-text-grey-light">
+                                <i class="fas fa-arrow-right"></i>
                             </span>
                         </div>
                     </a>
                 </div>
             </div>
+
+            <!-- No Results Message -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <span class="icon is-large has-text-grey-light">
+                    <i class="fas fa-search fa-2x"></i>
+                </span>
+                <p class="title is-4 has-text-grey">No functions found</p>
+                <p class="has-text-grey">Try adjusting your search terms</p>
+            </div>
         </div>
     </section>
 
     <script>
+        // Update function count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFunctionCount();
+        });
+
         function filterRoots() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const rootCards = document.querySelectorAll('.root-card');
+            const rootItems = document.querySelectorAll('.root-item');
+            const noResults = document.getElementById('noResults');
+            let visibleCount = 0;
 
-            rootCards.forEach(card => {
-                const rootName = card.querySelector('.title').textContent.toLowerCase();
-                const column = card.closest('.column');
-                column.style.display = rootName.includes(searchTerm) ? '' : 'none';
+            rootItems.forEach(item => {
+                const rootName = item.querySelector('.title').textContent.toLowerCase();
+                const isVisible = rootName.includes(searchTerm);
+                item.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
             });
+
+            // Show/hide no results message
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        function updateFunctionCount() {
+            const count = document.querySelectorAll('.root-item').length;
+            document.getElementById('functionCount').textContent = `${count} function${count !== 1 ? 's' : ''}`;
         }
     </script>
 
     <!-- Footer -->
-    <footer class="footer has-background-white-ter">
+    <footer class="footer has-background-light">
         <div class="content has-text-centered">
-            <p>
-                <strong>Static Binary Analysis Results</strong>.
-                <br>
-                Licensed under <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT">MIT</a>
+            <p class="has-text-grey-dark">
+                <strong>Binary Analysis Results</strong> • 
+                <a href="https://github.com/SoftengPoliTo/manifest-producer/blob/main/LICENSE-MIT" class="has-text-grey-dark">MIT License</a>
             </p>
         </div>
     </footer>
