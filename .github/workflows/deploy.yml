@@ -5,25 +5,23 @@ on:
     branches:
       - main
 
+env:
+  BINARY: behaviour-assessment
+
 jobs:
   create-windows-binary:
-
-    env: 
-        BINARY: behaviour-assessment
-
     runs-on: windows-latest
-
+    
     steps:
     - uses: actions/checkout@v4
 
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
 
-    - name: Build light-firmware
-      run: |
-        cargo build --release
+    - name: Build binary
+      run: cargo build --release
 
-    - name: Build package
+    - name: Create package
       id: package
       shell: bash
       run: |
@@ -31,8 +29,8 @@ jobs:
         ARCHIVE_NAME="$BINARY-$ARCHIVE_TARGET"
         ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
         7z a ${ARCHIVE_FILE} ./target/release/$BINARY.exe
-        echo "::set-output name=file::${ARCHIVE_FILE}"
-        echo "::set-output name=name::${ARCHIVE_NAME}.zip"
+        echo "file=${ARCHIVE_FILE}" >> $GITHUB_OUTPUT
+        echo "name=${ARCHIVE_NAME}.zip" >> $GITHUB_OUTPUT
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -41,16 +39,11 @@ jobs:
         path: ${{ steps.package.outputs.file }}
 
   create-unix-binary:
-
-    env:
-      BINARY: behaviour-assessment
-
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
+            target: x86_64-unknown-linux-gnu
           - os: macos-latest
             target: x86_64-apple-darwin
 
@@ -59,68 +52,60 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install musl
-      if: contains(matrix.target, 'linux-musl')
-      run: |
-        sudo apt-get install musl-tools
-
     - name: Install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
-        target: ${{ matrix.target }}
+        targets: ${{ matrix.target }}
 
-    - name: Build manifest-producer
-      run: |
-        cargo build --target ${{ matrix.target }}
+    - name: Build binary
+      run: cargo build --release --target ${{ matrix.target }}
 
-    - name: Build package
+    - name: Create package
       id: package
       run: |
         TAR_FILE=$BINARY-${{ matrix.target }}
-        cd target/${{ matrix.target }}/debug
+        cd target/${{ matrix.target }}/release
         tar -czvf $GITHUB_WORKSPACE/$TAR_FILE.tar.gz $BINARY
-        echo ::set-output "name=file::${TAR_FILE}.tar.gz "
-        echo ::set-output "name=name::${TAR_FILE}"
+        echo "file=${TAR_FILE}.tar.gz" >> $GITHUB_OUTPUT
+        echo "name=${TAR_FILE}" >> $GITHUB_OUTPUT
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.package.outputs.name }}
-        path: ${{ steps.package.outputs.file }}     
+        path: ${{ steps.package.outputs.file }}
 
   deploy:
-
     needs: [create-windows-binary, create-unix-binary]
-
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
 
-      - name: Create Cargo.lock
-        run: |
-          cargo update
+    - name: Get version from Cargo.toml
+      id: version
+      run: |
+        VERSION=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+        echo "tag=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Get version
-        id: tagName
-        run: |
-          VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
-          echo "::set-output name=tag::$VERSION"
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./binaries
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./binaries
-
-      - name: Create a release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: v${{ steps.tagName.outputs.tag }}
-          files: |
-            ./binaries/**/*.zip
-            ./binaries/**/*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.version.outputs.tag }}
+        name: v${{ steps.version.outputs.tag }}
+        files: |
+          ./binaries/**/*.zip
+          ./binaries/**/*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
