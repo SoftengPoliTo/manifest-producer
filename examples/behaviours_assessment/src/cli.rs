@@ -31,7 +31,8 @@ pub fn parse_arguments() -> (String, String, Option<usize>) {
         .get_matches();
 
     let elf_path = matches.get_one::<String>("elf_path").unwrap().to_string();
-    let name = elf_path.split('/').last().unwrap();
+    // let name = elf_path.split('/').last().unwrap();
+    let name = elf_path.split('/').next_back().unwrap();
     let output_path = format!("./examples/results/{name}");
 
     let depth = matches.get_one::<usize>("depth").copied();
