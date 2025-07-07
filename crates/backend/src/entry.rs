@@ -123,12 +123,9 @@ fn extract_main(disassembly: &str) -> Result<u64> {
     let re_flexible_mov = Regex::new(r"mov[a-z]*\s+\$([0-9a-fA-F]+|0x[0-9a-fA-F]+),\s+%rdi")?;
 
     for line in disassembly.lines() {
-        println!("Debug line: {line}");
-
         if let Some(caps) = re_direct_mov.captures(line) {
             let addr_str = caps.get(1).unwrap().as_str();
             let addr = u64::from_str_radix(addr_str, 16).unwrap();
-            println!("Found main address via direct mov: 0x{addr:x}");
             return Ok(addr);
         }
 
@@ -136,7 +133,6 @@ fn extract_main(disassembly: &str) -> Result<u64> {
             let addr_str = caps.get(1).unwrap().as_str();
             let addr_str = addr_str.strip_prefix("0x").unwrap_or(addr_str);
             let addr = u64::from_str_radix(addr_str, 16).unwrap();
-            println!("Found main address via flexible mov: 0x{addr:x}");
             return Ok(addr);
         }
 
@@ -150,7 +146,6 @@ fn extract_main(disassembly: &str) -> Result<u64> {
             let rip_value = lea_instruction_address + 7;
             let main_address = rip_value + offset;
 
-            println!("Found main address via lea (positive): 0x{main_address:x}");
             return Ok(main_address);
         }
 
@@ -165,16 +160,10 @@ fn extract_main(disassembly: &str) -> Result<u64> {
             let rip_value = lea_instruction_address + 7;
             let main_address = rip_value - offset;
 
-            println!("Found main address via lea (negative): 0x{main_address:x}");
             return Ok(main_address);
-        }
-
-        if line.contains("rdi") {
-            println!("Line contains rdi but no match: {line}");
         }
     }
 
-    println!("No main address pattern found");
     Ok(0)
 }
 
