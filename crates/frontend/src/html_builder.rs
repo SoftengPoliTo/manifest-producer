@@ -55,7 +55,7 @@ pub fn html_builder<S: ::std::hash::BuildHasher>(
     render_root_page(&safe_root_name, output_path)?;
 
     let js_tree = graph_builder(detected_functions, &safe_root_name, output_path, max_depth)?;
-    render_tree_page(root_nodes, &js_tree, output_path)?;
+    render_tree_page(&safe_root_name, &js_tree, output_path)?;
     Ok(())
 }
 
